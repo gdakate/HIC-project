@@ -1107,6 +1107,11 @@ const DIFF_SETTINGS = {
   Hard:     [4, 5, 6],
 };
 
+// ── Gaze recording state (set by Metrics, read by the global listener) ──
+let isRoundActive      = false;
+let currentRoundGazeData = [];   // [{x, y, timestamp}] — raw screen coords
+let currentTargetEl    = null;   // digit-box reference for gaze-on CSS
+
 // ════════════════════════════════════════════════════════════════
 //  PERSISTENT STATE
 // ════════════════════════════════════════════════════════════════
@@ -1312,6 +1317,9 @@ const Metrics = {
     clearInterval(this.gazeInterval);
     clearInterval(this.rtTicker);
     clearInterval(this.gazeIndicatorInterval);
+    isRoundActive = false;
+    currentRoundGazeData = [];
+    currentTargetEl = null;
   },
 
   startRT() {
@@ -1335,9 +1343,11 @@ const Metrics = {
   },
 
   startGaze(targetEl) {
-    this.gazePoints   = [];
-    this.gazeOnTarget = 0;
-    // Always capture the target rect (even without WebGazer)
+    // Reset global gaze state for this round
+    currentRoundGazeData = [];
+    currentTargetEl      = targetEl;
+    isRoundActive        = true;
+    // Capture digit-box position (normalized) so canvas can draw target rect
     const r = targetEl.getBoundingClientRect();
     this.targetRect = {
       x: r.left   / window.innerWidth,
@@ -1345,48 +1355,26 @@ const Metrics = {
       w: r.width  / window.innerWidth,
       h: r.height / window.innerHeight,
     };
-    clearInterval(this.gazeInterval);
-    if (!Gazer.active) return;
-
-    // Subscribe directly to WebGazer predictions for this round.
-    // This is more reliable than polling Gazer.pos because WebGazer
-    // can silently reset the listener between calibration and gameplay.
-    try {
-      webgazer.setGazeListener((data) => {
-        if (!data) return;
-        Gazer.pos = { x: data.x, y: data.y };    // keep indicator working
-        const r2 = targetEl.getBoundingClientRect();
-        const onTarget = (
-          data.x >= r2.left  - GAZE_PADDING &&
-          data.x <= r2.right + GAZE_PADDING &&
-          data.y >= r2.top   - GAZE_PADDING &&
-          data.y <= r2.bottom + GAZE_PADDING
-        );
-        this.gazePoints.push({
-          nx: data.x / window.innerWidth,
-          ny: data.y / window.innerHeight,
-          onTarget,
-        });
-        if (onTarget) this.gazeOnTarget++;
-        targetEl.classList.toggle('gaze-on', onTarget);
-      });
-    } catch (e) { console.warn('startGaze listener failed:', e); }
+    // Data is collected by the persistent listener installed in finishCalibration()
   },
 
   stopGaze() {
-    clearInterval(this.gazeInterval);
+    isRoundActive   = false;
+    currentTargetEl = null;
     const el = $('digit-box');
     if (el) el.classList.remove('gaze-on');
-    // Restore base listener so Gazer.pos stays current between rounds
-    if (Gazer.active) {
-      try {
-        webgazer.setGazeListener((data) => {
-          Gazer.pos = data ? { x: data.x, y: data.y } : null;
-        });
-      } catch {}
+    if (!currentRoundGazeData.length || !this.targetRect) return null;
+    // Compute fixation rate from raw screen coords + stored normalized target rect
+    const tr   = this.targetRect;
+    const padX = GAZE_PADDING / window.innerWidth;
+    const padY = GAZE_PADDING / window.innerHeight;
+    let onCnt = 0;
+    for (const p of currentRoundGazeData) {
+      const nx = p.x / window.innerWidth, ny = p.y / window.innerHeight;
+      if (nx >= tr.x - padX && nx <= tr.x + tr.w + padX &&
+          ny >= tr.y - padY && ny <= tr.y + tr.h + padY) onCnt++;
     }
-    if (!this.gazePoints.length) return null;
-    return this.gazeOnTarget / this.gazePoints.length;
+    return onCnt / currentRoundGazeData.length;
   },
 
   startGazeIndicator() {
@@ -1412,7 +1400,7 @@ const Metrics = {
     this.rounds.push({
       roundNum, seqLen, correct, rt, fixation,
       gazeActive:  Gazer.active,
-      gazePoints:  [...this.gazePoints],
+      gazePoints:  [...currentRoundGazeData],   // raw {x,y,timestamp}
       targetRect:  this.targetRect ? { ...this.targetRect } : null,
     });
   },
@@ -1659,11 +1647,21 @@ function handleCalClick(i) {
 
 function finishCalibration() {
   Gazer.calibrated = true;
-  // Re-register listener here — calibration clicks can sometimes
-  // reset WebGazer's internal listener state.
+  // Install ONE persistent listener for the entire session.
+  // isRoundActive gates whether points are recorded into currentRoundGazeData.
   try {
-    webgazer.setGazeListener((data) => {
-      Gazer.pos = data ? { x: data.x, y: data.y } : null;
+    webgazer.setGazeListener((data, timestamp) => {
+      if (!data) return;
+      Gazer.pos = { x: data.x, y: data.y };   // keep gaze indicator working
+      if (!isRoundActive) return;
+      currentRoundGazeData.push({ x: data.x, y: data.y, timestamp: timestamp || Date.now() });
+      // Update gaze-on CSS on the digit box
+      if (currentTargetEl) {
+        const r = currentTargetEl.getBoundingClientRect();
+        const on = data.x >= r.left - GAZE_PADDING && data.x <= r.right + GAZE_PADDING &&
+                   data.y >= r.top  - GAZE_PADDING && data.y <= r.bottom + GAZE_PADDING;
+        currentTargetEl.classList.toggle('gaze-on', on);
+      }
     });
     webgazer.showPredictionPoints(false);
   } catch {}
@@ -2081,40 +2079,32 @@ function renderHistory() {
         <div class="hist-metric"><div class="hist-metric-val purple">${rtStr}</div><div class="hist-metric-name">Avg RT</div></div>
         <div class="hist-metric"><div class="hist-metric-val orange">${fixStr}</div><div class="hist-metric-name">Fixation</div></div>
       </div>
-      ${hasGaze ? `<button class="toggle-gaze-btn" id="gaze-tog-${sid}" onclick="toggleGazePaths(${sid})">👁 Show Gaze Paths</button><div class="gaze-paths-wrap" id="gaze-wrap-${sid}"></div>` : ''}`;
+      ${hasGaze ? `<div class="gaze-paths-wrap" id="gaze-wrap-${sid}"></div>` : ''}`;
     list.appendChild(card);
-  });
-}
 
-function toggleGazePaths(sid) {
-  const wrap = $('gaze-wrap-' + sid);
-  const btn  = $('gaze-tog-' + sid);
-  if (!wrap || !btn) return;
-  if (wrap.style.display === 'block') {
-    wrap.style.display = 'none';
-    btn.textContent = '👁 Show Gaze Paths';
-    return;
-  }
-  wrap.style.display = 'block';
-  btn.textContent = '👁 Hide Gaze Paths';
-  if (wrap.innerHTML) return; // already rendered
-  const sess = loadSessions().find(s => s.id == sid);
-  if (!sess) return;
-  sess.rounds.forEach((r, i) => {
-    if (!r.gazePoints?.length) return;
-    const pct   = r.fixation != null ? Math.round(r.fixation*100) : null;
-    const rtStr = r.rt != null ? (r.rt/1000).toFixed(2)+'s' : '—';
-    const cid   = `hgc-${sid}-${i}`;
-    const div   = document.createElement('div');
-    div.className = 'gaze-round-block';
-    div.innerHTML = `
-      <div class="gaze-round-header">
-        <div class="gaze-round-label">Round ${i+1} ${r.correct ? '✅' : '❌'}</div>
-        <div class="gaze-round-meta"><span>⏱ ${rtStr}</span>${pct != null ? `<span>👁 ${pct}% on-target</span>` : ''}</div>
-      </div>
-      <div class="gaze-canvas-wrap"><canvas id="${cid}" width="600" height="260"></canvas></div>`;
-    wrap.appendChild(div);
-    setTimeout(() => drawGazePath(document.getElementById(cid), r.gazePoints, r.targetRect, r.gazeActive), 60 + i*40);
+    // Auto-render thumbnail canvases for sessions that have gaze data
+    if (hasGaze) {
+      const wrap = $('gaze-wrap-' + sid);
+      if (wrap) {
+        wrap.style.display = 'block';
+        s.rounds.forEach((r, i) => {
+          if (!r.gazePoints?.length) return;
+          const pct   = r.fixation != null ? Math.round(r.fixation * 100) : null;
+          const rtStr = r.rt != null ? (r.rt / 1000).toFixed(2) + 's' : '—';
+          const cid   = `hgc-${sid}-${i}`;
+          const div   = document.createElement('div');
+          div.className = 'gaze-round-block';
+          div.innerHTML = `
+            <div class="gaze-round-header">
+              <div class="gaze-round-label">Round ${i+1} ${r.correct ? '✅' : '❌'}</div>
+              <div class="gaze-round-meta"><span>⏱ ${rtStr}</span>${pct != null ? `<span>👁 ${pct}%</span>` : ''}</div>
+            </div>
+            <div class="gaze-canvas-wrap"><canvas id="${cid}" width="600" height="220"></canvas></div>`;
+          wrap.appendChild(div);
+          setTimeout(() => drawGazePath(document.getElementById(cid), r.gazePoints, r.targetRect, r.gazeActive), 80 + i * 50);
+        });
+      }
+    }
   });
 }
 
@@ -2267,10 +2257,9 @@ function drawGazePath(canvas, gazePoints, targetRect, gazeActive) {
   ctx.fillRect(0, 0, W, H);
 
   // Grid lines (subtle)
-  ctx.strokeStyle = 'rgba(0,0,0,0.05)';
-  ctx.lineWidth = 1;
-  for (let x = 0; x <= W; x += W / 6) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
-  for (let y = 0; y <= H; y += H / 4) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+  ctx.strokeStyle = 'rgba(0,0,0,0.05)'; ctx.lineWidth = 1;
+  for (let x = 0; x <= W; x += W / 6) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+  for (let y = 0; y <= H; y += H / 4) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
 
   // Target box (digit display area)
   if (targetRect) {
@@ -2278,68 +2267,73 @@ function drawGazePath(canvas, gazePoints, targetRect, gazeActive) {
     const bw = targetRect.w * W, bh = targetRect.h * H;
     ctx.fillStyle = 'rgba(88,204,2,0.12)';
     ctx.fillRect(bx, by, bw, bh);
-    ctx.strokeStyle = '#58CC02';
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#58CC02'; ctx.lineWidth = 2;
     ctx.strokeRect(bx, by, bw, bh);
-    // label
-    ctx.fillStyle = '#46A302';
-    ctx.font = 'bold 11px system-ui';
-    ctx.textAlign = 'center';
-    ctx.fillText('Target', bx + bw / 2, by - 5 > 10 ? by - 5 : by + bh + 14);
+    ctx.fillStyle = '#46A302'; ctx.font = 'bold 11px system-ui'; ctx.textAlign = 'center';
+    ctx.fillText('Target', bx + bw/2, by - 5 > 10 ? by - 5 : by + bh + 14);
   }
 
   if (!gazePoints || gazePoints.length === 0) {
-    ctx.fillStyle = '#AFAFAF'; ctx.textAlign = 'center';
-    ctx.font = '13px system-ui';
-    const msg = gazeActive === false ? 'Camera not available' : 'No gaze data recorded';
-    ctx.fillText(msg, W / 2, H / 2);
+    ctx.fillStyle = '#AFAFAF'; ctx.textAlign = 'center'; ctx.font = '13px system-ui';
+    ctx.fillText(gazeActive === false ? 'Camera not available' : 'No gaze data recorded', W/2, H/2);
     return;
   }
 
-  // Path line
-  ctx.beginPath();
-  ctx.strokeStyle = 'rgba(100,100,100,0.2)';
-  ctx.lineWidth = 1.5;
-  gazePoints.forEach((p, i) => {
-    const x = p.nx * W, y = p.ny * H;
-    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  // Normalise points to canvas coordinates.
+  // New format: {x, y, timestamp}  — raw screen pixels → scale to canvas
+  // Old format: {nx, ny, onTarget} — already 0-1 normalised
+  const isSrcCoords = 'x' in gazePoints[0] && !('nx' in gazePoints[0]);
+  const scaleX = isSrcCoords ? W / window.innerWidth  : W;
+  const scaleY = isSrcCoords ? H / window.innerHeight : H;
+  const padX   = targetRect ? GAZE_PADDING / window.innerWidth  : 0;
+  const padY   = targetRect ? GAZE_PADDING / window.innerHeight : 0;
+
+  const pts = gazePoints.map(p => {
+    const cx = isSrcCoords ? p.x * scaleX : p.nx * W;
+    const cy = isSrcCoords ? p.y * scaleY : p.ny * H;
+    let onTarget = p.onTarget;          // old format pre-computed
+    if (onTarget === undefined && targetRect) {
+      const nx = isSrcCoords ? p.x / window.innerWidth  : p.nx;
+      const ny = isSrcCoords ? p.y / window.innerHeight : p.ny;
+      onTarget  = nx >= targetRect.x - padX && nx <= targetRect.x + targetRect.w + padX &&
+                  ny >= targetRect.y - padY && ny <= targetRect.y + targetRect.h + padY;
+    }
+    return { cx, cy, onTarget: !!onTarget };
   });
+
+  // Path line
+  ctx.beginPath(); ctx.strokeStyle = 'rgba(100,100,100,0.2)'; ctx.lineWidth = 1.5;
+  pts.forEach((p, i) => i === 0 ? ctx.moveTo(p.cx, p.cy) : ctx.lineTo(p.cx, p.cy));
   ctx.stroke();
 
-  // Dots — colored by on-target, opacity by time
-  gazePoints.forEach((p, i) => {
-    const x = p.nx * W, y = p.ny * H;
-    const t = (i + 1) / gazePoints.length;
-    const alpha = 0.35 + 0.65 * t;
-    ctx.beginPath();
-    ctx.arc(x, y, 3.5, 0, Math.PI * 2);
-    ctx.fillStyle = p.onTarget
-      ? `rgba(88,204,2,${alpha})`
-      : `rgba(255,150,0,${alpha})`;
+  // Dots — green = on target, orange = off target; opacity fades in over time
+  pts.forEach((p, i) => {
+    const alpha = 0.35 + 0.65 * ((i + 1) / pts.length);
+    ctx.beginPath(); ctx.arc(p.cx, p.cy, 3.5, 0, Math.PI * 2);
+    ctx.fillStyle = p.onTarget ? `rgba(88,204,2,${alpha})` : `rgba(255,75,75,${alpha})`;
     ctx.fill();
   });
 
-  // Start marker (blue) and end marker (red)
+  // Start (blue S) and end (red E) markers
   const drawMarker = (p, color, label) => {
-    const x = p.nx * W, y = p.ny * H;
-    ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2);
+    ctx.beginPath(); ctx.arc(p.cx, p.cy, 6, 0, Math.PI * 2);
     ctx.fillStyle = color; ctx.fill();
     ctx.fillStyle = 'white'; ctx.font = 'bold 8px system-ui'; ctx.textAlign = 'center';
-    ctx.fillText(label, x, y + 3);
+    ctx.fillText(label, p.cx, p.cy + 3);
   };
-  drawMarker(gazePoints[0], '#1CB0F6', 'S');
-  drawMarker(gazePoints[gazePoints.length - 1], '#FF4B4B', 'E');
+  drawMarker(pts[0], '#1CB0F6', 'S');
+  drawMarker(pts[pts.length - 1], '#FF4B4B', 'E');
 
   // Legend
   const legendY = H - 14;
   ctx.font = '10px system-ui'; ctx.textAlign = 'left';
-  ctx.fillStyle = 'rgba(88,204,2,0.9)'; ctx.fillRect(8, legendY - 8, 10, 10);
-  ctx.fillStyle = '#555'; ctx.fillText('on target', 22, legendY);
-  ctx.fillStyle = 'rgba(255,150,0,0.9)'; ctx.fillRect(82, legendY - 8, 10, 10);
+  ctx.fillStyle = 'rgba(88,204,2,0.9)';  ctx.fillRect(8,  legendY-8, 10, 10);
+  ctx.fillStyle = '#555'; ctx.fillText('on target',  22, legendY);
+  ctx.fillStyle = 'rgba(255,75,75,0.9)'; ctx.fillRect(82, legendY-8, 10, 10);
   ctx.fillStyle = '#555'; ctx.fillText('off target', 96, legendY);
-  ctx.fillStyle = '#1CB0F6'; ctx.beginPath(); ctx.arc(163, legendY - 3, 5, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#1CB0F6'; ctx.beginPath(); ctx.arc(163, legendY-3, 5, 0, Math.PI*2); ctx.fill();
   ctx.fillStyle = '#555'; ctx.fillText('start', 172, legendY);
-  ctx.fillStyle = '#FF4B4B'; ctx.beginPath(); ctx.arc(205, legendY - 3, 5, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#FF4B4B'; ctx.beginPath(); ctx.arc(205, legendY-3, 5, 0, Math.PI*2); ctx.fill();
   ctx.fillStyle = '#555'; ctx.fillText('end', 214, legendY);
 }
 function showPhase(id) {
