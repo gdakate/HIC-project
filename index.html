@@ -1196,6 +1196,7 @@ const Checkin = {
 // ════════════════════════════════════════════════════════════════
 const Gazer = {
   loaded:     false,
+  active:     false,   // true while webgazer.begin() is running
   calibrated: false,
   pos:        null,
   _ticker:    null,
@@ -1242,14 +1243,17 @@ const Gazer = {
     try { webgazer.showPredictionPoints(false); } catch {}
     try { webgazer.showVideoPreview(true);      } catch {}
     const vid = document.getElementById('webgazerVideoFeed');
-    return !!(vid) || typeof webgazer !== 'undefined';
+    const ok = !!(vid) || typeof webgazer !== 'undefined';
+    if (ok) this.active = true;
+    return ok;
   },
 
   end() {
     if (!this.loaded) return;
     try { webgazer.end(); } catch {}
     this.calibrated = false;
-    this.pos = null;
+    this.active     = false;
+    this.pos        = null;
     this.hideVideo();
   },
 
@@ -1342,32 +1346,45 @@ const Metrics = {
       h: r.height / window.innerHeight,
     };
     clearInterval(this.gazeInterval);
-    if (!Gazer.loaded) return;
+    if (!Gazer.active) return;
 
-    this.gazeInterval = setInterval(() => {
-      const pos = Gazer.pos;
-      if (!pos) return;                 // no prediction yet — skip silently
-      const r2  = targetEl.getBoundingClientRect();
-      const onTarget = (
-        pos.x >= r2.left  - GAZE_PADDING &&
-        pos.x <= r2.right + GAZE_PADDING &&
-        pos.y >= r2.top   - GAZE_PADDING &&
-        pos.y <= r2.bottom + GAZE_PADDING
-      );
-      this.gazePoints.push({
-        nx: pos.x / window.innerWidth,
-        ny: pos.y / window.innerHeight,
-        onTarget,
+    // Subscribe directly to WebGazer predictions for this round.
+    // This is more reliable than polling Gazer.pos because WebGazer
+    // can silently reset the listener between calibration and gameplay.
+    try {
+      webgazer.setGazeListener((data) => {
+        if (!data) return;
+        Gazer.pos = { x: data.x, y: data.y };    // keep indicator working
+        const r2 = targetEl.getBoundingClientRect();
+        const onTarget = (
+          data.x >= r2.left  - GAZE_PADDING &&
+          data.x <= r2.right + GAZE_PADDING &&
+          data.y >= r2.top   - GAZE_PADDING &&
+          data.y <= r2.bottom + GAZE_PADDING
+        );
+        this.gazePoints.push({
+          nx: data.x / window.innerWidth,
+          ny: data.y / window.innerHeight,
+          onTarget,
+        });
+        if (onTarget) this.gazeOnTarget++;
+        targetEl.classList.toggle('gaze-on', onTarget);
       });
-      if (onTarget) this.gazeOnTarget++;
-      targetEl.classList.toggle('gaze-on', onTarget);
-    }, GAZE_SAMPLE_MS);
+    } catch (e) { console.warn('startGaze listener failed:', e); }
   },
 
   stopGaze() {
     clearInterval(this.gazeInterval);
     const el = $('digit-box');
     if (el) el.classList.remove('gaze-on');
+    // Restore base listener so Gazer.pos stays current between rounds
+    if (Gazer.active) {
+      try {
+        webgazer.setGazeListener((data) => {
+          Gazer.pos = data ? { x: data.x, y: data.y } : null;
+        });
+      } catch {}
+    }
     if (!this.gazePoints.length) return null;
     return this.gazeOnTarget / this.gazePoints.length;
   },
@@ -1394,6 +1411,7 @@ const Metrics = {
     $('rt-chip').classList.remove('visible');
     this.rounds.push({
       roundNum, seqLen, correct, rt, fixation,
+      gazeActive:  Gazer.active,
       gazePoints:  [...this.gazePoints],
       targetRect:  this.targetRect ? { ...this.targetRect } : null,
     });
@@ -1944,7 +1962,7 @@ function showResults(sess) {
         </div>`;
       bdRows.appendChild(block);
       // Small delay so the canvas is in the DOM before drawing
-      setTimeout(() => drawGazePath(document.getElementById(canvasId), r.gazePoints, r.targetRect), 100 + i * 50);
+      setTimeout(() => drawGazePath(document.getElementById(canvasId), r.gazePoints, r.targetRect, r.gazeActive), 100 + i * 50);
     });
   }
 }
@@ -2096,7 +2114,7 @@ function toggleGazePaths(sid) {
       </div>
       <div class="gaze-canvas-wrap"><canvas id="${cid}" width="600" height="260"></canvas></div>`;
     wrap.appendChild(div);
-    setTimeout(() => drawGazePath(document.getElementById(cid), r.gazePoints, r.targetRect), 60 + i*40);
+    setTimeout(() => drawGazePath(document.getElementById(cid), r.gazePoints, r.targetRect, r.gazeActive), 60 + i*40);
   });
 }
 
@@ -2239,7 +2257,7 @@ function goHome() {
 function $(id)  { return document.getElementById(id); }
 function $$(id) { return document.getElementById(id); } // alias for clarity
 
-function drawGazePath(canvas, gazePoints, targetRect) {
+function drawGazePath(canvas, gazePoints, targetRect, gazeActive) {
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
@@ -2273,7 +2291,8 @@ function drawGazePath(canvas, gazePoints, targetRect) {
   if (!gazePoints || gazePoints.length === 0) {
     ctx.fillStyle = '#AFAFAF'; ctx.textAlign = 'center';
     ctx.font = '13px system-ui';
-    ctx.fillText('No gaze data recorded', W / 2, H / 2);
+    const msg = gazeActive === false ? 'Camera not available' : 'No gaze data recorded';
+    ctx.fillText(msg, W / 2, H / 2);
     return;
   }
 
