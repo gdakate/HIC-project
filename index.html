@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>DuoNeuro</title>
+  <title>UnoNeuro</title>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -567,134 +567,6 @@
     .hist-metric-val.orange { color: var(--orange); }
     .hist-metric-name { font-size: 9px; font-weight: 800; color: var(--gray-2); text-transform: uppercase; letter-spacing: .5px; margin-top: 1px; }
 
-    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-       ONBOARDING SCREEN
-    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-    .onboard-scroll { flex: 1; overflow-y: auto; padding: 28px 20px 40px; display: flex; flex-direction: column; gap: 24px; }
-    .onboard-hero { text-align: center; padding: 8px 0 4px; }
-    .onboard-hero .logo-badge { margin: 0 auto 12px; width: 56px; height: 56px; font-size: 30px; border-radius: 16px; }
-    .onboard-hero h2 { font-size: 24px; font-weight: 900; margin-bottom: 6px; }
-    .onboard-hero p  { font-size: 14px; color: var(--gray-3); font-weight: 600; }
-
-    .setup-card { background: var(--white); border-radius: 18px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,.07), 0 0 0 1px var(--gray-1); }
-    .setup-card-title { font-size: 13px; font-weight: 900; color: var(--gray-3); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 14px; }
-    .setup-val-display { font-size: 32px; font-weight: 900; color: var(--green); text-align: center; margin-bottom: 10px; }
-    .setup-val-display small { font-size: 15px; font-weight: 700; color: var(--gray-2); }
-
-    input[type=range].nl-range { width: 100%; accent-color: var(--green); height: 6px; cursor: pointer; }
-    .range-labels { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--gray-2); margin-top: 6px; }
-
-    .dur-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
-    .dur-btn {
-      background: var(--bg); border: 2px solid var(--gray-1); border-radius: 12px;
-      padding: 12px 4px; font-family: 'Nunito', sans-serif; font-size: 14px;
-      font-weight: 800; cursor: pointer; transition: .15s;
-    }
-    .dur-btn.active { background: var(--green-light); border-color: var(--green); color: var(--green-dark); }
-
-    .diff-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
-    .diff-btn {
-      background: var(--bg); border: 2.5px solid var(--gray-1); border-radius: 14px;
-      padding: 14px 8px; display: flex; flex-direction: column; align-items: center;
-      gap: 4px; font-family: 'Nunito', sans-serif; cursor: pointer; transition: .15s;
-    }
-    .diff-btn .diff-icon { font-size: 24px; }
-    .diff-btn .diff-name { font-size: 13px; font-weight: 900; }
-    .diff-btn .diff-sub  { font-size: 10px; color: var(--gray-2); font-weight: 700; }
-    .diff-btn.active { border-color: var(--green); background: var(--green-light); }
-    .diff-btn.active .diff-name { color: var(--green-dark); }
-
-    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-       CHECK-IN SCREEN
-    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-    .checkin-body {
-      flex: 1; display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 32px 24px; gap: 18px; text-align: center;
-    }
-    .checkin-day  { font-size: 13px; font-weight: 800; color: var(--gray-2); text-transform: uppercase; letter-spacing: 1px; }
-    .checkin-icon { font-size: 56px; }
-    .checkin-body h2 { font-size: 24px; font-weight: 900; }
-    .checkin-body p  { font-size: 14px; color: var(--gray-3); font-weight: 600; max-width: 280px; }
-    .mood-grid { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 320px; margin-top: 4px; }
-    .mood-btn {
-      background: var(--white); border: 2.5px solid var(--gray-1); border-radius: 16px;
-      padding: 16px 20px; display: flex; align-items: center; gap: 14px;
-      cursor: pointer; transition: .15s; font-family: 'Nunito', sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .mood-btn:active { transform: scale(.98); }
-    .mood-btn.good-btn:hover, .mood-btn.good-btn:focus { border-color: var(--green);  background: var(--green-light); }
-    .mood-btn.mod-btn:hover,  .mood-btn.mod-btn:focus  { border-color: var(--orange); background: #FFF3E0; }
-    .mood-btn.bad-btn:hover,  .mood-btn.bad-btn:focus  { border-color: var(--blue);   background: #E0F5FF; }
-    .mood-emoji { font-size: 28px; }
-    .mood-text  { text-align: left; }
-    .mood-title { font-size: 16px; font-weight: 900; display: block; }
-    .mood-hint  { font-size: 12px; color: var(--gray-2); font-weight: 700; }
-    .checkin-adj { font-size: 13px; font-weight: 700; padding: 10px 16px; border-radius: 10px; background: var(--bg); color: var(--gray-3); display: none; }
-    .checkin-adj.show { display: block; }
-
-    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-       REPORTS — MOOD TAB + SESSION UPDATES
-    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-    .mood-chip { font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 99px; background: var(--bg); }
-    .mood-chip.Good     { background: var(--green-light); color: var(--green-dark); }
-    .mood-chip.Moderate { background: #FFF3E0; color: #C05000; }
-    .mood-chip.Bad      { background: #E0F5FF; color: var(--blue-dark); }
-
-    .toggle-gaze-btn {
-      width: 100%; margin-top: 10px; padding: 8px;
-      background: var(--bg); border: 1.5px solid var(--gray-1); border-radius: 10px;
-      font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 800;
-      color: var(--gray-3); cursor: pointer;
-    }
-    .gaze-paths-wrap { margin-top: 12px; display: none; }
-
-    .mood-cal { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; margin-bottom: 16px; }
-    .mcal-day { aspect-ratio: 1; border-radius: 5px; background: var(--gray-1); }
-    .mcal-day.Good     { background: var(--green); }
-    .mcal-day.Moderate { background: var(--orange); }
-    .mcal-day.Bad      { background: var(--blue); }
-    .mcal-day.today    { outline: 2px solid var(--text); }
-    .mcal-legend { display: flex; gap: 12px; font-size: 11px; font-weight: 800; color: var(--gray-3); margin-bottom: 16px; }
-    .mcal-legend span { display: flex; align-items: center; gap: 4px; }
-    .mcal-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-
-    .mood-dist { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
-    .mood-dist-box { background: var(--bg); border-radius: 12px; padding: 14px 8px; text-align: center; }
-    .mood-dist-val { font-size: 26px; font-weight: 900; }
-    .mood-dist-lbl { font-size: 10px; font-weight: 800; color: var(--gray-2); text-transform: uppercase; letter-spacing: .5px; margin-top: 3px; }
-
-    /* week progress banner */
-    .week-banner {
-      background: linear-gradient(135deg, var(--green), #89E219);
-      border-radius: 14px; padding: 14px 18px; color: white;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .week-banner-left  { font-size: 13px; font-weight: 800; opacity: .9; }
-    .week-banner-right { font-size: 22px; font-weight: 900; }
-
-    /* ── Gaze modal ── */
-    .gaze-modal {
-      position: fixed; inset: 0; z-index: 500;
-      background: rgba(0,0,0,0.65); overflow-y: auto; padding: 20px;
-      display: none;
-    }
-    .gaze-modal.open { display: block; }
-    .gaze-modal-inner {
-      background: var(--white); border-radius: 20px;
-      max-width: 480px; margin: 0 auto; overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-    }
-    .gaze-modal-header {
-      padding: 16px 20px; display: flex; align-items: center;
-      justify-content: space-between; border-bottom: 2px solid var(--gray-1);
-      position: sticky; top: 0; background: var(--white); z-index: 1;
-    }
-    .gaze-modal-title { font-size: 16px; font-weight: 900; }
-    .gaze-modal-sub   { font-size: 12px; color: var(--gray-2); font-weight: 700; margin-top: 2px; }
-    .gaze-modal-body  { padding: 16px; display: flex; flex-direction: column; gap: 16px; }
-
     /* ── Confetti ── */
     .confetti-wrap { position: fixed; inset: 0; pointer-events: none; z-index: 200; overflow: hidden; }
     .conf-piece { position: absolute; width: 8px; height: 8px; border-radius: 2px; animation: confFall linear forwards; }
@@ -702,22 +574,439 @@
       0%   { transform: translateY(-20px) rotate(0deg);   opacity: 1; }
       100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
     }
+
+    /* ── Difficulty ── */
+    .diff-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 99px;
+      font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: .5px;
+    }
+    .diff-badge.easy   { background: var(--green-light); color: var(--green-dark); }
+    .diff-badge.medium { background: #FFF3E0; color: var(--orange-dark); }
+    .diff-badge.hard   { background: #FFE5E5; color: var(--red-dark); }
+
+    .session-timer {
+      font-size: 12px; font-weight: 900; color: var(--gray-2); flex-shrink: 0;
+      padding: 3px 8px; border-radius: 99px; background: var(--bg); border: 1.5px solid var(--gray-1);
+    }
+    .session-timer.warning { color: var(--orange); border-color: var(--orange); }
+    .session-timer.danger  { color: var(--red); border-color: var(--red); animation: rtPulse .6s ease-in-out infinite alternate; }
+
+    .diff-promo-card {
+      border-radius: 18px; padding: 16px 18px;
+      display: flex; align-items: center; gap: 14px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.08), 0 0 0 1px var(--gray-1);
+      animation: cardIn .4s ease-out .55s both;
+    }
+    .diff-promo-card.promoted { background: var(--green-light); }
+    .diff-promo-card.demoted  { background: #FFE5E5; }
+    .diff-promo-card.same     { background: var(--white); }
+    .diff-promo-icon  { font-size: 32px; width: 40px; text-align: center; }
+    .diff-promo-label { font-size: 11px; font-weight: 800; color: var(--gray-2); text-transform: uppercase; letter-spacing: 1px; }
+    .diff-promo-title { font-size: 17px; font-weight: 900; }
+    .diff-promo-sub   { font-size: 12px; font-weight: 600; color: var(--gray-3); margin-top: 2px; }
+
+    /* ── Game List (home) ── */
+    .game-list { display: flex; flex-direction: column; gap: 10px; }
+    .game-item {
+      background: var(--white); border-radius: 16px; padding: 12px 14px;
+      display: flex; align-items: center; gap: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06), 0 0 0 1px var(--gray-1);
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+      transition: transform .1s;
+    }
+    .game-item:active { transform: scale(.98); }
+    .game-item-icon {
+      width: 46px; height: 46px; border-radius: 13px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 22px;
+    }
+    .game-item-icon.green  { background: var(--green-light); }
+    .game-item-icon.blue   { background: #E0F5FF; }
+    .game-item-icon.purple { background: #F3E8FF; }
+    .game-item-icon.orange { background: #FFF3E0; }
+    .game-item-icon.red    { background: #FFE5E5; }
+    .game-item-body { flex: 1; min-width: 0; }
+    .game-item-name { font-size: 15px; font-weight: 900; }
+    .game-item-sub  { font-size: 11px; color: var(--gray-2); font-weight: 600; margin-top: 1px; }
+    .game-item-meta { display: flex; gap: 6px; align-items: center; margin-top: 4px; }
+    .game-play-btn {
+      width: 34px; height: 34px; border-radius: 10px; border: none;
+      background: var(--green); color: white; font-size: 14px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      box-shadow: 0 3px 0 var(--green-dark); -webkit-tap-highlight-color: transparent;
+      transition: transform .08s, box-shadow .08s;
+    }
+    .game-play-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--green-dark); }
+
+    /* ── Mood Modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.5);
+      display: flex; align-items: flex-end; justify-content: center;
+      z-index: 300; opacity: 0; pointer-events: none; transition: opacity .25s;
+    }
+    .modal-overlay.show { opacity: 1; pointer-events: auto; }
+    .modal-sheet {
+      background: var(--white); border-radius: 24px 24px 0 0;
+      padding: 24px 20px 40px; width: 100%; max-width: 480px;
+      transform: translateY(100%); transition: transform .35s cubic-bezier(.22,1,.36,1);
+    }
+    .modal-overlay.show .modal-sheet { transform: translateY(0); }
+    .modal-title { font-size: 20px; font-weight: 900; text-align: center; margin-bottom: 4px; }
+    .modal-sub   { font-size: 13px; color: var(--gray-3); text-align: center; font-weight: 600; margin-bottom: 20px; }
+    .mood-row    { display: flex; justify-content: space-around; margin-bottom: 20px; }
+    .mood-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      background: none; border: 2.5px solid var(--gray-1); border-radius: 14px;
+      padding: 10px 12px; cursor: pointer; transition: border-color .15s, background .15s;
+      font-family: 'Nunito', sans-serif;
+    }
+    .mood-btn.selected { border-color: var(--green); background: var(--green-light); }
+    .mood-emoji { font-size: 26px; }
+    .mood-label { font-size: 9px; font-weight: 800; color: var(--gray-2); text-transform: uppercase; }
+    .mood-btn.selected .mood-label { color: var(--green-dark); }
+
+    /* ── Shared game header ── */
+    .game-header {
+      background: var(--white); padding: 12px 16px;
+      display: flex; align-items: center; gap: 10px;
+      border-bottom: 2px solid var(--gray-1);
+    }
+    .game-title-sm { font-size: 14px; font-weight: 900; flex: 1; text-align: center; }
+    .prog-bar-wrap { flex: 1; }
+    .prog-track-sm { background: var(--gray-1); height: 7px; border-radius: 99px; overflow: hidden; }
+    .prog-fill-sm  { height: 100%; background: var(--green); border-radius: 99px; transition: width .4s ease; }
+
+    /* ── Tap When X ── */
+    .tapx-body {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; padding: 20px; gap: 18px;
+    }
+    .tapx-target-wrap {
+      background: var(--blue); color: white; border-radius: 16px;
+      padding: 10px 24px; text-align: center;
+    }
+    .tapx-target-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; opacity: .8; }
+    .tapx-target-symbol { font-size: 40px; font-weight: 900; line-height: 1.1; }
+    .tapx-stimulus-box {
+      width: 150px; height: 150px; background: var(--white);
+      border-radius: 26px; display: flex; align-items: center; justify-content: center;
+      font-size: 84px; font-weight: 900; color: var(--text);
+      box-shadow: 0 6px 20px rgba(0,0,0,.1), 0 4px 0 var(--gray-1);
+      transition: background .12s;
+    }
+    .tapx-stimulus-box.hit  { background: var(--green-light); box-shadow: 0 6px 20px rgba(88,204,2,.2), 0 4px 0 var(--green-dark); }
+    .tapx-stimulus-box.miss { background: #FFE5E5; box-shadow: 0 6px 20px rgba(255,75,75,.2), 0 4px 0 var(--red); }
+    .tapx-tap-btn {
+      width: 100%; max-width: 300px; padding: 20px;
+      background: var(--green); border: none; border-radius: 18px;
+      color: white; font-family: 'Nunito', sans-serif; font-size: 20px; font-weight: 900;
+      cursor: pointer; box-shadow: 0 5px 0 var(--green-dark);
+      -webkit-tap-highlight-color: transparent; text-transform: uppercase; letter-spacing: 1px;
+      transition: transform .08s, box-shadow .08s;
+    }
+    .tapx-tap-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--green-dark); }
+    .tapx-tap-btn:disabled { opacity: .4; cursor: not-allowed; transform: none !important; }
+    .tapx-stats-row { display: flex; gap: 24px; justify-content: center; }
+    .tapx-stat { text-align: center; }
+    .tapx-stat-val { font-size: 22px; font-weight: 900; }
+    .tapx-stat-val.green { color: var(--green); }
+    .tapx-stat-val.red   { color: var(--red); }
+    .tapx-stat-label { font-size: 10px; font-weight: 800; color: var(--gray-2); text-transform: uppercase; }
+    .mini-prog-wrap { width: 100%; max-width: 300px; }
+    .mini-prog-track { background: var(--gray-1); height: 6px; border-radius: 99px; overflow: hidden; }
+    .mini-prog-fill  { height: 100%; background: var(--blue); border-radius: 99px; transition: width .3s; }
+
+    /* ── Match & Recall ── */
+    .match-body { flex: 1; padding: 12px 16px 16px; display: flex; flex-direction: column; gap: 10px; }
+    .match-info-row { display: flex; justify-content: space-between; align-items: center; }
+    .match-pairs-left { font-size: 13px; font-weight: 800; color: var(--gray-3); }
+    .match-errors-ct  { font-size: 13px; font-weight: 800; color: var(--red); }
+    .match-grid { display: grid; gap: 8px; flex: 1; align-content: start; }
+    .match-card {
+      aspect-ratio: 1; background: var(--white);
+      border: 2.5px solid var(--gray-1); border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 30px; cursor: pointer;
+      transition: transform .18s, background .15s, border-color .15s;
+      position: relative; overflow: hidden;
+    }
+    .match-card.face-down { background: #1CB0F6; border-color: var(--blue-dark); color: transparent; font-size: 0; }
+    .match-card.face-down::after { content: ''; }
+    .match-card.matched  { border-color: var(--green); background: var(--green-light); opacity: .75; cursor: default; }
+    .match-card.wrong    { border-color: var(--red); background: #FFE5E5; animation: shake .35s; }
+    .match-card:active:not(.matched):not(.face-down) { transform: scale(.93); }
+    .match-reveal-timer { height: 4px; background: var(--gray-1); border-radius: 99px; overflow: hidden; margin-top: -4px; }
+    .match-reveal-fill  { height: 100%; background: var(--orange); border-radius: 99px; transition: width linear; }
+
+    /* ── Odd One Out ── */
+    .odo-body { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+    .odo-round-info { display: flex; justify-content: space-between; font-size: 12px; font-weight: 800; color: var(--gray-2); }
+    .odo-question-box {
+      background: var(--white); border-radius: 16px; padding: 18px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06), 0 0 0 1px var(--gray-1); text-align: center;
+    }
+    .odo-prompt   { font-size: 12px; font-weight: 800; color: var(--gray-2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .odo-question { font-size: 16px; font-weight: 900; line-height: 1.4; }
+    .odo-options  { display: flex; flex-direction: column; gap: 8px; }
+    .odo-option {
+      background: var(--white); border: 2.5px solid var(--gray-1); border-radius: 14px;
+      padding: 13px 16px; font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 700;
+      color: var(--text); cursor: pointer; text-align: left;
+      -webkit-tap-highlight-color: transparent; transition: border-color .15s, background .15s;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .odo-option.correct { border-color: var(--green); background: var(--green-light); color: var(--green-dark); }
+    .odo-option.wrong   { border-color: var(--red);   background: #FFE5E5;            color: var(--red); animation: shake .35s; }
+    .odo-option.reveal  { border-color: var(--green); background: var(--green-light); color: var(--green-dark); }
+    .odo-option-num {
+      width: 26px; height: 26px; border-radius: 50%; background: var(--gray-1);
+      font-size: 12px; font-weight: 900; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .odo-option.correct .odo-option-num, .odo-option.reveal .odo-option-num { background: var(--green); color: white; }
+    .odo-option.wrong   .odo-option-num { background: var(--red); color: white; }
+
+    /* ── Track Objects ── */
+    .track-arena-wrap { flex: 1; position: relative; overflow: hidden; background: var(--white); }
+    .track-obj {
+      position: absolute; width: 50px; height: 50px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 900; color: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,.25);
+    }
+    .track-obj.a { background: var(--blue); }
+    .track-obj.b { background: var(--orange); }
+    .track-status-bar {
+      padding: 10px 16px; text-align: center;
+      font-size: 13px; font-weight: 800; color: var(--gray-3);
+      background: var(--white); border-top: 1.5px solid var(--gray-1);
+    }
+    .track-q-panel {
+      padding: 14px 16px; background: var(--white); border-top: 2px solid var(--gray-1);
+      display: none; flex-direction: column; gap: 10px;
+    }
+    .track-q-panel.show { display: flex; }
+    .track-question { font-size: 17px; font-weight: 900; text-align: center; }
+    .track-choices  { display: flex; gap: 10px; }
+    .track-choice {
+      flex: 1; padding: 13px; background: var(--white); border: 2.5px solid var(--gray-1);
+      border-radius: 14px; font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 800;
+      cursor: pointer; text-align: center; -webkit-tap-highlight-color: transparent;
+      transition: border-color .15s, background .15s;
+    }
+    .track-choice.correct { border-color: var(--green); background: var(--green-light); color: var(--green-dark); }
+    .track-choice.wrong   { border-color: var(--red);   background: #FFE5E5;            color: var(--red); animation: shake .35s; }
+    .track-countdown-overlay {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,.92); z-index: 2; flex-direction: column; gap: 6px;
+    }
+    .track-countdown-num { font-size: 60px; font-weight: 900; color: var(--green); animation: popIn .4s cubic-bezier(.34,1.56,.64,1); }
+    .track-cd-label { font-size: 14px; font-weight: 800; color: var(--gray-3); }
+
+    /* ── Dual N-Back ── */
+    .dnb-body { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 14px; align-items: center; }
+    .dnb-n-badge {
+      background: var(--purple); color: white; border-radius: 12px;
+      padding: 7px 18px; font-size: 14px; font-weight: 900; letter-spacing: .5px; align-self: center;
+    }
+    .dnb-display-row { display: flex; gap: 20px; align-items: center; justify-content: center; }
+    .dnb-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px;
+      width: min(240px, calc(100% - 40px));
+    }
+    .dnb-cell { aspect-ratio: 1; background: var(--gray-1); border-radius: 12px; transition: background .12s, box-shadow .12s; }
+    .dnb-cell.lit { background: var(--blue); box-shadow: 0 0 0 3px var(--blue-dark), 0 4px 10px rgba(28,176,246,.4); }
+    .dnb-letter-box {
+      width: 72px; height: 72px; background: var(--white);
+      border: 3px solid var(--gray-1); border-radius: 18px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 38px; font-weight: 900; color: var(--text);
+      transition: border-color .1s, background .1s;
+    }
+    .dnb-letter-box.show { border-color: var(--orange); background: #FFF3E0; color: var(--orange-dark); }
+    .dnb-btns { display: flex; gap: 10px; width: 100%; }
+    .dnb-btn {
+      flex: 1; padding: 15px 8px; border: none; border-radius: 15px;
+      font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 900;
+      cursor: pointer; -webkit-tap-highlight-color: transparent; text-transform: uppercase; letter-spacing: .5px;
+      transition: transform .08s, box-shadow .08s, opacity .2s;
+    }
+    .dnb-btn.pos { background: var(--blue);   color: white; box-shadow: 0 4px 0 var(--blue-dark); }
+    .dnb-btn.let { background: var(--orange); color: white; box-shadow: 0 4px 0 var(--orange-dark); }
+    .dnb-btn:active { transform: translateY(3px); }
+    .dnb-btn.pos:active { box-shadow: 0 1px 0 var(--blue-dark); }
+    .dnb-btn.let:active { box-shadow: 0 1px 0 var(--orange-dark); }
+    .dnb-btn:disabled { opacity: .3; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+    .dnb-info-row { display: flex; gap: 20px; justify-content: center; }
+    .dnb-stat { text-align: center; }
+    .dnb-stat-val { font-size: 20px; font-weight: 900; }
+    .dnb-stat-val.blue   { color: var(--blue); }
+    .dnb-stat-val.green  { color: var(--green); }
+    .dnb-stat-val.purple { color: var(--purple); }
+    .dnb-stat-label { font-size: 10px; font-weight: 800; color: var(--gray-2); text-transform: uppercase; }
+    .dnb-trial-bar { width: 100%; }
+
+    /* ── Dashboard mood ── */
+    .mood-overlay-line { stroke: var(--purple); stroke-width: 2; fill: none; stroke-dasharray: 5,3; }
+
+    /* ══ PARTICIPANTS SCREEN ══════════════════════════════════════ */
+    .part-header {
+      background: var(--white); padding: 16px 20px 14px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 2px solid var(--gray-1);
+      position: sticky; top: 0; z-index: 10;
+    }
+    .part-add-btn {
+      background: var(--green); color: white; border: none;
+      border-radius: 10px; padding: 8px 14px;
+      font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 900;
+      cursor: pointer; box-shadow: 0 3px 0 var(--green-dark);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .part-body { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; padding-bottom: 32px; }
+    .part-section-label { font-size: 11px; font-weight: 900; color: var(--gray-2); text-transform: uppercase; letter-spacing: 1px; }
+    .part-card {
+      background: var(--white); border-radius: 18px; padding: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.07), 0 0 0 1px var(--gray-1);
+    }
+    .part-card.flagged-watch { border-left: 4px solid var(--orange); }
+    .part-card.flagged-alert { border-left: 4px solid var(--red); }
+    .part-card-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .part-avatar {
+      width: 44px; height: 44px; border-radius: 50%; font-size: 20px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 900;
+    }
+    .part-avatar.ok    { background: var(--green-light); color: var(--green-dark); }
+    .part-avatar.watch { background: #FFF3E0; color: var(--orange-dark); }
+    .part-avatar.alert { background: #FFE5E5; color: var(--red-dark); }
+    .part-avatar.new   { background: var(--gray-1); color: var(--gray-2); }
+    .part-info { flex: 1; min-width: 0; }
+    .part-name { font-size: 17px; font-weight: 900; }
+    .part-meta { font-size: 12px; font-weight: 600; color: var(--gray-2); margin-top: 1px; }
+    .status-badge { padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 900; flex-shrink: 0; }
+    .status-badge.ok    { background: var(--green-light); color: var(--green-dark); }
+    .status-badge.watch { background: #FFF3E0; color: var(--orange-dark); }
+    .status-badge.alert { background: #FFE5E5; color: var(--red-dark); animation: rtPulse 1.2s ease-in-out infinite alternate; }
+    .status-badge.new   { background: var(--gray-1); color: var(--gray-2); }
+    .part-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px; }
+    .part-stat { text-align: center; background: var(--bg); border-radius: 10px; padding: 8px 4px; }
+    .part-stat-val  { font-size: 15px; font-weight: 900; }
+    .part-stat-name { font-size: 9px; font-weight: 800; color: var(--gray-2); text-transform: uppercase; letter-spacing: .4px; margin-top: 1px; }
+    .part-flag-bar  { border-radius: 10px; padding: 8px 12px; margin-bottom: 10px; font-size: 12px; font-weight: 700; line-height: 1.5; }
+    .part-flag-bar.watch { background: #FFF3E0; color: var(--orange-dark); }
+    .part-flag-bar.alert { background: #FFE5E5; color: var(--red-dark); }
+    .part-actions { display: flex; gap: 8px; }
+    .part-action-btn {
+      flex: 1; padding: 10px 6px; border: none; border-radius: 12px;
+      font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 900;
+      cursor: pointer; -webkit-tap-highlight-color: transparent; text-align: center;
+    }
+    .part-action-btn.primary { background: var(--green); color: white; box-shadow: 0 3px 0 var(--green-dark); }
+    .part-action-btn.pdf     { background: var(--white); color: var(--blue); border: 2px solid var(--blue); }
+    .part-action-btn.report  { background: var(--red); color: white; box-shadow: 0 3px 0 var(--red-dark); }
+
+    /* ── Add Participant Modal ── */
+    .ap-title { font-size: 20px; font-weight: 900; margin-bottom: 4px; }
+    .ap-sub   { font-size: 13px; color: var(--gray-3); font-weight: 600; margin-bottom: 18px; }
+    .ap-field { margin-bottom: 14px; }
+    .ap-label { font-size: 12px; font-weight: 800; color: var(--gray-3); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 5px; display: block; }
+    .ap-input {
+      width: 100%; padding: 13px 14px; border: 2px solid var(--gray-1);
+      border-radius: 12px; font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 600;
+      background: var(--white); color: var(--text); outline: none; transition: border-color .2s;
+      -webkit-appearance: none;
+    }
+    .ap-input:focus { border-color: var(--green); }
+    .ap-input::placeholder { color: var(--gray-2); }
+
+    /* ── PDF loading overlay ── */
+    .pdf-loading { position: fixed; inset: 0; background: rgba(0,0,0,.65); display: none; align-items: center; justify-content: center; z-index: 500; flex-direction: column; gap: 14px; }
+    .pdf-loading.show { display: flex; }
+    .pdf-loading-text { color: white; font-size: 16px; font-weight: 900; }
+
+    /* ── Participant context bar ── */
+    .participant-ctx-bar {
+      background: var(--blue); color: white; padding: 6px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 12px; font-weight: 800;
+    }
+    .ctx-switch-btn {
+      background: rgba(255,255,255,.2); border: none; border-radius: 8px;
+      color: white; font-family: 'Nunito', sans-serif; font-size: 11px; font-weight: 900;
+      padding: 4px 10px; cursor: pointer;
+    }
+    .empty-state { text-align: center; padding: 48px 20px; color: var(--gray-2); }
+    .empty-state-icon { font-size: 52px; margin-bottom: 12px; }
+    .empty-state p { font-size: 15px; font-weight: 700; line-height: 1.7; }
   </style>
 </head>
 <body>
 
+<!-- ══════════════════════ PARTICIPANTS ══════════════════════════ -->
+<div id="screen-participants" class="screen active">
+  <header class="part-header">
+    <div class="logo">
+      <div class="logo-badge">🎯</div>
+      <span class="logo-text">UnoNeuro</span>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <a href="summary.html" style="background:var(--blue);color:white;border:none;border-radius:10px;padding:8px 13px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:900;text-decoration:none;box-shadow:0 3px 0 var(--blue-dark)">📊 Summary</a>
+      <button class="part-add-btn" onclick="showAddParticipant()">+ Add</button>
+    </div>
+  </header>
+  <div class="part-body">
+    <div class="part-section-label">Participants</div>
+    <div id="participant-list"><!-- rendered by JS --></div>
+  </div>
+</div>
+
+<!-- ══════════════ ADD PARTICIPANT MODAL ══════════════════════════ -->
+<div class="modal-overlay" id="add-participant-modal">
+  <div class="modal-sheet">
+    <div class="ap-title">New Participant</div>
+    <div class="ap-sub">Add someone to track their cognitive training.</div>
+    <div class="ap-field">
+      <label class="ap-label">Full Name *</label>
+      <input class="ap-input" id="ap-name" type="text" placeholder="e.g. Alice Chen" maxlength="60">
+    </div>
+    <div class="ap-field">
+      <label class="ap-label">Age</label>
+      <input class="ap-input" id="ap-age" type="number" placeholder="e.g. 34" min="5" max="120">
+    </div>
+    <div class="ap-field">
+      <label class="ap-label">Doctor / Clinician Name</label>
+      <input class="ap-input" id="ap-doctor" type="text" placeholder="e.g. Dr. Patel" maxlength="80">
+    </div>
+    <div class="ap-field">
+      <label class="ap-label">Doctor Email (for flagged reports)</label>
+      <input class="ap-input" id="ap-doctor-email" type="email" placeholder="doctor@hospital.com" maxlength="120">
+    </div>
+    <button class="btn btn-green" onclick="confirmAddParticipant()" style="margin-top:4px">ADD PARTICIPANT</button>
+    <button class="btn btn-ghost" onclick="closeAddParticipant()" style="margin-top:8px;padding:11px;font-size:13px">Cancel</button>
+  </div>
+</div>
+
+<!-- ══════════════ PDF LOADING OVERLAY ═════════════════════════════ -->
+<div class="pdf-loading" id="pdf-loading">
+  <div class="cal-spinner"></div>
+  <div class="pdf-loading-text">Generating PDF…</div>
+</div>
+
 <!-- ════════════════════════════ HOME ════════════════════════════ -->
-<div id="screen-home" class="screen active">
+<div id="screen-home" class="screen">
   <header class="home-header">
     <div class="logo">
       <div class="logo-badge">🧠</div>
-      <span class="logo-text">DuoNeuro</span>
+      <span class="logo-text">UnoNeuro</span>
     </div>
     <div class="header-stats">
       <div class="hstat hstat-streak"><span class="hstat-icon">🔥</span><span id="h-streak">0</span></div>
       <div class="hstat hstat-xp"><span class="hstat-icon">⚡</span><span id="h-xp">0</span></div>
     </div>
   </header>
+  <div class="participant-ctx-bar">
+    <span id="ctx-participant-name">—</span>
+    <button class="ctx-switch-btn" onclick="goToParticipants()">Switch ↩</button>
+  </div>
 
   <div class="home-body">
 
@@ -729,8 +1018,6 @@
       <div class="progress-caption"><strong id="daily-xp-num">0</strong> / 50 XP today</div>
     </div>
 
-    <div id="week-banner-wrap" style="display:none"></div>
-
     <div class="streak-card">
       <div class="streak-flame">🔥</div>
       <div class="streak-body">
@@ -740,17 +1027,11 @@
       </div>
     </div>
 
-    <div class="card lesson-card">
-      <div class="lesson-row">
-        <div class="lesson-icon-wrap">🧩</div>
-        <div class="lesson-meta">
-          <h3>Working Memory</h3>
-          <p>Digit Span Challenge &bull; ~3 min</p>
-        </div>
-      </div>
-      <div class="home-btn-row" style="margin-bottom:10px">
-        <button class="btn btn-green" id="start-btn" onclick="requestLesson()" style="flex:2">START LESSON</button>
-        <button class="btn btn-ghost" onclick="showReports()" style="flex:1">📊 Stats</button>
+    <div class="card" style="padding:14px 14px 6px">
+      <div class="card-label" style="margin-bottom:10px">Today's Training</div>
+      <div class="game-list" id="game-list"><!-- rendered by JS --></div>
+      <div style="margin-top:12px; margin-bottom:8px">
+        <button class="btn btn-ghost" onclick="showReports()" style="padding:10px;font-size:13px">📊 Progress &amp; Reports</button>
       </div>
     </div>
 
@@ -763,94 +1044,6 @@
       </div>
     </div>
 
-  </div>
-</div>
-
-<!-- ══════════════════════ ONBOARDING ════════════════════════════ -->
-<div id="screen-onboarding" class="screen">
-  <div class="onboard-scroll">
-
-    <div class="onboard-hero">
-      <div class="logo-badge">🧠</div>
-      <h2>Welcome to DuoNeuro</h2>
-      <p>Let's set up your personalized recovery program.</p>
-    </div>
-
-    <div class="setup-card">
-      <div class="setup-card-title">How many weeks of follow-up?</div>
-      <div class="setup-val-display" id="ob-weeks-val">6 <small>weeks</small></div>
-      <input type="range" class="nl-range" id="ob-weeks" min="2" max="12" value="6"
-             oninput="obWeeksUpdate(this.value)">
-      <div class="range-labels"><span>2 wks</span><span>12 wks</span></div>
-    </div>
-
-    <div class="setup-card">
-      <div class="setup-card-title">How long per daily session?</div>
-      <div class="dur-grid">
-        <button class="dur-btn"        onclick="obDurSelect(5,this)">5 min</button>
-        <button class="dur-btn active" onclick="obDurSelect(10,this)">10 min</button>
-        <button class="dur-btn"        onclick="obDurSelect(15,this)">15 min</button>
-        <button class="dur-btn"        onclick="obDurSelect(20,this)">20 min</button>
-      </div>
-    </div>
-
-    <div class="setup-card">
-      <div class="setup-card-title">Starting difficulty?</div>
-      <div class="diff-grid">
-        <button class="diff-btn" onclick="obDiffSelect('Easy',this)">
-          <span class="diff-icon">🌱</span>
-          <span class="diff-name">Easy</span>
-          <span class="diff-sub">2–3 digits</span>
-        </button>
-        <button class="diff-btn active" onclick="obDiffSelect('Moderate',this)">
-          <span class="diff-icon">🧠</span>
-          <span class="diff-name">Moderate</span>
-          <span class="diff-sub">3–5 digits</span>
-        </button>
-        <button class="diff-btn" onclick="obDiffSelect('Hard',this)">
-          <span class="diff-icon">🔥</span>
-          <span class="diff-name">Hard</span>
-          <span class="diff-sub">4–6 digits</span>
-        </button>
-      </div>
-    </div>
-
-    <button class="btn btn-green" onclick="saveOnboarding()" style="margin-top:8px">START MY PROGRAM</button>
-
-  </div>
-</div>
-
-<!-- ══════════════════════ CHECK-IN ══════════════════════════════ -->
-<div id="screen-checkin" class="screen">
-  <div class="checkin-body">
-    <div class="checkin-day" id="checkin-day-text"></div>
-    <div class="checkin-icon">💭</div>
-    <h2>How are you feeling today?</h2>
-    <p>Your answer helps adjust today's difficulty to match your energy level.</p>
-    <div class="mood-grid">
-      <button class="mood-btn good-btn" onclick="selectMood('Good')">
-        <span class="mood-emoji">😊</span>
-        <div class="mood-text">
-          <span class="mood-title">Good</span>
-          <span class="mood-hint">Ready to challenge myself!</span>
-        </div>
-      </button>
-      <button class="mood-btn mod-btn" onclick="selectMood('Moderate')">
-        <span class="mood-emoji">😐</span>
-        <div class="mood-text">
-          <span class="mood-title">Moderate</span>
-          <span class="mood-hint">Feeling okay, let's go.</span>
-        </div>
-      </button>
-      <button class="mood-btn bad-btn" onclick="selectMood('Bad')">
-        <span class="mood-emoji">😔</span>
-        <div class="mood-text">
-          <span class="mood-title">Bad</span>
-          <span class="mood-hint">Tough day — take it easy.</span>
-        </div>
-      </button>
-    </div>
-    <div class="checkin-adj" id="checkin-adj"></div>
   </div>
 </div>
 
@@ -921,6 +1114,7 @@
       <div class="gaze-dot"></div>
       <span class="gaze-label" id="gaze-label">👁</span>
     </div>
+    <div class="session-timer" id="session-timer">5:00</div>
   </div>
 
   <div class="lesson-body">
@@ -1024,6 +1218,14 @@
 
   <!-- Gaze breakdown (rendered by JS) -->
   <div class="results-cards" style="padding-top:0">
+    <div id="res-diff-card" class="diff-promo-card same" style="display:none">
+      <div class="diff-promo-icon" id="res-diff-icon">🎯</div>
+      <div>
+        <div class="diff-promo-label">Difficulty</div>
+        <div class="diff-promo-title" id="res-diff-title">Easy</div>
+        <div class="diff-promo-sub"   id="res-diff-sub"></div>
+      </div>
+    </div>
     <div class="gaze-breakdown" id="gaze-breakdown" style="display:none">
       <div class="gaze-breakdown-title">👁 Gaze per Round</div>
       <div id="gaze-breakdown-rows"></div>
@@ -1054,7 +1256,6 @@
     <div class="tab-bar">
       <button class="tab active" onclick="switchTab('charts',this)">📈 Charts</button>
       <button class="tab"        onclick="switchTab('history',this)">📋 History</button>
-      <button class="tab"        onclick="switchTab('mood',this)">😊 Mood</button>
     </div>
 
     <div class="tab-content active" id="tab-charts">
@@ -1089,24 +1290,149 @@
       </div>
     </div>
 
-    <div class="tab-content" id="tab-mood">
-      <div id="mood-tab-body"></div>
-    </div>
-
   </div>
 </div>
 
-<!-- Gaze detail modal -->
-<div class="gaze-modal" id="gaze-modal" onclick="closeGazeModal(event)">
-  <div class="gaze-modal-inner" id="gaze-modal-inner">
-    <div class="gaze-modal-header">
-      <div>
-        <div class="gaze-modal-title" id="gaze-modal-title"></div>
-        <div class="gaze-modal-sub"   id="gaze-modal-sub"></div>
-      </div>
-      <button class="btn-x" onclick="closeGazeModal()">✕</button>
+<!-- ════════════════════ MOOD MODAL ══════════════════════════════ -->
+<div class="modal-overlay" id="mood-modal">
+  <div class="modal-sheet">
+    <div class="modal-title">How are you feeling?</div>
+    <div class="modal-sub">This helps us understand your performance patterns.</div>
+    <div class="mood-row">
+      <button class="mood-btn" onclick="selectMood(1,this)"><span class="mood-emoji">😴</span><span class="mood-label">Tired</span></button>
+      <button class="mood-btn" onclick="selectMood(2,this)"><span class="mood-emoji">😐</span><span class="mood-label">Meh</span></button>
+      <button class="mood-btn" onclick="selectMood(3,this)"><span class="mood-emoji">🙂</span><span class="mood-label">OK</span></button>
+      <button class="mood-btn" onclick="selectMood(4,this)"><span class="mood-emoji">😊</span><span class="mood-label">Good</span></button>
+      <button class="mood-btn" onclick="selectMood(5,this)"><span class="mood-emoji">🤩</span><span class="mood-label">Great</span></button>
     </div>
-    <div class="gaze-modal-body" id="gaze-modal-body"></div>
+    <button class="btn btn-green" id="mood-start-btn" onclick="confirmMoodAndStart()" disabled style="opacity:.4">START →</button>
+    <button class="btn btn-ghost" onclick="skipMoodAndStart()" style="margin-top:8px;padding:11px;font-size:13px">Skip</button>
+  </div>
+</div>
+
+<!-- ════════════════════ TAP WHEN X ══════════════════════════════ -->
+<div id="screen-tapx" class="screen">
+  <div class="game-header">
+    <button class="btn-x" onclick="exitGame()">✕</button>
+    <div class="game-title-sm">Tap When Ready</div>
+    <div class="prog-bar-wrap">
+      <div class="prog-track-sm"><div class="prog-fill-sm" id="tapx-prog" style="width:0%"></div></div>
+    </div>
+    <div class="session-timer" id="tapx-timer">5:00</div>
+  </div>
+  <div class="tapx-body">
+    <div class="tapx-target-wrap">
+      <div class="tapx-target-label">Tap only when you see</div>
+      <div class="tapx-target-symbol" id="tapx-target-sym">★</div>
+    </div>
+    <div class="tapx-stimulus-box" id="tapx-stim-box">·</div>
+    <div class="tapx-stats-row">
+      <div class="tapx-stat"><div class="tapx-stat-val green" id="tapx-hits">0</div><div class="tapx-stat-label">Hits</div></div>
+      <div class="tapx-stat"><div class="tapx-stat-val red"   id="tapx-fa">0</div><div class="tapx-stat-label">False Alarms</div></div>
+      <div class="tapx-stat"><div class="tapx-stat-val" id="tapx-rt-disp" style="color:var(--purple)">—</div><div class="tapx-stat-label">Avg RT</div></div>
+    </div>
+    <div class="mini-prog-wrap">
+      <div class="mini-prog-track"><div class="mini-prog-fill" id="tapx-mini-prog" style="width:0%"></div></div>
+    </div>
+    <button class="tapx-tap-btn" id="tapx-tap-btn" onclick="tapxTap()">TAP!</button>
+  </div>
+</div>
+
+<!-- ═══════════════════ MATCH & RECALL ══════════════════════════ -->
+<div id="screen-match" class="screen">
+  <div class="game-header">
+    <button class="btn-x" onclick="exitGame()">✕</button>
+    <div class="game-title-sm">Match &amp; Recall</div>
+    <div style="flex:1"></div>
+    <div class="session-timer" id="match-timer">5:00</div>
+  </div>
+  <div class="match-body">
+    <div class="match-reveal-timer"><div class="match-reveal-fill" id="match-reveal-fill" style="width:100%"></div></div>
+    <div class="match-info-row">
+      <div class="match-pairs-left" id="match-pairs-left">Pairs left: 8</div>
+      <div class="match-errors-ct"  id="match-errors-ct"></div>
+    </div>
+    <div class="match-grid" id="match-grid"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════ ODD ONE OUT ════════════════════════════ -->
+<div id="screen-odo" class="screen">
+  <div class="game-header">
+    <button class="btn-x" onclick="exitGame()">✕</button>
+    <div class="prog-bar-wrap">
+      <div class="prog-track-sm"><div class="prog-fill-sm" id="odo-prog" style="width:0%"></div></div>
+    </div>
+    <div class="session-timer" id="odo-timer">5:00</div>
+  </div>
+  <div class="odo-body">
+    <div class="odo-round-info">
+      <span id="odo-round-label">Round 1 / 10</span>
+      <span id="odo-score-label">Score: 0</span>
+    </div>
+    <div class="odo-question-box">
+      <div class="odo-prompt">Which one doesn't belong?</div>
+      <div class="odo-question" id="odo-question"></div>
+    </div>
+    <div class="odo-options" id="odo-options"></div>
+  </div>
+</div>
+
+<!-- ══════════════════ TRACK OBJECTS ═══════════════════════════ -->
+<div id="screen-track" class="screen">
+  <div class="game-header">
+    <button class="btn-x" onclick="exitGame()">✕</button>
+    <div class="game-title-sm">Object Tracker</div>
+    <div style="flex:1"></div>
+    <div class="session-timer" id="track-timer">5:00</div>
+  </div>
+  <div class="track-arena-wrap" id="track-arena">
+    <div class="track-obj a" id="track-obj-a">A</div>
+    <div class="track-obj b" id="track-obj-b">B</div>
+    <div class="track-countdown-overlay" id="track-cd-overlay">
+      <div class="track-countdown-num" id="track-cd-num">3</div>
+      <div class="track-cd-label">Watch the objects!</div>
+    </div>
+  </div>
+  <div class="track-status-bar" id="track-status">Get ready…</div>
+  <div class="track-q-panel" id="track-q-panel">
+    <div class="track-question" id="track-question"></div>
+    <div class="track-choices" id="track-choices"></div>
+  </div>
+</div>
+
+<!-- ══════════════════ DUAL N-BACK ══════════════════════════════ -->
+<div id="screen-dnb" class="screen">
+  <div class="game-header">
+    <button class="btn-x" onclick="exitGame()">✕</button>
+    <div class="dnb-n-badge" id="dnb-n-badge">N = 2</div>
+    <div style="flex:1"></div>
+    <div class="session-timer" id="dnb-timer">5:00</div>
+  </div>
+  <div class="dnb-body">
+    <div class="dnb-info-row">
+      <div class="dnb-stat"><div class="dnb-stat-val blue"   id="dnb-trial-num">0</div><div class="dnb-stat-label">Trial</div></div>
+      <div class="dnb-stat"><div class="dnb-stat-val green"  id="dnb-hits">0</div><div class="dnb-stat-label">Hits</div></div>
+      <div class="dnb-stat"><div class="dnb-stat-val purple" id="dnb-fa">0</div><div class="dnb-stat-label">False+</div></div>
+    </div>
+    <div class="dnb-trial-bar">
+      <div class="prog-track-sm"><div class="prog-fill-sm" id="dnb-prog" style="width:0%"></div></div>
+    </div>
+    <div class="dnb-display-row">
+      <div class="dnb-grid" id="dnb-grid">
+        <div class="dnb-cell" id="dnb-c0"></div><div class="dnb-cell" id="dnb-c1"></div><div class="dnb-cell" id="dnb-c2"></div>
+        <div class="dnb-cell" id="dnb-c3"></div><div class="dnb-cell" id="dnb-c4"></div><div class="dnb-cell" id="dnb-c5"></div>
+        <div class="dnb-cell" id="dnb-c6"></div><div class="dnb-cell" id="dnb-c7"></div><div class="dnb-cell" id="dnb-c8"></div>
+      </div>
+      <div class="dnb-letter-box" id="dnb-letter-box">—</div>
+    </div>
+    <div class="dnb-btns">
+      <button class="dnb-btn pos" id="dnb-pos-btn" onclick="dnbPress('pos')" disabled>📍 Position</button>
+      <button class="dnb-btn let" id="dnb-let-btn" onclick="dnbPress('let')" disabled>🔤 Letter</button>
+    </div>
+    <div style="font-size:12px;font-weight:700;color:var(--gray-2);text-align:center" id="dnb-hint">
+      Press a button if current matches <strong>N trials ago</strong>
+    </div>
   </div>
 </div>
 
@@ -1136,16 +1462,27 @@ const CAL_POINTS = [
 
 const CONF_COLORS = ['#58CC02','#FF9600','#1CB0F6','#FF4B4B','#CE82FF','#FFBA00'];
 
-const DIFF_SETTINGS = {
-  Easy:     [2, 3, 3],
-  Moderate: [3, 4, 5],
-  Hard:     [4, 5, 6],
+// ════════════════════════════════════════════════════════════════
+//  GAME REGISTRY
+// ════════════════════════════════════════════════════════════════
+const GAMES = {
+  'digit-span':    { id:'digit-span',    name:'Working Memory',  sub:'Digit Span Challenge', icon:'🧠', color:'green',  diffLevel:'easy',   duration:'~3 min' },
+  'tap-x':         { id:'tap-x',         name:'Tap When Ready',  sub:'Reaction & Focus',     icon:'⚡', color:'blue',   diffLevel:'easy',   duration:'~2 min' },
+  'match-recall':  { id:'match-recall',  name:'Match & Recall',  sub:'Memory Pairs',         icon:'🃏', color:'purple', diffLevel:'easy',   duration:'~3 min' },
+  'odd-one-out':   { id:'odd-one-out',   name:'Odd One Out',     sub:'Category Logic',       icon:'🔍', color:'orange', diffLevel:'medium', duration:'~4 min' },
+  'track-objects': { id:'track-objects', name:'Object Tracker',  sub:'Divided Attention',    icon:'🎯', color:'orange', diffLevel:'medium', duration:'~4 min' },
+  'dual-nback':    { id:'dual-nback',    name:'Dual N-Back',     sub:'Working Memory Pro',   icon:'🧩', color:'red',    diffLevel:'hard',   duration:'~5 min' },
 };
 
-// ── Gaze recording state (set by Metrics, read by the global listener) ──
-let isRoundActive      = false;
-let currentRoundGazeData = [];   // [{x, y, timestamp}] — raw screen coords
-let currentTargetEl    = null;   // digit-box reference for gaze-on CSS
+let currentGameId = 'digit-span';
+let currentMood   = null;
+
+const DIFFICULTY_LEVELS = ['easy', 'medium', 'hard'];
+const DIFFICULTY_CONFIG = {
+  easy:   { label: 'Easy',   emoji: '🟢', seqLengths: [3, 4, 4] },
+  medium: { label: 'Medium', emoji: '🟡', seqLengths: [4, 5, 5] },
+  hard:   { label: 'Hard',   emoji: '🔴', seqLengths: [5, 6, 7] },
+};
 
 // ════════════════════════════════════════════════════════════════
 //  PERSISTENT STATE
@@ -1153,82 +1490,9 @@ let currentTargetEl    = null;   // digit-box reference for gaze-on CSS
 let S = {
   streak: 0, xp: 0, dailyXP: 0,
   lastPlayed: null, bestScore: null, lessonsCompleted: 0,
+  difficulty: 'easy',
   // session (not persisted)
   round: 0, roundScore: 0, sessionXP: 0, seq: [], input: [],
-};
-
-function persist() {
-  localStorage.setItem('nl_state_v3', JSON.stringify({
-    streak: S.streak, xp: S.xp, dailyXP: S.dailyXP,
-    lastPlayed: S.lastPlayed, bestScore: S.bestScore,
-    lessonsCompleted: S.lessonsCompleted,
-  }));
-}
-
-function hydrate() {
-  const raw = localStorage.getItem('nl_state_v3');
-  if (!raw) return;
-  const d = JSON.parse(raw);
-  const today     = new Date().toDateString();
-  const yesterday = new Date(Date.now() - 86400000).toDateString();
-  S.xp               = d.xp || 0;
-  S.bestScore        = d.bestScore != null ? d.bestScore : null;
-  S.lessonsCompleted = d.lessonsCompleted || 0;
-  S.lastPlayed       = d.lastPlayed || null;
-  S.streak           = d.streak || 0;
-  if (S.lastPlayed && S.lastPlayed !== today && S.lastPlayed !== yesterday) S.streak = 0;
-  S.dailyXP = (S.lastPlayed === today) ? (d.dailyXP || 0) : 0;
-}
-
-// ── Session history ──────────────────────────────────────────
-function loadSessions() {
-  try { return JSON.parse(localStorage.getItem('nl_sessions_v1') || '[]'); }
-  catch { return []; }
-}
-function saveSessions(arr) {
-  localStorage.setItem('nl_sessions_v1', JSON.stringify(arr.slice(-100))); // keep last 100
-}
-function pushSession(sess) {
-  const arr = loadSessions();
-  arr.push(sess);
-  saveSessions(arr);
-}
-
-// ── Program config (onboarding settings) ─────────────────────
-const Config = {
-  KEY: 'nl_config',
-  load() {
-    try { return JSON.parse(localStorage.getItem(this.KEY) || 'null'); }
-    catch { return null; }
-  },
-  save(cfg) { localStorage.setItem(this.KEY, JSON.stringify(cfg)); },
-  isSetup() { return this.load() !== null; },
-  get() {
-    return this.load() || { weeks: 6, sessionMin: 10, difficulty: 'Moderate', startDate: new Date().toDateString() };
-  },
-};
-
-// ── Daily check-in ────────────────────────────────────────────
-const Checkin = {
-  KEY: 'nl_checkin',
-  load() {
-    try { return JSON.parse(localStorage.getItem(this.KEY) || '[]'); }
-    catch { return []; }
-  },
-  save(mood) {
-    const arr = this.load();
-    arr.push({ date: new Date().toDateString(), mood });
-    localStorage.setItem(this.KEY, JSON.stringify(arr.slice(-90)));
-  },
-  isDoneToday() {
-    const today = new Date().toDateString();
-    return this.load().some(c => c.date === today);
-  },
-  todayMood() {
-    const today = new Date().toDateString();
-    const entry = this.load().find(c => c.date === today);
-    return entry ? entry.mood : null;
-  },
 };
 
 // ════════════════════════════════════════════════════════════════
@@ -1236,7 +1500,6 @@ const Checkin = {
 // ════════════════════════════════════════════════════════════════
 const Gazer = {
   loaded:     false,
-  active:     false,   // true while webgazer.begin() is running
   calibrated: false,
   pos:        null,
   _ticker:    null,
@@ -1245,22 +1508,27 @@ const Gazer = {
     return new Promise((resolve) => {
       if (typeof webgazer !== 'undefined') { this.loaded = true; resolve(true); return; }
 
-      const s = document.createElement('script');
-      s.src = 'https://cdn.jsdelivr.net/npm/webgazer@2.0.1/webgazer.js';
-      const t = setTimeout(() => { s.remove(); resolve(false); }, 15000);
-      s.onload  = () => { clearTimeout(t); this.loaded = true; resolve(true); };
-      s.onerror = () => { clearTimeout(t); resolve(false); };
-      document.head.appendChild(s);
+      const CDNS = [
+        'https://cdn.jsdelivr.net/npm/webgazer/webgazer.js',
+        'https://unpkg.com/webgazer/webgazer.js',
+        'https://webgazer.cs.brown.edu/webgazer.js',
+      ];
+
+      const tryNext = (i) => {
+        if (i >= CDNS.length) { resolve(false); return; }
+        const s = document.createElement('script');
+        s.src = CDNS[i];
+        const t = setTimeout(() => { s.remove(); tryNext(i + 1); }, 10000);
+        s.onload  = () => { clearTimeout(t); this.loaded = true; resolve(true); };
+        s.onerror = () => { clearTimeout(t); tryNext(i + 1); };
+        document.head.appendChild(s);
+      };
+      tryNext(0);
     });
   },
 
   async begin() {
     if (!this.loaded) return false;
-    try {
-      webgazer.params.showVideoPreview    = false;
-      webgazer.params.showFaceOverlay     = false;
-      webgazer.params.showFaceFeedbackBox = false;
-    } catch {}
     try {
       const r = webgazer.begin();
       if (r && typeof r.then === 'function') await r;
@@ -1278,17 +1546,14 @@ const Gazer = {
     try { webgazer.showPredictionPoints(false); } catch {}
     try { webgazer.showVideoPreview(true);      } catch {}
     const vid = document.getElementById('webgazerVideoFeed');
-    const ok = !!(vid) || typeof webgazer !== 'undefined';
-    if (ok) this.active = true;
-    return ok;
+    return !!(vid) || typeof webgazer !== 'undefined';
   },
 
   end() {
     if (!this.loaded) return;
     try { webgazer.end(); } catch {}
     this.calibrated = false;
-    this.active     = false;
-    this.pos        = null;
+    this.pos = null;
     this.hideVideo();
   },
 
@@ -1347,9 +1612,6 @@ const Metrics = {
     clearInterval(this.gazeInterval);
     clearInterval(this.rtTicker);
     clearInterval(this.gazeIndicatorInterval);
-    isRoundActive = false;
-    currentRoundGazeData = [];
-    currentTargetEl = null;
   },
 
   startRT() {
@@ -1373,11 +1635,9 @@ const Metrics = {
   },
 
   startGaze(targetEl) {
-    // Reset global gaze state for this round
-    currentRoundGazeData = [];
-    currentTargetEl      = targetEl;
-    isRoundActive        = true;
-    // Capture digit-box position (normalized) so canvas can draw target rect
+    this.gazePoints   = [];
+    this.gazeOnTarget = 0;
+    // Always capture the target rect (even without WebGazer)
     const r = targetEl.getBoundingClientRect();
     this.targetRect = {
       x: r.left   / window.innerWidth,
@@ -1385,26 +1645,35 @@ const Metrics = {
       w: r.width  / window.innerWidth,
       h: r.height / window.innerHeight,
     };
-    // Data is collected by the persistent listener installed in finishCalibration()
+    clearInterval(this.gazeInterval);
+    if (!Gazer.loaded) return;
+
+    this.gazeInterval = setInterval(() => {
+      const pos = Gazer.pos;
+      if (!pos) return;                 // no prediction yet — skip silently
+      const r2  = targetEl.getBoundingClientRect();
+      const onTarget = (
+        pos.x >= r2.left  - GAZE_PADDING &&
+        pos.x <= r2.right + GAZE_PADDING &&
+        pos.y >= r2.top   - GAZE_PADDING &&
+        pos.y <= r2.bottom + GAZE_PADDING
+      );
+      this.gazePoints.push({
+        nx: pos.x / window.innerWidth,
+        ny: pos.y / window.innerHeight,
+        onTarget,
+      });
+      if (onTarget) this.gazeOnTarget++;
+      targetEl.classList.toggle('gaze-on', onTarget);
+    }, GAZE_SAMPLE_MS);
   },
 
   stopGaze() {
-    isRoundActive   = false;
-    currentTargetEl = null;
+    clearInterval(this.gazeInterval);
     const el = $('digit-box');
     if (el) el.classList.remove('gaze-on');
-    if (!currentRoundGazeData.length || !this.targetRect) return null;
-    // Compute fixation rate from raw screen coords + stored normalized target rect
-    const tr   = this.targetRect;
-    const padX = GAZE_PADDING / window.innerWidth;
-    const padY = GAZE_PADDING / window.innerHeight;
-    let onCnt = 0;
-    for (const p of currentRoundGazeData) {
-      const nx = p.x / window.innerWidth, ny = p.y / window.innerHeight;
-      if (nx >= tr.x - padX && nx <= tr.x + tr.w + padX &&
-          ny >= tr.y - padY && ny <= tr.y + tr.h + padY) onCnt++;
-    }
-    return onCnt / currentRoundGazeData.length;
+    if (!this.gazePoints.length) return null;
+    return this.gazeOnTarget / this.gazePoints.length;
   },
 
   startGazeIndicator() {
@@ -1429,12 +1698,7 @@ const Metrics = {
     $('rt-chip').classList.remove('visible');
     this.rounds.push({
       roundNum, seqLen, correct, rt, fixation,
-      gazeActive:  Gazer.active,
-      gazePoints:  currentRoundGazeData.map(p => ({
-        nx: p.x / window.innerWidth,
-        ny: p.y / window.innerHeight,
-        timestamp: p.timestamp,
-      })),
+      gazePoints:  [...this.gazePoints],
       targetRect:  this.targetRect ? { ...this.targetRect } : null,
     });
   },
@@ -1470,8 +1734,6 @@ const Metrics = {
       fixationRate,
       focusScore,
       gazeEnabled,
-      mood:        Checkin.todayMood(),
-      difficulty:  S.todayDifficulty || Config.get().difficulty,
       rounds:      [...this.rounds],
     };
   },
@@ -1486,20 +1748,12 @@ function renderHome() {
   $('h-xp').textContent          = S.xp;
   $('streak-count').textContent  = S.streak;
   $('stat-xp').textContent       = S.xp;
-  $('stat-best').textContent     = S.bestScore != null ? `${S.bestScore}/${TOTAL_ROUNDS}` : '—';
+  $('stat-best').textContent     = S.bestScore != null ? `${S.bestScore}/5` : '—';
   $('stat-lessons').textContent  = S.lessonsCompleted;
 
-  // Week progress banner
-  const cfg = Config.load();
-  const wrapEl = $('week-banner-wrap');
-  if (cfg && wrapEl) {
-    const daysDiff   = Math.floor((Date.now() - new Date(cfg.startDate).getTime()) / 86400000);
-    const weekNum    = Math.min(Math.floor(daysDiff / 7) + 1, cfg.weeks);
-    wrapEl.style.display = 'block';
-    wrapEl.innerHTML = `<div class="week-banner"><div class="week-banner-left">Program Progress · ${cfg.difficulty}</div><div class="week-banner-right">Week ${weekNum} / ${cfg.weeks}</div></div>`;
-  } else if (wrapEl) {
-    wrapEl.style.display = 'none';
-  }
+  const diffCfg = DIFFICULTY_CONFIG[S.difficulty];
+  const badge   = $('home-diff-badge');
+  if (badge) { badge.className = `diff-badge ${S.difficulty}`; badge.textContent = `${diffCfg.emoji} ${diffCfg.label}`; }
 
   const msgs = [
     'Start your journey today!',
@@ -1517,61 +1771,28 @@ function renderHome() {
   $('daily-bar').style.width   = pct + '%';
   $('daily-xp-num').textContent = S.dailyXP;
 
-  const btn = $('start-btn');
-  if (S.lastPlayed === today && S.dailyXP >= DAILY_GOAL) {
-    btn.textContent      = '✓ GOAL REACHED TODAY';
-    btn.style.background = 'var(--blue)';
-    btn.style.boxShadow  = '0 4px 0 var(--blue-dark)';
-  } else {
-    btn.textContent      = 'START LESSON';
-    btn.style.background = '';
-    btn.style.boxShadow  = '';
-  }
+  renderGameList();
 }
 
-// ════════════════════════════════════════════════════════════════
-//  ONBOARDING
-// ════════════════════════════════════════════════════════════════
-let obWeeksVal = 6, obDurVal = 10, obDiffVal = 'Moderate';
-
-function obWeeksUpdate(v) {
-  obWeeksVal = +v;
-  $('ob-weeks-val').innerHTML = `${v} <small>weeks</small>`;
-}
-function obDurSelect(min, btn) {
-  obDurVal = min;
-  document.querySelectorAll('.dur-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-}
-function obDiffSelect(diff, btn) {
-  obDiffVal = diff;
-  document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-}
-function saveOnboarding() {
-  Config.save({ weeks: obWeeksVal, sessionMin: obDurVal, difficulty: obDiffVal, startDate: new Date().toDateString() });
-  showScreen('screen-home');
-  renderHome();
-}
-
-// ════════════════════════════════════════════════════════════════
-//  CHECK-IN
-// ════════════════════════════════════════════════════════════════
-function selectMood(mood) {
-  Checkin.save(mood);
-  const cfg = Config.get();
-  const levels = ['Easy', 'Moderate', 'Hard'];
-  const adj = $('checkin-adj');
-  if (mood === 'Bad') {
-    const idx = levels.indexOf(cfg.difficulty);
-    const newDiff = idx > 0 ? levels[idx - 1] : 'Easy';
-    adj.textContent = `Difficulty adjusted to ${newDiff} today — take it easy! 💙`;
-    adj.classList.add('show');
-    setTimeout(startSessionFlow, 1200);
-  } else {
-    adj.classList.remove('show');
-    setTimeout(startSessionFlow, 400);
-  }
+function renderGameList() {
+  const list = $('game-list');
+  if (!list) return;
+  list.innerHTML = Object.values(GAMES).map(g => {
+    const diffCfg = DIFFICULTY_CONFIG[S.difficulty];
+    const diffBadge = g.id === 'digit-span'
+      ? `<span class="diff-badge ${S.difficulty}">${diffCfg.emoji} ${diffCfg.label}</span>`
+      : `<span class="diff-badge ${g.diffLevel}">${g.diffLevel === 'easy' ? '🟢' : g.diffLevel === 'medium' ? '🟡' : '🔴'} ${g.diffLevel.charAt(0).toUpperCase()+g.diffLevel.slice(1)}</span>`;
+    return `
+      <div class="game-item" onclick="launchGame('${g.id}')">
+        <div class="game-item-icon ${g.color}">${g.icon}</div>
+        <div class="game-item-body">
+          <div class="game-item-name">${g.name}</div>
+          <div class="game-item-sub">${g.sub}</div>
+          <div class="game-item-meta">${diffBadge}<span style="font-size:10px;font-weight:700;color:var(--gray-2)">${g.duration}</span></div>
+        </div>
+        <button class="game-play-btn" onclick="event.stopPropagation();launchGame('${g.id}')">▶</button>
+      </div>`;
+  }).join('');
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -1579,34 +1800,40 @@ function selectMood(mood) {
 // ════════════════════════════════════════════════════════════════
 let calIndex = 0;
 
-function requestLesson() {
-  if (!Checkin.isDoneToday()) {
-    showScreen('screen-checkin');
-    $('checkin-day-text').textContent = new Date().toLocaleDateString('en', { weekday: 'long', month: 'long', day: 'numeric' });
-    $('checkin-adj').classList.remove('show');
-    return;
-  }
-  startSessionFlow();
-}
-
-function startSessionFlow() {
+// ════════════════════════════════════════════════════════════════
+//  MOOD TRACKING
+// ════════════════════════════════════════════════════════════════
+function launchGame(gameId) {
+  currentGameId = gameId;
+  currentMood   = null;
+  // Reset digit-span session state
   S.round = 0; S.roundScore = 0; S.sessionXP = 0; S.input = [];
   Metrics.reset();
+  // Show mood modal
+  const mo = $('mood-modal');
+  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+  $('mood-start-btn').disabled = true;
+  $('mood-start-btn').style.opacity = '.4';
+  mo.classList.add('show');
+}
 
-  // Determine today's difficulty from config + mood
-  const cfg = Config.get();
-  const levels = ['Easy', 'Moderate', 'Hard'];
-  let diff = cfg.difficulty || 'Moderate';
-  if (Checkin.todayMood() === 'Bad') {
-    const idx = levels.indexOf(diff);
-    diff = idx > 0 ? levels[idx - 1] : 'Easy';
-  }
-  S.todayDifficulty = diff;
+function selectMood(val, btn) {
+  currentMood = val;
+  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  $('mood-start-btn').disabled = false;
+  $('mood-start-btn').style.opacity = '1';
+}
 
+function confirmMoodAndStart() { closeMoodModal(); startCalibrationFlow(); }
+function skipMoodAndStart()    { currentMood = null; closeMoodModal(); startCalibrationFlow(); }
+
+function closeMoodModal() { $('mood-modal').classList.remove('show'); }
+
+function startCalibrationFlow() {
   showScreen('screen-calibration');
   $('cal-header-sub').textContent = 'Loading…';
   showCalState('loading');
-
   Gazer.load().then(loaded => {
     if (!loaded) { showCalState('error'); return; }
     return Gazer.begin().then(ok => {
@@ -1616,6 +1843,41 @@ function startSessionFlow() {
       $('cal-header-sub').textContent = 'Position yourself facing the camera';
     });
   });
+}
+
+function afterCalibration() {
+  switch (currentGameId) {
+    case 'digit-span':    startLesson();             break;
+    case 'tap-x':         startTapXGame();            break;
+    case 'match-recall':  startMatchRecallGame();     break;
+    case 'odd-one-out':   startOddOneOutGame();       break;
+    case 'track-objects': startTrackObjectsGame();    break;
+    case 'dual-nback':    startDualNBackGame();       break;
+    default:              startLesson();
+  }
+}
+
+function exitGame() {
+  if (!confirm('Exit? Your current round progress will be lost.')) return;
+  stopSessionTimer();
+  clearAllGameTimers();
+  Metrics.stopGazeIndicator();
+  Gazer.end();
+  showScreen('screen-home');
+  renderHome();
+}
+
+function clearAllGameTimers() {
+  clearInterval(_tapxInterval);  _tapxInterval  = null;
+  clearInterval(_matchInterval); _matchInterval = null;
+  clearInterval(_trackInterval); _trackInterval = null;
+  clearInterval(_dnbInterval);   _dnbInterval   = null;
+  clearTimeout(_tapxStimulusTO); clearTimeout(_tapxBlankTO);
+}
+
+function requestLesson() {
+  // Legacy entry — route through new launchGame
+  launchGame('digit-span');
 }
 
 function showCalState(name) {
@@ -1681,28 +1943,18 @@ function handleCalClick(i) {
 
 function finishCalibration() {
   Gazer.calibrated = true;
-  // Install ONE persistent listener for the entire session.
-  // isRoundActive gates whether points are recorded into currentRoundGazeData.
+  // Re-register listener here — calibration clicks can sometimes
+  // reset WebGazer's internal listener state.
   try {
-    webgazer.setGazeListener((data, timestamp) => {
-      if (!data) return;
-      Gazer.pos = { x: data.x, y: data.y };   // keep gaze indicator working
-      if (!isRoundActive) return;
-      currentRoundGazeData.push({ x: data.x, y: data.y, timestamp: timestamp || Date.now() });
-      // Update gaze-on CSS on the digit box
-      if (currentTargetEl) {
-        const r = currentTargetEl.getBoundingClientRect();
-        const on = data.x >= r.left - GAZE_PADDING && data.x <= r.right + GAZE_PADDING &&
-                   data.y >= r.top  - GAZE_PADDING && data.y <= r.bottom + GAZE_PADDING;
-        currentTargetEl.classList.toggle('gaze-on', on);
-      }
+    webgazer.setGazeListener((data) => {
+      Gazer.pos = data ? { x: data.x, y: data.y } : null;
     });
     webgazer.showPredictionPoints(false);
   } catch {}
   Gazer.positionVideo('lesson');
   $('cal-dots-area').classList.remove('active');
   showCalState('done');
-  setTimeout(startLesson, 1200);
+  setTimeout(afterCalibration, 1200);
 }
 
 function retryCalibration() {
@@ -1725,7 +1977,50 @@ function retryCalibration() {
 function skipCalibration() {
   if (Gazer.loaded) Gazer.end();
   Gazer.calibrated = false;
-  startLesson();
+  afterCalibration();
+}
+
+// ════════════════════════════════════════════════════════════════
+//  SESSION TIMER
+// ════════════════════════════════════════════════════════════════
+function getSessionTimeLimitMs() {
+  // Base 5 min; +1 min per 5 completed lessons, capped at 15 min total
+  const baseSecs  = 300;
+  const bonusSecs = Math.floor(S.lessonsCompleted / 5) * 60;
+  return Math.min(baseSecs + bonusSecs, 900) * 1000;
+}
+
+let _sessionTimerInterval = null;
+let _sessionStartTime     = null;
+
+function startSessionTimer() {
+  const limitMs = getSessionTimeLimitMs();
+  _sessionStartTime = Date.now();
+  const el = $('session-timer');
+
+  const update = () => {
+    const remaining = Math.max(0, limitMs - (Date.now() - _sessionStartTime));
+    const secs = Math.ceil(remaining / 1000);
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    el.textContent = `${m}:${s.toString().padStart(2, '0')}`;
+    el.classList.toggle('warning', secs <= 60 && secs > 30);
+    el.classList.toggle('danger',  secs <= 30);
+    if (remaining <= 0) {
+      clearInterval(_sessionTimerInterval);
+      _sessionTimerInterval = null;
+      finishLesson(true);
+    }
+  };
+  update();
+  _sessionTimerInterval = setInterval(update, 1000);
+}
+
+function stopSessionTimer() {
+  clearInterval(_sessionTimerInterval);
+  _sessionTimerInterval = null;
+  const el = $('session-timer');
+  if (el) el.classList.remove('warning', 'danger');
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -1736,6 +2031,7 @@ function startLesson() {
   buildSegBar();
   if (Gazer.calibrated) Gazer.positionVideo('lesson');
   Metrics.startGazeIndicator();
+  startSessionTimer();
   beginRound();
 }
 
@@ -1758,8 +2054,7 @@ function updateSegBar() {
 function beginRound() {
   hideFeedback();
   updateSegBar();
-  const seqLens = (S.todayDifficulty && DIFF_SETTINGS[S.todayDifficulty]) || SEQ_LENGTHS;
-  S.seq   = randSeq(seqLens[Math.min(S.round, seqLens.length - 1)]);
+  S.seq   = randSeq(DIFFICULTY_CONFIG[S.difficulty].seqLengths[S.round]);
   S.input = [];
   showPhase('phase-ready');
   runCountdown(3, showWatchPhase);
@@ -1898,9 +2193,31 @@ function nextRound() {
 }
 
 // ════════════════════════════════════════════════════════════════
+//  DIFFICULTY PROGRESSION
+// ════════════════════════════════════════════════════════════════
+function evaluateDifficulty(sess) {
+  const levels  = DIFFICULTY_LEVELS;
+  const idx     = levels.indexOf(sess.difficulty);
+  const perfect = sess.correctRounds === TOTAL_ROUNDS;
+  const fast    = sess.avgRT != null ? sess.avgRT < 3500 : true;
+  const poor    = sess.correctRounds === 0;
+
+  if (perfect && fast && idx < levels.length - 1) {
+    S.difficulty = levels[idx + 1];
+    return 'promoted';
+  }
+  if (poor && idx > 0) {
+    S.difficulty = levels[idx - 1];
+    return 'demoted';
+  }
+  return 'same';
+}
+
+// ════════════════════════════════════════════════════════════════
 //  FINISH LESSON
 // ════════════════════════════════════════════════════════════════
-function finishLesson() {
+function finishLesson(timeUp = false) {
+  stopSessionTimer();
   hideFeedback();
   Metrics.stopGazeIndicator();
   Gazer.end();
@@ -1915,18 +2232,21 @@ function finishLesson() {
   S.dailyXP          += S.sessionXP;
   S.lessonsCompleted++;
   if (S.bestScore === null || S.roundScore > S.bestScore) S.bestScore = S.roundScore;
-  persist();
 
   const sess = Metrics.computeSession(S.roundScore, S.sessionXP);
-  pushSession(sess);
+  sess.difficulty = S.difficulty; // snapshot before evaluation
+  sess.timeUp     = timeUp;
+  const diffChange = evaluateDifficulty(sess);
+  persist(); // saves updated difficulty
 
-  showResults(sess);
+  pushSession(sess);
+  showResults(sess, diffChange);
 }
 
 // ════════════════════════════════════════════════════════════════
 //  RESULTS SCREEN
 // ════════════════════════════════════════════════════════════════
-function showResults(sess) {
+function showResults(sess, diffChange = 'same') {
   showScreen('screen-results');
   const pct = sess.correctRounds / TOTAL_ROUNDS;
 
@@ -1994,8 +2314,27 @@ function showResults(sess) {
         </div>`;
       bdRows.appendChild(block);
       // Small delay so the canvas is in the DOM before drawing
-      setTimeout(() => drawGazePath(document.getElementById(canvasId), r.gazePoints, r.targetRect, r.gazeActive), 100 + i * 50);
+      setTimeout(() => drawGazePath(document.getElementById(canvasId), r.gazePoints, r.targetRect), 100 + i * 50);
     });
+  }
+
+  // Difficulty progression card
+  const diffCard = $('res-diff-card');
+  diffCard.style.display = 'flex';
+  diffCard.className = `diff-promo-card ${diffChange}`;
+  const sessCfg = DIFFICULTY_CONFIG[sess.difficulty];
+  if (diffChange === 'promoted') {
+    $('res-diff-icon').textContent  = '🚀';
+    $('res-diff-title').textContent = `Level Up! → ${DIFFICULTY_CONFIG[S.difficulty].label}`;
+    $('res-diff-sub').textContent   = `Next session: longer sequences await!`;
+  } else if (diffChange === 'demoted') {
+    $('res-diff-icon').textContent  = '📉';
+    $('res-diff-title').textContent = `Back to ${DIFFICULTY_CONFIG[S.difficulty].label}`;
+    $('res-diff-sub').textContent   = `Keep practicing — you\'ll climb back up!`;
+  } else {
+    $('res-diff-icon').textContent  = sessCfg.emoji;
+    $('res-diff-title').textContent = `${sessCfg.label} Mode`;
+    $('res-diff-sub').textContent   = sess.timeUp ? 'Time limit reached' : 'Holding steady — keep it up!';
   }
 }
 
@@ -2003,15 +2342,6 @@ function showResults(sess) {
 //  REPORTS SCREEN
 // ════════════════════════════════════════════════════════════════
 let charts = {};
-
-async function showReports() {
-  showScreen('screen-reports');
-  await loadChartJS();
-  renderReportsSummary();
-  renderCharts();
-  renderHistory();
-  switchTab('charts', document.querySelector('.tab'));
-}
 
 function renderReportsSummary() {
   const sessions = loadSessions();
@@ -2027,231 +2357,9 @@ function renderReportsSummary() {
   $('rep-avg-rt').textContent = rts.length ? (avg(rts)/1000).toFixed(2)+'s' : '—';
 }
 
-function renderCharts() {
-  const sessions = loadSessions().slice(-7); // last 7 sessions
-
-  const labels    = sessions.map(s => s.displayDate || s.date);
-  const focusData = sessions.map(s => s.focusScore);
-  const accData   = sessions.map(s => Math.round(s.accuracy * 100));
-  const rtData    = sessions.map(s => s.avgRT != null ? Math.round(s.avgRT) : null);
-
-  destroyCharts();
-
-  const baseOpts = {
-    responsive: true, maintainAspectRatio: false,
-    plugins: { legend: { display: false }, tooltip: { titleFont: { family: 'Nunito', weight: '800' }, bodyFont: { family: 'Nunito' } } },
-    scales: {
-      x: { ticks: { font: { family: 'Nunito', weight: '700' }, maxRotation: 30 }, grid: { display: false } },
-      y: { ticks: { font: { family: 'Nunito', weight: '700' } }, grid: { color: 'rgba(0,0,0,.05)' } },
-    },
-  };
-
-  const makeLine = (id, data, color, yLabel, min, max) => {
-    const ctx = document.getElementById(id)?.getContext('2d');
-    if (!ctx) return null;
-    return new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels,
-        datasets: [{
-          data, borderColor: color, backgroundColor: color + '18',
-          borderWidth: 2.5, pointRadius: 5, pointHoverRadius: 7,
-          pointBackgroundColor: color, fill: true, tension: .35,
-          spanGaps: true,
-        }],
-      },
-      options: { ...baseOpts, scales: { ...baseOpts.scales, y: { ...baseOpts.scales.y, min, max, title: { display: false } } } },
-    });
-  };
-
-  charts.focus = makeLine('chart-focus', focusData, '#58CC02', 'Score', 0, 100);
-  charts.acc   = makeLine('chart-acc',   accData,   '#1CB0F6', '%',     0, 100);
-  charts.rt    = makeLine('chart-rt',    rtData,    '#CE82FF', 'ms',    0, null);
-
-  // Badge text
-  if (sessions.length) {
-    const lastFocus = focusData[focusData.length-1];
-    $('badge-focus').textContent = lastFocus != null ? `Last: ${lastFocus}` : 'Last 7 sessions';
-    const lastAcc = accData[accData.length-1];
-    $('badge-acc').textContent = lastAcc != null ? `Last: ${lastAcc}%` : '—';
-  }
-}
-
 function destroyCharts() {
   Object.values(charts).forEach(c => { try { c?.destroy(); } catch {} });
   charts = {};
-}
-
-function renderHistory() {
-  const sessions = loadSessions().slice().reverse();
-  const list  = $('history-list');
-  const empty = $('hist-empty');
-  list.innerHTML = '';
-  if (!sessions.length) { empty.style.display = 'block'; return; }
-  empty.style.display = 'none';
-
-  sessions.forEach(s => {
-    const card     = document.createElement('div');
-    card.className = 'hist-card';
-    card.style.cursor = 'pointer';
-    card.onclick   = () => openGazeModal(s.id);
-    const rtStr    = s.avgRT != null ? (s.avgRT/1000).toFixed(2)+'s' : '—';
-    const fixStr   = s.fixationRate != null ? Math.round(s.fixationRate*100)+'%' : '—';
-    const badgeCls = s.focusScore >= 70 ? 'high' : s.focusScore >= 40 ? 'medium' : s.focusScore > 0 ? 'low' : 'na';
-    const moodIcon = s.mood === 'Good' ? '😊' : s.mood === 'Bad' ? '😔' : s.mood === 'Moderate' ? '😐' : '';
-    const moodHtml = s.mood ? `<span class="mood-chip ${s.mood}">${moodIcon} ${s.mood}</span>` : '';
-    const hasGaze  = s.rounds?.some(r => r.gazePoints?.length > 0);
-    card.innerHTML = `
-      <div class="hist-card-top">
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          ${moodHtml}<div class="hist-date">${s.displayDate || s.date}</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px">
-          ${hasGaze ? '<span style="font-size:13px">👁</span>' : ''}
-          <div class="focus-badge ${badgeCls}">Focus ${s.focusScore}</div>
-        </div>
-      </div>
-      <div class="hist-metrics">
-        <div class="hist-metric"><div class="hist-metric-val green">${s.correctRounds}/${TOTAL_ROUNDS}</div><div class="hist-metric-name">Score</div></div>
-        <div class="hist-metric"><div class="hist-metric-val blue">${Math.round(s.accuracy*100)}%</div><div class="hist-metric-name">Accuracy</div></div>
-        <div class="hist-metric"><div class="hist-metric-val purple">${rtStr}</div><div class="hist-metric-name">Avg RT</div></div>
-        <div class="hist-metric"><div class="hist-metric-val orange">${fixStr}</div><div class="hist-metric-name">Fixation</div></div>
-      </div>`;
-    list.appendChild(card);
-  });
-}
-
-function openGazeModal(sid) {
-  const sessions = loadSessions();
-  const sess = sessions.find(s => s.id == sid);
-  if (!sess) return;
-
-  const badgeCls = sess.focusScore >= 70 ? 'high' : sess.focusScore >= 40 ? 'medium' : sess.focusScore > 0 ? 'low' : 'na';
-  $('gaze-modal-title').textContent = sess.displayDate || sess.date;
-  $('gaze-modal-sub').innerHTML =
-    `Focus <span class="focus-badge ${badgeCls}" style="margin-left:4px">` +
-    `${sess.focusScore}</span>&nbsp;&nbsp;` +
-    `${sess.correctRounds}/${TOTAL_ROUNDS} correct` +
-    (sess.mood ? `&nbsp;&nbsp;${sess.mood === 'Good' ? '😊' : sess.mood === 'Bad' ? '😔' : '😐'} ${sess.mood}` : '');
-
-  const body = $('gaze-modal-body');
-  body.innerHTML = '';
-
-  sess.rounds.forEach((r, i) => {
-    const pct   = r.fixation != null ? Math.round(r.fixation * 100) : null;
-    const rtStr = r.rt != null ? (r.rt / 1000).toFixed(2) + 's' : '—';
-    const cid   = `modal-gaze-${sid}-${i}`;
-    const block = document.createElement('div');
-    block.className = 'gaze-round-block';
-    block.innerHTML = `
-      <div class="gaze-round-header">
-        <div class="gaze-round-label">Round ${i + 1} &nbsp;${r.correct ? '✅' : '❌'}</div>
-        <div class="gaze-round-meta">
-          <span>⏱ ${rtStr}</span>
-          ${pct != null ? `<span>👁 ${pct}% on-target</span>` : ''}
-          <span style="color:var(--gray-2)">${r.gazePoints?.length ?? 0} pts</span>
-        </div>
-      </div>
-      <div class="gaze-canvas-wrap"><canvas id="${cid}" width="600" height="260"></canvas></div>`;
-    body.appendChild(block);
-    setTimeout(() => drawGazePath(document.getElementById(cid), r.gazePoints, r.targetRect, r.gazeActive), 60 + i * 60);
-  });
-
-  $('gaze-modal').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeGazeModal(event) {
-  // Close when clicking the backdrop (outside modal-inner) or the X button
-  if (event && event.target !== $('gaze-modal')) return;
-  $('gaze-modal').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-async function renderMoodTab() {
-  const body = $('mood-tab-body');
-  if (!body) return;
-  const checkins = Checkin.load();
-
-  if (!checkins.length) {
-    body.innerHTML = '<div class="hist-empty"><div class="hist-empty-icon">😊</div><p>No mood data yet.<br>Complete a daily check-in to start tracking!</p></div>';
-    return;
-  }
-
-  // Build 30-day calendar
-  const today = new Date();
-  const calHtml = Array.from({ length: 30 }, (_, i) => {
-    const d  = new Date(today.getTime() - (29 - i) * 86400000);
-    const ds = d.toDateString();
-    const entry = checkins.find(c => c.date === ds);
-    const isToday = ds === today.toDateString();
-    return `<div class="mcal-day ${entry ? entry.mood : ''} ${isToday ? 'today' : ''}" title="${entry ? entry.mood : 'No data'} · ${d.toLocaleDateString('en',{month:'short',day:'numeric'})}"></div>`;
-  }).join('');
-
-  // Distribution
-  const counts = { Good: 0, Moderate: 0, Bad: 0 };
-  checkins.forEach(c => { if (c.mood in counts) counts[c.mood]++; });
-
-  body.innerHTML = `
-    <div class="chart-section">
-      <div class="chart-section-header"><div class="chart-section-title">30-Day Mood Calendar</div></div>
-      <div class="mood-cal">${calHtml}</div>
-      <div class="mcal-legend">
-        <span><span class="mcal-dot" style="background:var(--green)"></span>Good</span>
-        <span><span class="mcal-dot" style="background:var(--orange)"></span>Moderate</span>
-        <span><span class="mcal-dot" style="background:var(--blue)"></span>Bad</span>
-        <span><span class="mcal-dot" style="background:var(--gray-1)"></span>No data</span>
-      </div>
-    </div>
-    <div class="chart-section">
-      <div class="chart-section-header"><div class="chart-section-title">Distribution</div></div>
-      <div class="mood-dist">
-        <div class="mood-dist-box"><div class="mood-dist-val" style="color:var(--green)">😊 ${counts.Good}</div><div class="mood-dist-lbl">Good</div></div>
-        <div class="mood-dist-box"><div class="mood-dist-val" style="color:var(--orange)">😐 ${counts.Moderate}</div><div class="mood-dist-lbl">Moderate</div></div>
-        <div class="mood-dist-box"><div class="mood-dist-val" style="color:var(--blue)">😔 ${counts.Bad}</div><div class="mood-dist-lbl">Bad</div></div>
-      </div>
-    </div>
-    <div class="chart-section">
-      <div class="chart-section-header">
-        <div class="chart-section-title">Mood Trend</div>
-        <div class="chart-badge green">Last ${Math.min(checkins.length,14)} days</div>
-      </div>
-      <div class="chart-wrap"><canvas id="chart-mood"></canvas></div>
-    </div>`;
-
-  await loadChartJS();
-  if (typeof Chart === 'undefined') return;
-  if (charts.mood) { try { charts.mood.destroy(); } catch {} }
-  const recent = checkins.slice(-14);
-  const moodNum = { Good: 3, Moderate: 2, Bad: 1 };
-  const ctx = document.getElementById('chart-mood')?.getContext('2d');
-  if (!ctx) return;
-  charts.mood = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: recent.map(c => { const d = new Date(c.date); return d.toLocaleDateString('en',{month:'short',day:'numeric'}); }),
-      datasets: [{
-        data: recent.map(c => moodNum[c.mood] || 2),
-        borderColor: '#1CB0F6', backgroundColor: '#1CB0F618',
-        borderWidth: 2.5, pointRadius: 6, fill: true, tension: .35,
-        pointBackgroundColor: recent.map(c => c.mood === 'Good' ? '#58CC02' : c.mood === 'Bad' ? '#1CB0F6' : '#FF9600'),
-      }],
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { ticks: { font: { family: 'Nunito', weight: '700' }, maxRotation: 30 }, grid: { display: false } },
-        y: {
-          min: 0.5, max: 3.5, ticks: {
-            stepSize: 1,
-            callback: v => ({ 1: '😔', 2: '😐', 3: '😊' }[v] || ''),
-            font: { family: 'Nunito', weight: '800', size: 14 },
-          },
-        },
-      },
-    },
-  });
 }
 
 function switchTab(name, el) {
@@ -2259,7 +2367,6 @@ function switchTab(name, el) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   if (el) el.classList.add('active');
   $('tab-' + name).classList.add('active');
-  if (name === 'mood') renderMoodTab();
 }
 
 function loadChartJS() {
@@ -2286,6 +2393,7 @@ function showScreen(id) {
 
 function exitLesson() {
   if (confirm('Exit lesson? Progress this round will be lost.')) {
+    stopSessionTimer();
     hideFeedback();
     Metrics.stopGazeIndicator();
     Gazer.end();
@@ -2294,20 +2402,13 @@ function exitLesson() {
   }
 }
 
-function goHome() {
-  Gazer.end();
-  destroyCharts();
-  showScreen('screen-home');
-  renderHome();
-}
-
 // ════════════════════════════════════════════════════════════════
 //  HELPERS
 // ════════════════════════════════════════════════════════════════
 function $(id)  { return document.getElementById(id); }
 function $$(id) { return document.getElementById(id); } // alias for clarity
 
-function drawGazePath(canvas, gazePoints, targetRect, gazeActive) {
+function drawGazePath(canvas, gazePoints, targetRect) {
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
@@ -2317,9 +2418,10 @@ function drawGazePath(canvas, gazePoints, targetRect, gazeActive) {
   ctx.fillRect(0, 0, W, H);
 
   // Grid lines (subtle)
-  ctx.strokeStyle = 'rgba(0,0,0,0.05)'; ctx.lineWidth = 1;
-  for (let x = 0; x <= W; x += W / 6) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
-  for (let y = 0; y <= H; y += H / 4) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+  ctx.strokeStyle = 'rgba(0,0,0,0.05)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x <= W; x += W / 6) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+  for (let y = 0; y <= H; y += H / 4) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
 
   // Target box (digit display area)
   if (targetRect) {
@@ -2327,68 +2429,67 @@ function drawGazePath(canvas, gazePoints, targetRect, gazeActive) {
     const bw = targetRect.w * W, bh = targetRect.h * H;
     ctx.fillStyle = 'rgba(88,204,2,0.12)';
     ctx.fillRect(bx, by, bw, bh);
-    ctx.strokeStyle = '#58CC02'; ctx.lineWidth = 2;
+    ctx.strokeStyle = '#58CC02';
+    ctx.lineWidth = 2;
     ctx.strokeRect(bx, by, bw, bh);
-    ctx.fillStyle = '#46A302'; ctx.font = 'bold 11px system-ui'; ctx.textAlign = 'center';
-    ctx.fillText('Target', bx + bw/2, by - 5 > 10 ? by - 5 : by + bh + 14);
+    // label
+    ctx.fillStyle = '#46A302';
+    ctx.font = 'bold 11px system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText('Target', bx + bw / 2, by - 5 > 10 ? by - 5 : by + bh + 14);
   }
 
-  console.log('gazePoints sample:', gazePoints.slice(0, 3));
-
   if (!gazePoints || gazePoints.length === 0) {
-    ctx.fillStyle = '#AFAFAF'; ctx.textAlign = 'center'; ctx.font = '13px system-ui';
-    ctx.fillText(gazeActive === false ? 'Camera not available' : 'No gaze data recorded', W/2, H/2);
+    ctx.fillStyle = '#AFAFAF'; ctx.textAlign = 'center';
+    ctx.font = '13px system-ui';
+    ctx.fillText('No gaze data recorded', W / 2, H / 2);
     return;
   }
 
-  // All points are normalised {nx, ny} — multiply directly by canvas size.
-  const padX = targetRect ? GAZE_PADDING / window.innerWidth  : 0;
-  const padY = targetRect ? GAZE_PADDING / window.innerHeight : 0;
-
-  const pts = gazePoints.map(p => {
-    const cx = p.nx * W;
-    const cy = p.ny * H;
-    let onTarget = p.onTarget;
-    if (onTarget === undefined && targetRect) {
-      onTarget = p.nx >= targetRect.x - padX && p.nx <= targetRect.x + targetRect.w + padX &&
-                 p.ny >= targetRect.y - padY && p.ny <= targetRect.y + targetRect.h + padY;
-    }
-    return { cx, cy, onTarget: !!onTarget };
-  });
-
   // Path line
-  ctx.beginPath(); ctx.strokeStyle = 'rgba(100,100,100,0.2)'; ctx.lineWidth = 1.5;
-  pts.forEach((p, i) => i === 0 ? ctx.moveTo(p.cx, p.cy) : ctx.lineTo(p.cx, p.cy));
+  ctx.beginPath();
+  ctx.strokeStyle = 'rgba(100,100,100,0.2)';
+  ctx.lineWidth = 1.5;
+  gazePoints.forEach((p, i) => {
+    const x = p.nx * W, y = p.ny * H;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
   ctx.stroke();
 
-  // Dots — green = on target, orange = off target; opacity fades in over time
-  pts.forEach((p, i) => {
-    const alpha = 0.35 + 0.65 * ((i + 1) / pts.length);
-    ctx.beginPath(); ctx.arc(p.cx, p.cy, 3.5, 0, Math.PI * 2);
-    ctx.fillStyle = p.onTarget ? `rgba(88,204,2,${alpha})` : `rgba(255,75,75,${alpha})`;
+  // Dots — colored by on-target, opacity by time
+  gazePoints.forEach((p, i) => {
+    const x = p.nx * W, y = p.ny * H;
+    const t = (i + 1) / gazePoints.length;
+    const alpha = 0.35 + 0.65 * t;
+    ctx.beginPath();
+    ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+    ctx.fillStyle = p.onTarget
+      ? `rgba(88,204,2,${alpha})`
+      : `rgba(255,150,0,${alpha})`;
     ctx.fill();
   });
 
-  // Start (blue S) and end (red E) markers
+  // Start marker (blue) and end marker (red)
   const drawMarker = (p, color, label) => {
-    ctx.beginPath(); ctx.arc(p.cx, p.cy, 6, 0, Math.PI * 2);
+    const x = p.nx * W, y = p.ny * H;
+    ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2);
     ctx.fillStyle = color; ctx.fill();
     ctx.fillStyle = 'white'; ctx.font = 'bold 8px system-ui'; ctx.textAlign = 'center';
-    ctx.fillText(label, p.cx, p.cy + 3);
+    ctx.fillText(label, x, y + 3);
   };
-  drawMarker(pts[0], '#1CB0F6', 'S');
-  drawMarker(pts[pts.length - 1], '#FF4B4B', 'E');
+  drawMarker(gazePoints[0], '#1CB0F6', 'S');
+  drawMarker(gazePoints[gazePoints.length - 1], '#FF4B4B', 'E');
 
   // Legend
   const legendY = H - 14;
   ctx.font = '10px system-ui'; ctx.textAlign = 'left';
-  ctx.fillStyle = 'rgba(88,204,2,0.9)';  ctx.fillRect(8,  legendY-8, 10, 10);
-  ctx.fillStyle = '#555'; ctx.fillText('on target',  22, legendY);
-  ctx.fillStyle = 'rgba(255,75,75,0.9)'; ctx.fillRect(82, legendY-8, 10, 10);
+  ctx.fillStyle = 'rgba(88,204,2,0.9)'; ctx.fillRect(8, legendY - 8, 10, 10);
+  ctx.fillStyle = '#555'; ctx.fillText('on target', 22, legendY);
+  ctx.fillStyle = 'rgba(255,150,0,0.9)'; ctx.fillRect(82, legendY - 8, 10, 10);
   ctx.fillStyle = '#555'; ctx.fillText('off target', 96, legendY);
-  ctx.fillStyle = '#1CB0F6'; ctx.beginPath(); ctx.arc(163, legendY-3, 5, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#1CB0F6'; ctx.beginPath(); ctx.arc(163, legendY - 3, 5, 0, Math.PI*2); ctx.fill();
   ctx.fillStyle = '#555'; ctx.fillText('start', 172, legendY);
-  ctx.fillStyle = '#FF4B4B'; ctx.beginPath(); ctx.arc(205, legendY-3, 5, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#FF4B4B'; ctx.beginPath(); ctx.arc(205, legendY - 3, 5, 0, Math.PI*2); ctx.fill();
   ctx.fillStyle = '#555'; ctx.fillText('end', 214, legendY);
 }
 function showPhase(id) {
@@ -2428,15 +2529,1195 @@ function spawnConfetti(n) {
 }
 
 // ════════════════════════════════════════════════════════════════
-//  BOOT
+//  GENERIC GAME RESULTS  (non-digit-span games use this)
 // ════════════════════════════════════════════════════════════════
-hydrate();
-if (!Config.isSetup()) {
-  showScreen('screen-onboarding');
-} else {
+function showGameResults({ gameId, accuracy, avgRT, sessionDuration, xp = 0, extraLines = [] }) {
+  const today     = new Date().toDateString();
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  if (S.lastPlayed !== today) {
+    S.streak   = (S.lastPlayed === yesterday || S.lastPlayed === null) ? S.streak + 1 : 1;
+    S.lastPlayed = today;
+  }
+  S.xp               += xp;
+  S.dailyXP          += xp;
+  S.sessionXP         = xp;
+  S.lessonsCompleted++;
+  persist();
+
+  // Build a session record compatible with the existing dashboard
+  const now = new Date();
+  const focusScore = Math.round(accuracy * 100);
+  const sess = {
+    id: now.getTime(), date: now.toDateString(),
+    displayDate: now.toLocaleDateString('en', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }),
+    accuracy, correctRounds: Math.round(accuracy * 3), xp,
+    avgRT, fixationRate: null, focusScore, gazeEnabled: false,
+    rounds: [], gameId, sessionDuration, mood: currentMood,
+  };
+  pushSession(sess);
+
+  // Show results screen (reuse existing UI)
+  showScreen('screen-results');
+  const pct = accuracy;
+  if (pct >= 1)   { $('res-emoji').textContent = '🏆'; $('res-title').textContent = 'Perfect!';     $('res-sub').textContent = 'Flawless performance!'; spawnConfetti(80); }
+  else if (pct >= .67) { $('res-emoji').textContent = '⭐'; $('res-title').textContent = 'Great Work!';  $('res-sub').textContent = 'Keep pushing!'; spawnConfetti(30); }
+  else            { $('res-emoji').textContent = '💪'; $('res-title').textContent = 'Keep Going!';   $('res-sub').textContent = 'Every rep builds your brain!'; }
+
+  $('res-score').textContent  = Math.round(accuracy * 100) + '%';
+  $('res-streak').textContent = S.streak;
+  countUp($('res-xp'), 0, xp, 900);
+
+  if (avgRT != null) {
+    $('res-rt').textContent     = (avgRT / 1000).toFixed(2) + 's';
+    $('res-rt-sub').textContent = 'avg response time';
+  } else {
+    $('res-rt').textContent = '—'; $('res-rt-sub').textContent = '';
+  }
+  $('res-focus').textContent     = focusScore;
+  $('res-focus-sub').textContent = 'based on accuracy';
+  $('res-focus').className       = 'rcard-val ' + focusColor(focusScore);
+  $('gaze-breakdown').style.display = 'none';
+
+  const diffCard = $('res-diff-card');
+  const g = GAMES[gameId] || {};
+  diffCard.style.display = 'flex'; diffCard.className = 'diff-promo-card same';
+  $('res-diff-icon').textContent  = g.icon || '🎮';
+  $('res-diff-title').textContent = g.name || 'Game Complete';
+  $('res-diff-sub').textContent   = sessionDuration ? `Time: ${Math.round(sessionDuration/1000)}s` : '';
+}
+
+// ════════════════════════════════════════════════════════════════
+//  GAME 2 — TAP WHEN X
+// ════════════════════════════════════════════════════════════════
+const TAPX_SYMBOLS    = ['A','B','C','D','E','F','G','H','★','●','▲','◆','✦','○','□'];
+const TAPX_TOTAL      = 20;
+const TAPX_TARGET_PCT = 0.3; // 30% targets
+
+let _tapxState = {};
+let _tapxInterval  = null;
+let _tapxStimulusTO = null;
+let _tapxBlankTO    = null;
+
+function startTapXGame() {
+  const diff   = S.difficulty;
+  const stimMs = diff === 'easy' ? 1600 : diff === 'medium' ? 1200 : 900;
+  const targetSym = TAPX_SYMBOLS[Math.floor(Math.random() * 5)]; // pick from first 5
+
+  _tapxState = {
+    target: targetSym, total: TAPX_TOTAL, idx: 0,
+    hits: 0, misses: 0, falseAlarms: 0, rts: [],
+    stimMs, sequence: buildTapxSequence(targetSym),
+    stimStart: null, tapped: false, gameStart: Date.now(),
+  };
+
+  $('tapx-target-sym').textContent = targetSym;
+  $('tapx-hits').textContent = '0';
+  $('tapx-fa').textContent   = '0';
+  $('tapx-rt-disp').textContent = '—';
+  $('tapx-stim-box').textContent = '·';
+  $('tapx-stim-box').className   = 'tapx-stimulus-box';
+  $('tapx-mini-prog').style.width = '0%';
+  $('tapx-tap-btn').disabled = true;
+  startTimerFor('tapx-timer');
+  showScreen('screen-tapx');
+  setTimeout(tapxNextStimulus, 800);
+}
+
+function buildTapxSequence(target) {
+  const seq = [];
+  const nTargets = Math.round(TAPX_TOTAL * TAPX_TARGET_PCT);
+  for (let i = 0; i < TAPX_TOTAL; i++) seq.push(i < nTargets ? 'target' : 'distractor');
+  // shuffle
+  for (let i = seq.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [seq[i], seq[j]] = [seq[j], seq[i]];
+  }
+  return seq;
+}
+
+function tapxNextStimulus() {
+  const st = _tapxState;
+  if (st.idx >= st.total) { tapxFinish(); return; }
+
+  const isTarget  = st.sequence[st.idx] === 'target';
+  const distractors = TAPX_SYMBOLS.filter(s => s !== st.target);
+  const symbol    = isTarget ? st.target : distractors[Math.floor(Math.random() * distractors.length)];
+
+  const box = $('tapx-stim-box');
+  box.textContent = symbol;
+  box.className   = 'tapx-stimulus-box';
+  $('tapx-tap-btn').disabled = false;
+  st.tapped    = false;
+  st.isTarget  = isTarget;
+  st.stimStart = performance.now();
+  $('tapx-mini-prog').style.width = (st.idx / st.total * 100) + '%';
+  $('tapx-prog').style.width      = (st.idx / st.total * 100) + '%';
+
+  _tapxStimulusTO = setTimeout(() => {
+    // Time up for this stimulus — score it
+    if (!st.tapped) {
+      if (st.isTarget) st.misses++;  // miss
+    }
+    box.textContent = '·'; box.className = 'tapx-stimulus-box';
+    $('tapx-tap-btn').disabled = true;
+    st.idx++;
+    _tapxBlankTO = setTimeout(tapxNextStimulus, 300);
+  }, st.stimMs);
+}
+
+function tapxTap() {
+  const st = _tapxState;
+  if (st.tapped || $('tapx-tap-btn').disabled) return;
+  st.tapped = true;
+  const rt  = performance.now() - st.stimStart;
+  const box = $('tapx-stim-box');
+
+  if (st.isTarget) {
+    st.hits++; st.rts.push(rt);
+    box.classList.add('hit');
+  } else {
+    st.falseAlarms++;
+    box.classList.add('miss');
+  }
+  $('tapx-hits').textContent = st.hits;
+  $('tapx-fa').textContent   = st.falseAlarms;
+  if (st.rts.length) $('tapx-rt-disp').textContent = (avg(st.rts) / 1000).toFixed(2) + 's';
+}
+
+function tapxFinish() {
+  stopTimerFor('tapx-timer');
+  clearTimeout(_tapxStimulusTO); clearTimeout(_tapxBlankTO);
+  const st    = _tapxState;
+  const nTgts = Math.round(TAPX_TOTAL * TAPX_TARGET_PCT);
+  const accuracy = clamp((st.hits - st.falseAlarms * 0.5) / nTgts, 0, 1);
+  const avgRTval = st.rts.length ? avg(st.rts) : null;
+  const xp = Math.round(accuracy * 40) + 10;
+  showGameResults({
+    gameId: 'tap-x', accuracy, avgRT: avgRTval,
+    sessionDuration: Date.now() - st.gameStart, xp,
+  });
+}
+
+// ════════════════════════════════════════════════════════════════
+//  GAME 3 — MATCH & RECALL
+// ════════════════════════════════════════════════════════════════
+const MATCH_EMOJIS = ['🍎','🚀','🐬','🌈','🎸','🦋','🍕','🌸','🏆','⚽','🎯','🦊','🍦','🎠','🌙'];
+
+let _matchState  = {};
+let _matchInterval = null;
+
+function startMatchRecallGame() {
+  const diff  = S.difficulty;
+  const pairs = diff === 'easy' ? 6 : diff === 'medium' ? 8 : 10;
+  const cols  = diff === 'easy' ? 3 : 4;
+  const revealMs = diff === 'easy' ? 4000 : diff === 'medium' ? 3000 : 2000;
+
+  const emojis = MATCH_EMOJIS.slice(0, pairs);
+  const cards  = [...emojis, ...emojis];
+  for (let i = cards.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [cards[i], cards[j]] = [cards[j], cards[i]];
+  }
+
+  _matchState = {
+    cards, pairs, cols, revealMs,
+    flipped: [], matched: new Set(), errors: 0,
+    locked: true, gameStart: Date.now(),
+  };
+
+  const grid = $('match-grid');
+  grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  $('match-pairs-left').textContent = `Pairs left: ${pairs}`;
+  $('match-errors-ct').textContent  = '';
+  $('match-reveal-fill').style.transition = 'none';
+  $('match-reveal-fill').style.width = '100%';
+  startTimerFor('match-timer');
+  showScreen('screen-match');
+
+  renderMatchGrid(true); // all face-up
+  setTimeout(() => {
+    $('match-reveal-fill').style.transition = `width ${revealMs}ms linear`;
+    $('match-reveal-fill').style.width = '0%';
+  }, 50);
+  setTimeout(() => {
+    renderMatchGrid(false); // flip face-down
+    _matchState.locked = false;
+  }, revealMs + 50);
+}
+
+function renderMatchGrid(faceUp) {
+  const grid = $('match-grid');
+  const st   = _matchState;
+  grid.innerHTML = '';
+  st.cards.forEach((emoji, i) => {
+    const el = document.createElement('div');
+    const isMatched = st.matched.has(i);
+    el.className = 'match-card' + (isMatched ? ' matched' : faceUp ? '' : ' face-down');
+    if (!el.classList.contains('face-down') || isMatched) el.textContent = emoji;
+    el.dataset.idx = i;
+    el.onclick = () => matchFlip(i);
+    grid.appendChild(el);
+  });
+}
+
+function matchFlip(idx) {
+  const st = _matchState;
+  if (st.locked) return;
+  if (st.matched.has(idx)) return;
+  if (st.flipped.includes(idx)) return;
+  if (st.flipped.length >= 2) return;
+
+  // Reveal card
+  const el = grid_card(idx);
+  if (!el) return;
+  el.classList.remove('face-down');
+  el.textContent = st.cards[idx];
+  st.flipped.push(idx);
+
+  if (st.flipped.length === 2) {
+    st.locked = true;
+    const [a, b] = st.flipped;
+    if (st.cards[a] === st.cards[b]) {
+      st.matched.add(a); st.matched.add(b);
+      grid_card(a)?.classList.add('matched');
+      grid_card(b)?.classList.add('matched');
+      st.flipped = [];
+      $('match-pairs-left').textContent = `Pairs left: ${st.pairs - st.matched.size / 2}`;
+      st.locked = false;
+      if (st.matched.size === st.cards.length) matchFinish();
+    } else {
+      st.errors++;
+      grid_card(a)?.classList.add('wrong');
+      grid_card(b)?.classList.add('wrong');
+      $('match-errors-ct').textContent = `${st.errors} error${st.errors !== 1 ? 's' : ''}`;
+      setTimeout(() => {
+        grid_card(a)?.classList.remove('wrong'); grid_card(a)?.classList.add('face-down'); grid_card(a)?.removeAttribute('textContent');
+        grid_card(b)?.classList.remove('wrong'); grid_card(b)?.classList.add('face-down'); grid_card(b)?.removeAttribute('textContent');
+        if (grid_card(a)) grid_card(a).textContent = '';
+        if (grid_card(b)) grid_card(b).textContent = '';
+        st.flipped = []; st.locked = false;
+      }, 900);
+    }
+  }
+}
+
+function grid_card(idx) { return document.querySelector(`#match-grid [data-idx="${idx}"]`); }
+
+function matchFinish() {
+  stopTimerFor('match-timer');
+  const st = _matchState;
+  const dur = Date.now() - st.gameStart;
+  const maxErrors = st.pairs * 1.5;
+  const accuracy  = clamp(1 - st.errors / maxErrors, 0, 1);
+  const avgRTval  = dur / (st.pairs + st.errors);
+  const xp = Math.round(accuracy * 40) + 10;
+  showGameResults({ gameId: 'match-recall', accuracy, avgRT: avgRTval, sessionDuration: dur, xp });
+}
+
+// ════════════════════════════════════════════════════════════════
+//  GAME 4 — ODD ONE OUT
+// ════════════════════════════════════════════════════════════════
+const ODO_ROUNDS_TOTAL = 10;
+const ODO_QUESTIONS = [
+  { q:'🍎 Apple, 🍇 Grapes, 🍌 Banana, 🐄 Cow, 🥭 Mango',      odd:3, why:'Not a fruit' },
+  { q:'🐕 Dog, 🐈 Cat, 🐟 Fish, 🌹 Rose, 🐇 Rabbit',           odd:3, why:'Not an animal' },
+  { q:'🚗 Car, 🚌 Bus, ✈️ Plane, 🍕 Pizza, 🚂 Train',          odd:3, why:'Not a vehicle' },
+  { q:'🔴 Red, 🟢 Green, 🔵 Blue, 🌊 Wave, 🟡 Yellow',         odd:3, why:'Not a color' },
+  { q:'🎹 Piano, 🎸 Guitar, 🎺 Trumpet, 🖥️ Computer, 🥁 Drums',odd:3, why:'Not an instrument' },
+  { q:'🌍 Earth, 🌙 Moon, ⭐ Star, 🏠 House, ☀️ Sun',          odd:3, why:'Not in space' },
+  { q:'🇫🇷 France, 🇩🇪 Germany, 🇯🇵 Japan, 🍦 Ice Cream, 🇧🇷 Brazil',odd:3,why:'Not a country'},
+  { q:'📚 Books, 📖 Novel, 📜 Scroll, 🏀 Basketball, 📰 Newspaper',odd:3,why:'Not reading material'},
+  { q:'🧊 Ice, ❄️ Snow, 🌨️ Sleet, 🌋 Volcano, 🏔️ Glacier',  odd:3, why:'Not cold' },
+  { q:'🎭 Theater, 🎬 Cinema, 🎪 Circus, 🔧 Wrench, 🎨 Gallery',odd:3,why:'Not entertainment'},
+  // More complex
+  { q:'Robin, Sparrow, Eagle, Penguin, Falcon',  odd:3, why:'Penguin cannot fly' },
+  { q:'Mercury, Venus, Earth, Moon, Mars',        odd:3, why:'Moon is not a planet' },
+  { q:'Algebra, Geometry, Calculus, Poetry, Statistics',odd:3,why:'Not math'},
+  { q:'Democracy, Monarchy, Oligarchy, Ecosystem, Republic',odd:3,why:'Not a government type'},
+  { q:'Violin, Cello, Viola, Flute, Double Bass', odd:3, why:'Flute is not a string instrument'},
+];
+
+let _odoState = {};
+
+function startOddOneOutGame() {
+  _odoState = {
+    round: 0, score: 0, rts: [], gameStart: Date.now(),
+    questions: shuffle(ODO_QUESTIONS).slice(0, ODO_ROUNDS_TOTAL),
+    answered: false,
+  };
+  startTimerFor('odo-timer');
+  showScreen('screen-odo');
+  odoShowRound();
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+
+function odoShowRound() {
+  const st = _odoState;
+  if (st.round >= ODO_ROUNDS_TOTAL) { odoFinish(); return; }
+  const q = st.questions[st.round];
+  const items = q.q.split(', ');
+  st.answered = false;
+  st.roundStart = performance.now();
+
+  $('odo-round-label').textContent = `Round ${st.round + 1} / ${ODO_ROUNDS_TOTAL}`;
+  $('odo-score-label').textContent = `Score: ${st.score}`;
+  $('odo-prog').style.width = (st.round / ODO_ROUNDS_TOTAL * 100) + '%';
+
+  const questionText = items.filter((_,i) => i !== q.odd).slice(0,2).join(', ') + ' … or something else?';
+  $('odo-question').textContent = q.q.split(', ').join('  |  ');
+
+  const optDiv = $('odo-options');
+  optDiv.innerHTML = items.map((item, i) =>
+    `<button class="odo-option" onclick="odoAnswer(${i})" data-idx="${i}">
+       <span class="odo-option-num">${String.fromCharCode(65+i)}</span>${item}
+     </button>`
+  ).join('');
+}
+
+function odoAnswer(idx) {
+  const st = _odoState;
+  if (st.answered) return;
+  st.answered = true;
+  const q   = st.questions[st.round];
+  const rt  = performance.now() - st.roundStart;
+  st.rts.push(rt);
+
+  const opts = document.querySelectorAll('.odo-option');
+  if (idx === q.odd) {
+    st.score++;
+    opts[idx].classList.add('correct');
+  } else {
+    opts[idx].classList.add('wrong');
+    opts[q.odd].classList.add('reveal');
+  }
+  opts.forEach(o => o.disabled = true);
+
+  setTimeout(() => { st.round++; odoShowRound(); }, 1200);
+}
+
+function odoFinish() {
+  stopTimerFor('odo-timer');
+  const st = _odoState;
+  const accuracy = st.score / ODO_ROUNDS_TOTAL;
+  const xp = Math.round(accuracy * 50) + 10;
+  showGameResults({ gameId:'odd-one-out', accuracy, avgRT: avg(st.rts)||null, sessionDuration: Date.now()-st.gameStart, xp });
+}
+
+// ════════════════════════════════════════════════════════════════
+//  GAME 5 — TRACK 2 OBJECTS
+// ════════════════════════════════════════════════════════════════
+const TRACK_ROUNDS = 8;
+
+let _trackState   = {};
+let _trackInterval = null;
+
+function startTrackObjectsGame() {
+  _trackState = {
+    round: 0, score: 0, rts: [], answered: false, gameStart: Date.now(),
+    moving: false,
+  };
+  startTimerFor('track-timer');
+  showScreen('screen-track');
+  $('track-q-panel').classList.remove('show');
+  trackNextRound();
+}
+
+function trackNextRound() {
+  const st = _trackState;
+  if (st.round >= TRACK_ROUNDS) { trackFinish(); return; }
+  $('track-q-panel').classList.remove('show');
+  $('track-status').textContent = `Round ${st.round + 1} / ${TRACK_ROUNDS}`;
+
+  const arena  = $('track-arena');
+  const W = arena.clientWidth  - 50;
+  const H = arena.clientHeight - 50;
+
+  // Random start positions
+  let ax = 20 + Math.random() * (W * 0.4), ay = 20 + Math.random() * H * 0.8;
+  let bx = W * 0.55 + Math.random() * (W * 0.4), by = 20 + Math.random() * H * 0.8;
+
+  // Random velocities
+  const speedA = 60 + Math.random() * 80; // px/s
+  const speedB = 60 + Math.random() * 80;
+  const dirA = Math.random() * Math.PI * 2;
+  const dirB = Math.random() * Math.PI * 2;
+  let vax = Math.cos(dirA) * speedA, vay = Math.sin(dirA) * speedA;
+  let vbx = Math.cos(dirB) * speedB, vby = Math.sin(dirB) * speedB;
+
+  const objA = $('track-obj-a'); const objB = $('track-obj-b');
+  objA.style.left = ax + 'px'; objA.style.top = ay + 'px';
+  objB.style.left = bx + 'px'; objB.style.top = by + 'px';
+
+  // Show countdown overlay
+  const ov = $('track-cd-overlay');
+  const cdNum = $('track-cd-num');
+  ov.style.display = 'flex';
+  let cd = 3;
+  cdNum.textContent = cd;
+  const cdTick = setInterval(() => {
+    cd--;
+    if (cd <= 0) { clearInterval(cdTick); ov.style.display = 'none'; trackMove(speedA, speedB, dirA, dirB, ax, ay, bx, by, W, H); }
+    else cdNum.textContent = cd;
+  }, 700);
+
+  // Store for question generation
+  st.lastSpeedA = speedA; st.lastSpeedB = speedB;
+  st.lastDirA = dirA; st.lastDirB = dirB;
+}
+
+function trackMove(speedA, speedB, dirA, dirB, ax, ay, bx, by, W, H) {
+  const st   = _trackState;
+  const dur  = 2500; // ms movement time
+  const fps  = 30;
+  const dt   = 1000 / fps;
+  let t      = 0;
+  let vax = Math.cos(dirA)*speedA/fps, vay = Math.sin(dirA)*speedA/fps;
+  let vbx = Math.cos(dirB)*speedB/fps, vby = Math.sin(dirB)*speedB/fps;
+
+  const objA = $('track-obj-a'); const objB = $('track-obj-b');
+  $('track-status').textContent = 'Watch both objects!';
+
+  _trackInterval = setInterval(() => {
+    ax += vax; ay += vay; bx += vbx; by += vby;
+    // Bounce off walls
+    if (ax < 0 || ax > W) { vax *= -1; ax = clamp(ax, 0, W); }
+    if (ay < 0 || ay > H) { vay *= -1; ay = clamp(ay, 0, H); }
+    if (bx < 0 || bx > W) { vbx *= -1; bx = clamp(bx, 0, W); }
+    if (by < 0 || by > H) { vby *= -1; by = clamp(by, 0, H); }
+    objA.style.left = ax + 'px'; objA.style.top = ay + 'px';
+    objB.style.left = bx + 'px'; objB.style.top = by + 'px';
+    t += dt;
+    if (t >= dur) { clearInterval(_trackInterval); _trackInterval = null; trackAskQuestion(speedA, speedB, dirA); }
+  }, dt);
+}
+
+function trackAskQuestion(speedA, speedB, dirA) {
+  const st  = _trackState;
+  st.roundStart = performance.now();
+  st.answered   = false;
+  const questions = [
+    { text: 'Which object moved FASTER?',
+      choices: ['A (blue)', 'B (orange)', 'About the same'],
+      correct: speedA > speedB * 1.15 ? 0 : speedB > speedA * 1.15 ? 1 : 2 },
+    { text: 'Which object had a more LEFTWARD direction?',
+      choices: ['A (blue)', 'B (orange)'],
+      correct: Math.cos(dirA) < 0 ? 0 : 1 },
+  ];
+  const qData = questions[Math.floor(Math.random() * questions.length)];
+  $('track-question').textContent = qData.text;
+  const choicesDiv = $('track-choices');
+  choicesDiv.innerHTML = qData.choices.map((c, i) =>
+    `<button class="track-choice" onclick="trackAnswer(${i},${qData.correct})">${c}</button>`
+  ).join('');
+  $('track-q-panel').classList.add('show');
+  $('track-status').textContent = 'Answer the question!';
+}
+
+function trackAnswer(idx, correct) {
+  const st = _trackState;
+  if (st.answered) return;
+  st.answered = true;
+  const rt = performance.now() - st.roundStart;
+  st.rts.push(rt);
+  const choices = document.querySelectorAll('.track-choice');
+  if (idx === correct) { st.score++; choices[idx].classList.add('correct'); }
+  else { choices[idx].classList.add('wrong'); choices[correct].classList.add('correct'); }
+  choices.forEach(c => c.style.pointerEvents = 'none');
+  setTimeout(() => { st.round++; trackNextRound(); }, 1000);
+}
+
+function trackFinish() {
+  stopTimerFor('track-timer');
+  const st = _trackState;
+  const accuracy = st.score / TRACK_ROUNDS;
+  const xp = Math.round(accuracy * 50) + 10;
+  showGameResults({ gameId:'track-objects', accuracy, avgRT: avg(st.rts)||null, sessionDuration: Date.now()-st.gameStart, xp });
+}
+
+// ════════════════════════════════════════════════════════════════
+//  GAME 6 — DUAL N-BACK
+// ════════════════════════════════════════════════════════════════
+const DNB_TRIALS     = 22;
+const DNB_TRIAL_MS   = 2500;
+const DNB_LETTERS    = ['B','D','G','K','P','R','S','T'];
+
+let _dnbState   = {};
+let _dnbInterval = null;
+
+function startDualNBackGame() {
+  const n = S.difficulty === 'hard' ? 3 : 2;
+  _dnbState = {
+    n, trial: 0, total: DNB_TRIALS,
+    posHistory: [], letHistory: [],
+    posHits: 0, letHits: 0, posFA: 0, letFA: 0,
+    posPressed: false, letPressed: false,
+    gameStart: Date.now(), rts: [], correctResponses: 0, totalTargets: 0,
+    locked: false,
+  };
+
+  $('dnb-n-badge').textContent  = `N = ${n}`;
+  $('dnb-trial-num').textContent = '0';
+  $('dnb-hits').textContent = '0';
+  $('dnb-fa').textContent   = '0';
+  $('dnb-prog').style.width = '0%';
+  $('dnb-pos-btn').disabled = true;
+  $('dnb-let-btn').disabled = true;
+  for (let i = 0; i < 9; i++) { const c = $(`dnb-c${i}`); if(c) c.classList.remove('lit'); }
+  $('dnb-letter-box').textContent = '—';
+  $('dnb-letter-box').classList.remove('show');
+
+  startTimerFor('dnb-timer');
+  showScreen('screen-dnb');
+  setTimeout(dnbNextTrial, 800);
+}
+
+function dnbNextTrial() {
+  const st = _dnbState;
+  if (st.trial >= st.total) { dnbFinish(); return; }
+
+  // Hide previous stimulus
+  for (let i = 0; i < 9; i++) { const c = $(`dnb-c${i}`); if(c) c.classList.remove('lit'); }
+  const lb = $('dnb-letter-box'); lb.textContent = '—'; lb.classList.remove('show');
+  $('dnb-pos-btn').disabled = true;
+  $('dnb-let-btn').disabled = true;
+
+  // Score previous trial
+  if (st.trial > 0) dnbScoreTrial();
+
+  // New stimulus
+  const pos    = Math.floor(Math.random() * 9);
+  const letter = DNB_LETTERS[Math.floor(Math.random() * DNB_LETTERS.length)];
+  st.posHistory.push(pos); st.letHistory.push(letter);
+  st.posPressed = false; st.letPressed = false;
+  st.trialStart = performance.now();
+
+  // Light up grid cell
+  const cell = $(`dnb-c${pos}`); if (cell) cell.classList.add('lit');
+  lb.textContent = letter; lb.classList.add('show');
+
+  st.trial++;
+  $('dnb-trial-num').textContent = st.trial;
+  $('dnb-prog').style.width = (st.trial / st.total * 100) + '%';
+
+  // Enable buttons after N trials
+  if (st.trial > st.n) {
+    $('dnb-pos-btn').disabled = false;
+    $('dnb-let-btn').disabled = false;
+  }
+
+  _dnbInterval = setTimeout(dnbNextTrial, DNB_TRIAL_MS);
+}
+
+function dnbScoreTrial() {
+  const st = _dnbState;
+  const i  = st.posHistory.length - 1;
+  if (i < st.n) return;
+
+  const posMatch = st.posHistory[i] === st.posHistory[i - st.n];
+  const letMatch = st.letHistory[i] === st.letHistory[i - st.n];
+
+  if (posMatch) st.totalTargets++;
+  if (letMatch) st.totalTargets++;
+
+  if (posMatch && st.posPressed) st.posHits++;
+  else if (!posMatch && st.posPressed) st.posFA++;
+
+  if (letMatch && st.letPressed) st.letHits++;
+  else if (!letMatch && st.letPressed) st.letFA++;
+
+  const hitThisTrial = (posMatch ? st.posPressed : true) && (letMatch ? st.letPressed : true);
+  if (posMatch && st.posPressed && letMatch && st.letPressed) st.correctResponses++;
+  else if (posMatch && st.posPressed && !letMatch) st.correctResponses++;
+  else if (letMatch && st.letPressed && !posMatch) st.correctResponses++;
+  else if (!posMatch && !letMatch && !st.posPressed && !st.letPressed) st.correctResponses++;
+
+  $('dnb-hits').textContent = st.posHits + st.letHits;
+  $('dnb-fa').textContent   = st.posFA + st.letFA;
+}
+
+function dnbPress(type) {
+  const st = _dnbState;
+  if (type === 'pos') st.posPressed = true;
+  if (type === 'let') st.letPressed = true;
+  if (st.trialStart) st.rts.push(performance.now() - st.trialStart);
+}
+
+function dnbFinish() {
+  clearTimeout(_dnbInterval); _dnbInterval = null;
+  stopTimerFor('dnb-timer');
+  const st = _dnbState;
+  const eligibleTrials = Math.max(1, st.total - st.n);
+  const accuracy = clamp(st.correctResponses / eligibleTrials, 0, 1);
+  const xp = Math.round(accuracy * 60) + 15;
+
+  // Auto-promote N if excellent performance
+  if (accuracy >= 0.8 && st.n < 3) {
+    S.difficulty = 'hard'; persist();
+  }
+  showGameResults({ gameId:'dual-nback', accuracy, avgRT: st.rts.length ? avg(st.rts) : null, sessionDuration: Date.now()-st.gameStart, xp });
+}
+
+// ════════════════════════════════════════════════════════════════
+//  PER-GAME SESSION TIMER HELPERS
+// ════════════════════════════════════════════════════════════════
+function startTimerFor(elemId) {
+  // Reuse the main session timer mechanism on a specific element
+  const limitMs = getSessionTimeLimitMs();
+  const start   = Date.now();
+  const el      = $(elemId);
+  if (!el) return;
+  if (_sessionTimerInterval) clearInterval(_sessionTimerInterval);
+  _sessionStartTime = start;
+
+  const update = () => {
+    const remaining = Math.max(0, limitMs - (Date.now() - start));
+    const secs = Math.ceil(remaining / 1000);
+    const m = Math.floor(secs/60), s = secs%60;
+    el.textContent = `${m}:${s.toString().padStart(2,'0')}`;
+    el.classList.toggle('warning', secs <= 60 && secs > 30);
+    el.classList.toggle('danger',  secs <= 30);
+    if (remaining <= 0) {
+      clearInterval(_sessionTimerInterval); _sessionTimerInterval = null;
+      // Force-finish whichever game is active
+      if (currentGameId === 'tap-x')         tapxFinish();
+      else if (currentGameId === 'match-recall') matchFinish();
+      else if (currentGameId === 'odd-one-out')  odoFinish();
+      else if (currentGameId === 'track-objects') trackFinish();
+      else if (currentGameId === 'dual-nback')    dnbFinish();
+      else finishLesson(true);
+    }
+  };
+  update();
+  _sessionTimerInterval = setInterval(update, 1000);
+}
+
+function stopTimerFor(elemId) {
+  clearInterval(_sessionTimerInterval); _sessionTimerInterval = null;
+  const el = $(elemId); if (el) { el.classList.remove('warning','danger'); }
+}
+
+// ════════════════════════════════════════════════════════════════
+//  ENHANCED DASHBOARD — MOOD CORRELATION + PER-SESSION DETAILS
+// ════════════════════════════════════════════════════════════════
+function renderHistory() {
+  const sessions = loadSessions().slice().reverse();
+  const list  = $('history-list');
+  const empty = $('hist-empty');
+  list.innerHTML = '';
+  if (!sessions.length) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  sessions.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'hist-card';
+    const rtStr    = s.avgRT != null ? (s.avgRT/1000).toFixed(2)+'s' : '—';
+    const fixStr   = s.fixationRate != null ? Math.round(s.fixationRate*100)+'%' : '—';
+    const badgeCls = s.focusScore >= 70 ? 'high' : s.focusScore >= 40 ? 'medium' : s.focusScore > 0 ? 'low' : 'na';
+    const gameInfo = GAMES[s.gameId] || GAMES['digit-span'];
+    const moodStr  = s.mood ? ['😴','😐','🙂','😊','🤩'][s.mood-1] : '';
+    const durStr   = s.sessionDuration ? Math.round(s.sessionDuration/1000)+'s' : '—';
+    card.innerHTML = `
+      <div class="hist-card-top">
+        <div class="hist-date">${s.displayDate||s.date} ${moodStr}</div>
+        <div class="focus-badge ${badgeCls}">Focus ${s.focusScore}</div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--gray-2);margin-bottom:8px">${gameInfo.icon} ${gameInfo.name}</div>
+      <div class="hist-metrics">
+        <div class="hist-metric"><div class="hist-metric-val green">${Math.round(s.accuracy*100)}%</div><div class="hist-metric-name">Accuracy</div></div>
+        <div class="hist-metric"><div class="hist-metric-val blue">${rtStr}</div><div class="hist-metric-name">Avg RT</div></div>
+        <div class="hist-metric"><div class="hist-metric-val purple">${durStr}</div><div class="hist-metric-name">Duration</div></div>
+        <div class="hist-metric"><div class="hist-metric-val orange">${s.xp}</div><div class="hist-metric-name">XP</div></div>
+      </div>`;
+    list.appendChild(card);
+  });
+}
+
+function renderCharts() {
+  const sessions  = loadSessions().slice(-7);
+  const labels    = sessions.map(s => s.displayDate || s.date);
+  const focusData = sessions.map(s => s.focusScore);
+  const accData   = sessions.map(s => Math.round(s.accuracy * 100));
+  const rtData    = sessions.map(s => s.avgRT != null ? Math.round(s.avgRT) : null);
+  const moodData  = sessions.map(s => s.mood != null ? s.mood * 20 : null); // scale to 0-100
+
+  destroyCharts();
+
+  const baseOpts = {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { titleFont: { family: 'Nunito', weight: '800' }, bodyFont: { family: 'Nunito' } } },
+    scales: {
+      x: { ticks: { font: { family: 'Nunito', weight: '700' }, maxRotation: 30 }, grid: { display: false } },
+      y: { ticks: { font: { family: 'Nunito', weight: '700' } }, grid: { color: 'rgba(0,0,0,.05)' } },
+    },
+  };
+
+  const makeLine = (id, data, color, min, max, extra = []) => {
+    const ctx = document.getElementById(id)?.getContext('2d');
+    if (!ctx) return null;
+    return new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { data, borderColor: color, backgroundColor: color+'18', borderWidth: 2.5, pointRadius: 5, pointHoverRadius: 7, pointBackgroundColor: color, fill: true, tension: .35, spanGaps: true },
+          ...extra,
+        ],
+      },
+      options: { ...baseOpts, scales: { ...baseOpts.scales, y: { ...baseOpts.scales.y, min, max } } },
+    });
+  };
+
+  const moodDataset = {
+    data: moodData, borderColor: '#CE82FF', backgroundColor: 'transparent',
+    borderWidth: 2, borderDash: [5,4], pointRadius: 4, pointBackgroundColor: '#CE82FF',
+    tension: .35, spanGaps: true, label: 'Mood',
+  };
+
+  charts.focus = makeLine('chart-focus', focusData, '#58CC02', 0, 100, [moodDataset]);
+  charts.acc   = makeLine('chart-acc',   accData,   '#1CB0F6', 0, 100);
+  charts.rt    = makeLine('chart-rt',    rtData,    '#CE82FF', 0, null);
+
+  if (sessions.length) {
+    const lastFocus = focusData[focusData.length-1];
+    $('badge-focus').textContent = lastFocus != null ? `Last: ${lastFocus} · 💜=Mood` : 'Last 7 sessions';
+    const lastAcc = accData[accData.length-1];
+    $('badge-acc').textContent = lastAcc != null ? `Last: ${lastAcc}%` : '—';
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+//  PARTICIPANT MANAGEMENT
+// ════════════════════════════════════════════════════════════════
+let currentParticipant = null;
+
+function loadParticipants() {
+  try { return JSON.parse(localStorage.getItem('uno_participants_v1') || '[]'); }
+  catch { return []; }
+}
+function saveParticipants(list) {
+  localStorage.setItem('uno_participants_v1', JSON.stringify(list));
+}
+function getParticipant(id) {
+  return loadParticipants().find(p => p.id === id) || null;
+}
+function loadParticipantSessions(pid) {
+  try { return JSON.parse(localStorage.getItem(`uno_sess_${pid}`) || '[]'); }
+  catch { return []; }
+}
+function saveParticipantSessions(pid, arr) {
+  localStorage.setItem(`uno_sess_${pid}`, JSON.stringify(arr.slice(-200)));
+}
+
+// Override global session helpers to be participant-aware
+function loadSessions() {
+  if (!currentParticipant) return [];
+  return loadParticipantSessions(currentParticipant.id);
+}
+function saveSessions(arr) {
+  if (!currentParticipant) return;
+  saveParticipantSessions(currentParticipant.id, arr);
+}
+function pushSession(sess) {
+  const arr = loadSessions();
+  arr.push(sess);
+  saveSessions(arr);
+}
+
+// Override persist/hydrate to be participant-aware
+function persist() {
+  if (!currentParticipant) return;
+  localStorage.setItem(`uno_state_${currentParticipant.id}`, JSON.stringify({
+    streak: S.streak, xp: S.xp, dailyXP: S.dailyXP,
+    lastPlayed: S.lastPlayed, bestScore: S.bestScore,
+    lessonsCompleted: S.lessonsCompleted, difficulty: S.difficulty,
+  }));
+}
+function hydrate() {
+  if (!currentParticipant) return;
+  const raw = localStorage.getItem(`uno_state_${currentParticipant.id}`);
+  const today     = new Date().toDateString();
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  if (!raw) {
+    S.streak = 0; S.xp = 0; S.dailyXP = 0; S.lastPlayed = null;
+    S.bestScore = null; S.lessonsCompleted = 0; S.difficulty = 'easy';
+    return;
+  }
+  const d = JSON.parse(raw);
+  S.xp               = d.xp || 0;
+  S.bestScore        = d.bestScore != null ? d.bestScore : null;
+  S.lessonsCompleted = d.lessonsCompleted || 0;
+  S.lastPlayed       = d.lastPlayed || null;
+  S.streak           = d.streak || 0;
+  S.difficulty       = DIFFICULTY_LEVELS.includes(d.difficulty) ? d.difficulty : 'easy';
+  if (S.lastPlayed && S.lastPlayed !== today && S.lastPlayed !== yesterday) S.streak = 0;
+  S.dailyXP = (S.lastPlayed === today) ? (d.dailyXP || 0) : 0;
+}
+
+// ── Seriousness / Flagging Algorithm ──────────────────────────
+function computeParticipantStatus(pid) {
+  const sessions = loadParticipantSessions(pid);
+  if (sessions.length < 2) return 'new';
+  const recent   = sessions.slice(-5);
+  const avgFocus = avg(recent.map(s => s.focusScore || 0));
+  const avgAcc   = avg(recent.map(s => s.accuracy  || 0)) * 100;
+  // Trend: compare last 3 vs previous 3
+  let trend = 0;
+  if (sessions.length >= 6) {
+    const older = sessions.slice(-6, -3).map(s => s.focusScore || 0);
+    const newer = sessions.slice(-3).map(s => s.focusScore || 0);
+    trend = avg(newer) - avg(older);
+  }
+  if (avgFocus < 35 || avgAcc < 40) return 'alert';
+  if (avgFocus < 55 || avgAcc < 58 || trend < -15) return 'watch';
+  return 'ok';
+}
+
+function getFlagMessages(pid) {
+  const sessions = loadParticipantSessions(pid);
+  if (sessions.length < 2) return [];
+  const recent   = sessions.slice(-5);
+  const avgFocus = avg(recent.map(s => s.focusScore || 0));
+  const avgAcc   = avg(recent.map(s => s.accuracy   || 0)) * 100;
+  const msgs = [];
+  if (avgFocus < 35)  msgs.push(`Focus score critically low (avg ${Math.round(avgFocus)} / 100)`);
+  if (avgAcc < 40)    msgs.push(`Accuracy critically low (avg ${Math.round(avgAcc)}%)`);
+  if (avgFocus < 55 && avgFocus >= 35) msgs.push(`Focus score below healthy threshold (avg ${Math.round(avgFocus)} / 100)`);
+  if (avgAcc < 58 && avgAcc >= 40)    msgs.push(`Accuracy below expected range (avg ${Math.round(avgAcc)}%)`);
+  if (sessions.length >= 6) {
+    const trend = avg(sessions.slice(-3).map(s => s.focusScore || 0)) - avg(sessions.slice(-6,-3).map(s => s.focusScore || 0));
+    if (trend < -15) msgs.push(`Declining performance trend (−${Math.round(Math.abs(trend))} pts over 3 sessions)`);
+  }
+  return msgs;
+}
+
+// ── Participant Screen Rendering ──────────────────────────────
+function goToParticipants() {
+  Gazer.end(); destroyCharts(); stopSessionTimer(); clearAllGameTimers();
+  currentParticipant = null;
+  showScreen('screen-participants');
+  renderParticipants();
+}
+
+function renderParticipants() {
+  const list = $('participant-list');
+  const participants = loadParticipants();
+  if (!participants.length) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">👥</div>
+        <p>No participants yet.<br>Add someone to start tracking their cognitive health.</p>
+      </div>
+      <button class="btn btn-green" onclick="showAddParticipant()" style="margin-top:8px">+ Add First Participant</button>`;
+    return;
+  }
+
+  list.innerHTML = participants.map(p => {
+    const sessions = loadParticipantSessions(p.id);
+    const status   = computeParticipantStatus(p.id);
+    const flags    = getFlagMessages(p.id);
+    const lastSess = sessions.length ? sessions[sessions.length-1] : null;
+    const lastDate = lastSess ? (lastSess.displayDate || lastSess.date || '—') : 'No sessions yet';
+    const avgFocus = sessions.length ? Math.round(avg(sessions.slice(-5).map(s => s.focusScore || 0))) : '—';
+    const avgAcc   = sessions.length ? Math.round(avg(sessions.slice(-5).map(s => s.accuracy   || 0)) * 100) + '%' : '—';
+    const avgRTv   = sessions.filter(s => s.avgRT).slice(-5);
+    const rtStr    = avgRTv.length ? (avg(avgRTv.map(s => s.avgRT)) / 1000).toFixed(2) + 's' : '—';
+    const statusEmoji = { ok: '✅', watch: '⚠️', alert: '🚨', new: '🆕' }[status];
+    const cardClass = status === 'watch' ? 'flagged-watch' : status === 'alert' ? 'flagged-alert' : '';
+    const flagBar = flags.length ? `
+      <div class="part-flag-bar ${status}">
+        ${status === 'alert' ? '🚨' : '⚠️'} ${flags.join(' • ')}
+      </div>` : '';
+    const reportBtn = (status === 'watch' || status === 'alert') ? `
+      <button class="part-action-btn report" onclick="event.stopPropagation();reportToDoctor('${p.id}')">📧 Doctor</button>` : '';
+    return `
+      <div class="part-card ${cardClass}" onclick="selectParticipant('${p.id}')">
+        <div class="part-card-top">
+          <div class="part-avatar ${status}">${p.name.charAt(0).toUpperCase()}</div>
+          <div class="part-info">
+            <div class="part-name">${p.name}</div>
+            <div class="part-meta">${p.age ? `Age ${p.age} · ` : ''}${sessions.length} session${sessions.length !== 1 ? 's' : ''} · Last: ${lastDate}</div>
+          </div>
+          <div class="status-badge ${status}">${statusEmoji} ${status.charAt(0).toUpperCase()+status.slice(1)}</div>
+        </div>
+        <div class="part-stats">
+          <div class="part-stat"><div class="part-stat-val" style="color:var(--green)">${avgFocus}</div><div class="part-stat-name">Focus</div></div>
+          <div class="part-stat"><div class="part-stat-val" style="color:var(--blue)">${avgAcc}</div><div class="part-stat-name">Accuracy</div></div>
+          <div class="part-stat"><div class="part-stat-val" style="color:var(--purple)">${rtStr}</div><div class="part-stat-name">Avg RT</div></div>
+          <div class="part-stat"><div class="part-stat-val" style="color:var(--orange)">${sessions.length}</div><div class="part-stat-name">Sessions</div></div>
+        </div>
+        ${flagBar}
+        <div class="part-actions">
+          <button class="part-action-btn primary" onclick="event.stopPropagation();selectParticipant('${p.id}')">▶ Train</button>
+          <button class="part-action-btn pdf" onclick="event.stopPropagation();downloadPDF('${p.id}')">📄 PDF</button>
+          ${reportBtn}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function selectParticipant(id) {
+  const p = getParticipant(id);
+  if (!p) return;
+  currentParticipant = p;
+  hydrate();
+  $('ctx-participant-name').textContent = `👤 ${p.name}`;
   showScreen('screen-home');
   renderHome();
 }
+
+// ── Add Participant ───────────────────────────────────────────
+function showAddParticipant() {
+  $('ap-name').value = ''; $('ap-age').value = ''; $('ap-doctor').value = ''; $('ap-doctor-email').value = '';
+  $('add-participant-modal').classList.add('show');
+  setTimeout(() => $('ap-name').focus(), 350);
+}
+function closeAddParticipant() { $('add-participant-modal').classList.remove('show'); }
+function confirmAddParticipant() {
+  const name = $('ap-name').value.trim();
+  if (!name) { $('ap-name').focus(); return; }
+  const p = {
+    id:          'p_' + Date.now(),
+    name,
+    age:         $('ap-age').value.trim() || null,
+    doctor:      $('ap-doctor').value.trim() || null,
+    doctorEmail: $('ap-doctor-email').value.trim() || null,
+    createdAt:   new Date().toISOString(),
+  };
+  const list = loadParticipants();
+  list.push(p);
+  saveParticipants(list);
+  closeAddParticipant();
+  selectParticipant(p.id);
+}
+
+// ── Doctor Report via mailto ──────────────────────────────────
+function reportToDoctor(pid) {
+  const p      = getParticipant(pid);
+  if (!p) return;
+  const flags  = getFlagMessages(pid);
+  const status = computeParticipantStatus(pid);
+  const sessions = loadParticipantSessions(pid);
+  const recent   = sessions.slice(-5);
+  const avgFocus = sessions.length ? Math.round(avg(recent.map(s => s.focusScore || 0))) : 'N/A';
+  const avgAcc   = sessions.length ? Math.round(avg(recent.map(s => s.accuracy || 0)) * 100) + '%' : 'N/A';
+  const to       = p.doctorEmail || '';
+  const subject  = encodeURIComponent(`UnoNeuro Alert: ${p.name} — ${status === 'alert' ? 'URGENT Review Needed' : 'Performance Concern'}`);
+  const body     = encodeURIComponent(
+    `Dear ${p.doctor || 'Clinician'},\n\n` +
+    `This is an automated alert from UnoNeuro regarding patient: ${p.name}${p.age ? ` (Age ${p.age})` : ''}.\n\n` +
+    `STATUS: ${status.toUpperCase()}\n\n` +
+    `CONCERNS IDENTIFIED:\n${flags.map(f => '• ' + f).join('\n')}\n\n` +
+    `RECENT METRICS (last 5 sessions):\n` +
+    `• Average Focus Score: ${avgFocus} / 100\n` +
+    `• Average Accuracy:    ${avgAcc}\n` +
+    `• Total Sessions:      ${sessions.length}\n\n` +
+    `Please review the attached PDF report for full session history.\n\n` +
+    `Generated by UnoNeuro on ${new Date().toLocaleDateString()}.`
+  );
+  window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+}
+
+// ════════════════════════════════════════════════════════════════
+//  PDF REPORT GENERATION (jsPDF)
+// ════════════════════════════════════════════════════════════════
+function loadjsPDF() {
+  return new Promise(resolve => {
+    if (window.jspdf) { resolve(); return; }
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    s.onload  = resolve;
+    s.onerror = () => { alert('Could not load PDF library. Check your internet connection.'); };
+    document.head.appendChild(s);
+  });
+}
+
+async function downloadPDF(pid) {
+  const p = getParticipant(pid);
+  if (!p) return;
+  $('pdf-loading').classList.add('show');
+  await loadjsPDF();
+
+  const { jsPDF } = window.jspdf;
+  const doc      = new jsPDF({ unit: 'mm', format: 'a4' });
+  const sessions = loadParticipantSessions(pid);
+  const status   = computeParticipantStatus(pid);
+  const flags    = getFlagMessages(pid);
+  const recent5  = sessions.slice(-5);
+  const avgFocus = sessions.length ? Math.round(avg(recent5.map(s => s.focusScore || 0))) : null;
+  const avgAcc   = sessions.length ? Math.round(avg(recent5.map(s => s.accuracy   || 0)) * 100) : null;
+  const avgRTArr = recent5.filter(s => s.avgRT);
+  const avgRT    = avgRTArr.length ? (avg(avgRTArr.map(s => s.avgRT)) / 1000).toFixed(2) + 's' : '—';
+  const totalXP  = sessions.reduce((sum, s) => sum + (s.xp || 0), 0);
+
+  // ── Colours ──
+  const GREEN  = [88, 204, 2];
+  const BLUE   = [28, 176, 246];
+  const RED    = [255, 75, 75];
+  const ORANGE = [255, 150, 0];
+  const GRAY   = [120, 120, 120];
+  const DARK   = [60, 60, 60];
+
+  const pageW = 210; const pageH = 297;
+  const margin = 18;
+  let y = 0;
+
+  // ── Helpers ──
+  const line  = (x1, y1, x2, y2, col = GRAY, w = 0.3) => { doc.setDrawColor(...col); doc.setLineWidth(w); doc.line(x1, y1, x2, y2); };
+  const rect  = (x, rx, ry, rw, rh, col) => { doc.setFillColor(...col); doc.roundedRect(rx, ry, rw, rh, 3, 3, 'F'); };
+  const text  = (t, tx, ty, size = 10, bold = false, col = DARK) => {
+    doc.setFontSize(size); doc.setFont('helvetica', bold ? 'bold' : 'normal'); doc.setTextColor(...col); doc.text(t, tx, ty);
+  };
+  const wrap  = (t, tx, ty, maxW, size = 9) => {
+    doc.setFontSize(size); doc.setFont('helvetica', 'normal'); doc.setTextColor(...GRAY);
+    const lines = doc.splitTextToSize(t, maxW);
+    doc.text(lines, tx, ty); return lines.length * (size * 0.4);
+  };
+
+  // ════ COVER HEADER ═══════════════════════════════════════════
+  doc.setFillColor(...GREEN);
+  doc.rect(0, 0, pageW, 52, 'F');
+  text('UnoNeuro', margin, 22, 22, true, [255,255,255]);
+  text('Cognitive Performance Report', margin, 31, 11, false, [220,255,200]);
+  text(`Participant: ${p.name}${p.age ? '  ·  Age ' + p.age : ''}`, margin, 41, 10, false, [255,255,255]);
+  text(`Generated: ${new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'long', year:'numeric' })}`, margin, 48, 9, false, [210,240,200]);
+  // Doctor info
+  if (p.doctor) text(`Clinician: ${p.doctor}${p.doctorEmail ? '  ·  ' + p.doctorEmail : ''}`, pageW - margin, 48, 8, false, [210,240,200]);
+
+  y = 62;
+
+  // ════ STATUS BANNER ══════════════════════════════════════════
+  const statusColor = status === 'ok' ? GREEN : status === 'watch' ? ORANGE : status === 'alert' ? RED : GRAY;
+  const statusLabel = { ok:'✓ OK — Within Normal Range', watch:'⚠ WATCH — Performance Concern', alert:'⚠ ALERT — Clinical Review Recommended', new:'NEW — Insufficient Data' }[status];
+  doc.setFillColor(...statusColor);
+  doc.roundedRect(margin, y, pageW - margin * 2, 12, 2, 2, 'F');
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor(255,255,255);
+  doc.text(statusLabel, margin + 4, y + 8);
+  y += 20;
+
+  // ════ SUMMARY METRICS ════════════════════════════════════════
+  text('Performance Summary', margin, y, 13, true, DARK); y += 6;
+  line(margin, y, pageW - margin, y, GRAY, 0.3); y += 6;
+
+  const metrics = [
+    ['Focus Score (5-session avg)', avgFocus != null ? `${avgFocus} / 100` : '—', avgFocus >= 70 ? GREEN : avgFocus >= 45 ? ORANGE : RED],
+    ['Accuracy (5-session avg)',     avgAcc   != null ? `${avgAcc}%`        : '—', avgAcc >= 70 ? GREEN : avgAcc >= 50 ? ORANGE : RED],
+    ['Avg Reaction Time',            avgRT],
+    ['Total Sessions',               String(sessions.length)],
+    ['Total XP Earned',              String(totalXP)],
+    ['Member Since',                 new Date(p.createdAt).toLocaleDateString()],
+  ];
+
+  metrics.forEach(([label, val, col = BLUE]) => {
+    text(label, margin, y, 9, false, GRAY);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(...col);
+    doc.text(val, pageW - margin, y, { align: 'right' });
+    line(margin, y + 2, pageW - margin, y + 2, [230,230,230], 0.2);
+    y += 9;
+  });
+  y += 4;
+
+  // ════ CLINICAL FLAGS ═════════════════════════════════════════
+  if (flags.length) {
+    text('Clinical Flags', margin, y, 13, true, DARK); y += 6;
+    line(margin, y, pageW - margin, y, GRAY, 0.3); y += 5;
+    flags.forEach(f => {
+      doc.setFillColor(255, 235, 235);
+      doc.roundedRect(margin, y - 4, pageW - margin * 2, 8, 2, 2, 'F');
+      text('• ' + f, margin + 3, y + 1, 9, false, [200, 60, 60]);
+      y += 10;
+    });
+    if (p.doctor || p.doctorEmail) {
+      y += 2;
+      text('Recommended Action:', margin, y, 9, true, DARK); y += 5;
+      text('Please review this participant\'s session history and consider scheduling a clinical assessment.', margin, y, 9, false, GRAY);
+      y += 7;
+    }
+  } else if (status === 'ok') {
+    doc.setFillColor(220, 255, 200);
+    doc.roundedRect(margin, y - 2, pageW - margin * 2, 10, 2, 2, 'F');
+    text('✓ No clinical concerns flagged. Performance within expected range.', margin + 3, y + 5, 9, false, [40,120,10]);
+    y += 16;
+  }
+  y += 6;
+
+  // ════ SESSION HISTORY TABLE ═══════════════════════════════════
+  if (y > pageH - 60) { doc.addPage(); y = 20; }
+  text('Session History', margin, y, 13, true, DARK); y += 6;
+  line(margin, y, pageW - margin, y, GRAY, 0.3); y += 5;
+
+  // Table header
+  const cols = [margin, 56, 95, 123, 144, 163, 182];
+  const headers = ['Date', 'Game', 'Accuracy', 'Focus', 'RT', 'XP', 'Mood'];
+  doc.setFontSize(8); doc.setFont('helvetica', 'bold'); doc.setTextColor(...GRAY);
+  headers.forEach((h, i) => doc.text(h, cols[i], y));
+  y += 4; line(margin, y, pageW - margin, y, GRAY, 0.3); y += 4;
+
+  const displaySessions = sessions.slice().reverse().slice(0, 40);
+  const gameNames = { 'digit-span':'Working Memory', 'tap-x':'Tap When Ready', 'match-recall':'Match & Recall', 'odd-one-out':'Odd One Out', 'track-objects':'Obj.Tracker', 'dual-nback':'Dual N-Back' };
+  const moodEmoji = ['😴','😐','🙂','😊','🤩'];
+
+  displaySessions.forEach((s, idx) => {
+    if (y > pageH - 20) { doc.addPage(); y = 20; }
+    const even = idx % 2 === 0;
+    if (even) { doc.setFillColor(248,250,248); doc.rect(margin, y - 3.5, pageW - margin * 2, 7, 'F'); }
+    doc.setFontSize(7.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(...DARK);
+    const dateStr  = (s.displayDate || s.date || '').split(',')[0];
+    const gameName = gameNames[s.gameId] || 'Working Memory';
+    const accStr   = `${Math.round((s.accuracy || 0) * 100)}%`;
+    const focStr   = String(s.focusScore || 0);
+    const rtStr2   = s.avgRT ? (s.avgRT / 1000).toFixed(1) + 's' : '—';
+    const xpStr    = String(s.xp || 0);
+    const mood     = s.mood ? moodEmoji[s.mood - 1] : '—';
+    const rowData  = [dateStr, gameName, accStr, focStr, rtStr2, xpStr, mood];
+    rowData.forEach((d, i) => doc.text(d, cols[i], y));
+    y += 7;
+  });
+
+  if (sessions.length > 40) { y += 3; text(`… and ${sessions.length - 40} more sessions`, margin, y, 8, false, GRAY); y += 6; }
+
+  // ════ FOOTER ════════════════════════════════════════════════
+  const totalPages = doc.getNumberOfPages();
+  for (let pg = 1; pg <= totalPages; pg++) {
+    doc.setPage(pg);
+    doc.setFillColor(245, 245, 245);
+    doc.rect(0, pageH - 12, pageW, 12, 'F');
+    doc.setFontSize(7.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(...GRAY);
+    doc.text('UnoNeuro — Cognitive Training Platform', margin, pageH - 5);
+    doc.text(`Page ${pg} of ${totalPages}`, pageW - margin, pageH - 5, { align: 'right' });
+    doc.text('CONFIDENTIAL — For clinical use only', pageW / 2, pageH - 5, { align: 'center' });
+  }
+
+  $('pdf-loading').classList.remove('show');
+  const filename = `UnoNeuro_${p.name.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0,10)}.pdf`;
+  doc.save(filename);
+}
+
+// ── Patch goHome / showReports to go back to participants ─────
+function goHome() {
+  Gazer.end(); destroyCharts(); stopSessionTimer(); clearAllGameTimers();
+  if (currentParticipant) { showScreen('screen-home'); renderHome(); }
+  else goToParticipants();
+}
+
+function showReports() {
+  showScreen('screen-reports');
+  loadChartJS().then(() => { renderReportsSummary(); renderCharts(); renderHistory(); switchTab('charts', document.querySelector('.tab')); });
+}
+
+// ════════════════════════════════════════════════════════════════
+//  BOOT
+// ════════════════════════════════════════════════════════════════
+(function boot() {
+  // If participants exist, go straight to participant list;
+  // otherwise show participant list (empty state with add prompt).
+  showScreen('screen-participants');
+  renderParticipants();
+}());
 </script>
 </body>
 </html>
