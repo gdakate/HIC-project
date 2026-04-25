@@ -567,6 +567,113 @@
     .hist-metric-val.orange { color: var(--orange); }
     .hist-metric-name { font-size: 9px; font-weight: 800; color: var(--gray-2); text-transform: uppercase; letter-spacing: .5px; margin-top: 1px; }
 
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       ONBOARDING SCREEN
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    .onboard-scroll { flex: 1; overflow-y: auto; padding: 28px 20px 40px; display: flex; flex-direction: column; gap: 24px; }
+    .onboard-hero { text-align: center; padding: 8px 0 4px; }
+    .onboard-hero .logo-badge { margin: 0 auto 12px; width: 56px; height: 56px; font-size: 30px; border-radius: 16px; }
+    .onboard-hero h2 { font-size: 24px; font-weight: 900; margin-bottom: 6px; }
+    .onboard-hero p  { font-size: 14px; color: var(--gray-3); font-weight: 600; }
+
+    .setup-card { background: var(--white); border-radius: 18px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,.07), 0 0 0 1px var(--gray-1); }
+    .setup-card-title { font-size: 13px; font-weight: 900; color: var(--gray-3); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 14px; }
+    .setup-val-display { font-size: 32px; font-weight: 900; color: var(--green); text-align: center; margin-bottom: 10px; }
+    .setup-val-display small { font-size: 15px; font-weight: 700; color: var(--gray-2); }
+
+    input[type=range].nl-range { width: 100%; accent-color: var(--green); height: 6px; cursor: pointer; }
+    .range-labels { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--gray-2); margin-top: 6px; }
+
+    .dur-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+    .dur-btn {
+      background: var(--bg); border: 2px solid var(--gray-1); border-radius: 12px;
+      padding: 12px 4px; font-family: 'Nunito', sans-serif; font-size: 14px;
+      font-weight: 800; cursor: pointer; transition: .15s;
+    }
+    .dur-btn.active { background: var(--green-light); border-color: var(--green); color: var(--green-dark); }
+
+    .diff-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+    .diff-btn {
+      background: var(--bg); border: 2.5px solid var(--gray-1); border-radius: 14px;
+      padding: 14px 8px; display: flex; flex-direction: column; align-items: center;
+      gap: 4px; font-family: 'Nunito', sans-serif; cursor: pointer; transition: .15s;
+    }
+    .diff-btn .diff-icon { font-size: 24px; }
+    .diff-btn .diff-name { font-size: 13px; font-weight: 900; }
+    .diff-btn .diff-sub  { font-size: 10px; color: var(--gray-2); font-weight: 700; }
+    .diff-btn.active { border-color: var(--green); background: var(--green-light); }
+    .diff-btn.active .diff-name { color: var(--green-dark); }
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       CHECK-IN SCREEN
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    .checkin-body {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 32px 24px; gap: 18px; text-align: center;
+    }
+    .checkin-day  { font-size: 13px; font-weight: 800; color: var(--gray-2); text-transform: uppercase; letter-spacing: 1px; }
+    .checkin-icon { font-size: 56px; }
+    .checkin-body h2 { font-size: 24px; font-weight: 900; }
+    .checkin-body p  { font-size: 14px; color: var(--gray-3); font-weight: 600; max-width: 280px; }
+    .mood-grid { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 320px; margin-top: 4px; }
+    .mood-btn {
+      background: var(--white); border: 2.5px solid var(--gray-1); border-radius: 16px;
+      padding: 16px 20px; display: flex; align-items: center; gap: 14px;
+      cursor: pointer; transition: .15s; font-family: 'Nunito', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .mood-btn:active { transform: scale(.98); }
+    .mood-btn.good-btn:hover, .mood-btn.good-btn:focus { border-color: var(--green);  background: var(--green-light); }
+    .mood-btn.mod-btn:hover,  .mood-btn.mod-btn:focus  { border-color: var(--orange); background: #FFF3E0; }
+    .mood-btn.bad-btn:hover,  .mood-btn.bad-btn:focus  { border-color: var(--blue);   background: #E0F5FF; }
+    .mood-emoji { font-size: 28px; }
+    .mood-text  { text-align: left; }
+    .mood-title { font-size: 16px; font-weight: 900; display: block; }
+    .mood-hint  { font-size: 12px; color: var(--gray-2); font-weight: 700; }
+    .checkin-adj { font-size: 13px; font-weight: 700; padding: 10px 16px; border-radius: 10px; background: var(--bg); color: var(--gray-3); display: none; }
+    .checkin-adj.show { display: block; }
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       REPORTS — MOOD TAB + SESSION UPDATES
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    .mood-chip { font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 99px; background: var(--bg); }
+    .mood-chip.Good     { background: var(--green-light); color: var(--green-dark); }
+    .mood-chip.Moderate { background: #FFF3E0; color: #C05000; }
+    .mood-chip.Bad      { background: #E0F5FF; color: var(--blue-dark); }
+
+    .toggle-gaze-btn {
+      width: 100%; margin-top: 10px; padding: 8px;
+      background: var(--bg); border: 1.5px solid var(--gray-1); border-radius: 10px;
+      font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 800;
+      color: var(--gray-3); cursor: pointer;
+    }
+    .gaze-paths-wrap { margin-top: 12px; display: none; }
+
+    .mood-cal { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; margin-bottom: 16px; }
+    .mcal-day { aspect-ratio: 1; border-radius: 5px; background: var(--gray-1); }
+    .mcal-day.Good     { background: var(--green); }
+    .mcal-day.Moderate { background: var(--orange); }
+    .mcal-day.Bad      { background: var(--blue); }
+    .mcal-day.today    { outline: 2px solid var(--text); }
+    .mcal-legend { display: flex; gap: 12px; font-size: 11px; font-weight: 800; color: var(--gray-3); margin-bottom: 16px; }
+    .mcal-legend span { display: flex; align-items: center; gap: 4px; }
+    .mcal-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+    .mood-dist { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+    .mood-dist-box { background: var(--bg); border-radius: 12px; padding: 14px 8px; text-align: center; }
+    .mood-dist-val { font-size: 26px; font-weight: 900; }
+    .mood-dist-lbl { font-size: 10px; font-weight: 800; color: var(--gray-2); text-transform: uppercase; letter-spacing: .5px; margin-top: 3px; }
+
+    /* week progress banner */
+    .week-banner {
+      background: linear-gradient(135deg, var(--green), #89E219);
+      border-radius: 14px; padding: 14px 18px; color: white;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .week-banner-left  { font-size: 13px; font-weight: 800; opacity: .9; }
+    .week-banner-right { font-size: 22px; font-weight: 900; }
+
     /* ── Confetti ── */
     .confetti-wrap { position: fixed; inset: 0; pointer-events: none; z-index: 200; overflow: hidden; }
     .conf-piece { position: absolute; width: 8px; height: 8px; border-radius: 2px; animation: confFall linear forwards; }
@@ -601,6 +708,8 @@
       <div class="progress-caption"><strong id="daily-xp-num">0</strong> / 50 XP today</div>
     </div>
 
+    <div id="week-banner-wrap" style="display:none"></div>
+
     <div class="streak-card">
       <div class="streak-flame">🔥</div>
       <div class="streak-body">
@@ -633,6 +742,94 @@
       </div>
     </div>
 
+  </div>
+</div>
+
+<!-- ══════════════════════ ONBOARDING ════════════════════════════ -->
+<div id="screen-onboarding" class="screen">
+  <div class="onboard-scroll">
+
+    <div class="onboard-hero">
+      <div class="logo-badge">🧠</div>
+      <h2>Welcome to NeuroLingo</h2>
+      <p>Let's set up your personalized recovery program.</p>
+    </div>
+
+    <div class="setup-card">
+      <div class="setup-card-title">How many weeks of follow-up?</div>
+      <div class="setup-val-display" id="ob-weeks-val">6 <small>weeks</small></div>
+      <input type="range" class="nl-range" id="ob-weeks" min="2" max="12" value="6"
+             oninput="obWeeksUpdate(this.value)">
+      <div class="range-labels"><span>2 wks</span><span>12 wks</span></div>
+    </div>
+
+    <div class="setup-card">
+      <div class="setup-card-title">How long per daily session?</div>
+      <div class="dur-grid">
+        <button class="dur-btn"        onclick="obDurSelect(5,this)">5 min</button>
+        <button class="dur-btn active" onclick="obDurSelect(10,this)">10 min</button>
+        <button class="dur-btn"        onclick="obDurSelect(15,this)">15 min</button>
+        <button class="dur-btn"        onclick="obDurSelect(20,this)">20 min</button>
+      </div>
+    </div>
+
+    <div class="setup-card">
+      <div class="setup-card-title">Starting difficulty?</div>
+      <div class="diff-grid">
+        <button class="diff-btn" onclick="obDiffSelect('Easy',this)">
+          <span class="diff-icon">🌱</span>
+          <span class="diff-name">Easy</span>
+          <span class="diff-sub">2–3 digits</span>
+        </button>
+        <button class="diff-btn active" onclick="obDiffSelect('Moderate',this)">
+          <span class="diff-icon">🧠</span>
+          <span class="diff-name">Moderate</span>
+          <span class="diff-sub">3–5 digits</span>
+        </button>
+        <button class="diff-btn" onclick="obDiffSelect('Hard',this)">
+          <span class="diff-icon">🔥</span>
+          <span class="diff-name">Hard</span>
+          <span class="diff-sub">4–6 digits</span>
+        </button>
+      </div>
+    </div>
+
+    <button class="btn btn-green" onclick="saveOnboarding()" style="margin-top:8px">START MY PROGRAM</button>
+
+  </div>
+</div>
+
+<!-- ══════════════════════ CHECK-IN ══════════════════════════════ -->
+<div id="screen-checkin" class="screen">
+  <div class="checkin-body">
+    <div class="checkin-day" id="checkin-day-text"></div>
+    <div class="checkin-icon">💭</div>
+    <h2>How are you feeling today?</h2>
+    <p>Your answer helps adjust today's difficulty to match your energy level.</p>
+    <div class="mood-grid">
+      <button class="mood-btn good-btn" onclick="selectMood('Good')">
+        <span class="mood-emoji">😊</span>
+        <div class="mood-text">
+          <span class="mood-title">Good</span>
+          <span class="mood-hint">Ready to challenge myself!</span>
+        </div>
+      </button>
+      <button class="mood-btn mod-btn" onclick="selectMood('Moderate')">
+        <span class="mood-emoji">😐</span>
+        <div class="mood-text">
+          <span class="mood-title">Moderate</span>
+          <span class="mood-hint">Feeling okay, let's go.</span>
+        </div>
+      </button>
+      <button class="mood-btn bad-btn" onclick="selectMood('Bad')">
+        <span class="mood-emoji">😔</span>
+        <div class="mood-text">
+          <span class="mood-title">Bad</span>
+          <span class="mood-hint">Tough day — take it easy.</span>
+        </div>
+      </button>
+    </div>
+    <div class="checkin-adj" id="checkin-adj"></div>
   </div>
 </div>
 
@@ -836,6 +1033,7 @@
     <div class="tab-bar">
       <button class="tab active" onclick="switchTab('charts',this)">📈 Charts</button>
       <button class="tab"        onclick="switchTab('history',this)">📋 History</button>
+      <button class="tab"        onclick="switchTab('mood',this)">😊 Mood</button>
     </div>
 
     <div class="tab-content active" id="tab-charts">
@@ -870,6 +1068,10 @@
       </div>
     </div>
 
+    <div class="tab-content" id="tab-mood">
+      <div id="mood-tab-body"></div>
+    </div>
+
   </div>
 </div>
 
@@ -898,6 +1100,12 @@ const CAL_POINTS = [
 ];
 
 const CONF_COLORS = ['#58CC02','#FF9600','#1CB0F6','#FF4B4B','#CE82FF','#FFBA00'];
+
+const DIFF_SETTINGS = {
+  Easy:     [2, 3, 3],
+  Moderate: [3, 4, 5],
+  Hard:     [4, 5, 6],
+};
 
 // ════════════════════════════════════════════════════════════════
 //  PERSISTENT STATE
@@ -945,6 +1153,43 @@ function pushSession(sess) {
   arr.push(sess);
   saveSessions(arr);
 }
+
+// ── Program config (onboarding settings) ─────────────────────
+const Config = {
+  KEY: 'nl_config',
+  load() {
+    try { return JSON.parse(localStorage.getItem(this.KEY) || 'null'); }
+    catch { return null; }
+  },
+  save(cfg) { localStorage.setItem(this.KEY, JSON.stringify(cfg)); },
+  isSetup() { return this.load() !== null; },
+  get() {
+    return this.load() || { weeks: 6, sessionMin: 10, difficulty: 'Moderate', startDate: new Date().toDateString() };
+  },
+};
+
+// ── Daily check-in ────────────────────────────────────────────
+const Checkin = {
+  KEY: 'nl_checkin',
+  load() {
+    try { return JSON.parse(localStorage.getItem(this.KEY) || '[]'); }
+    catch { return []; }
+  },
+  save(mood) {
+    const arr = this.load();
+    arr.push({ date: new Date().toDateString(), mood });
+    localStorage.setItem(this.KEY, JSON.stringify(arr.slice(-90)));
+  },
+  isDoneToday() {
+    const today = new Date().toDateString();
+    return this.load().some(c => c.date === today);
+  },
+  todayMood() {
+    const today = new Date().toDateString();
+    const entry = this.load().find(c => c.date === today);
+    return entry ? entry.mood : null;
+  },
+};
 
 // ════════════════════════════════════════════════════════════════
 //  WEBGAZER MODULE
@@ -1185,6 +1430,8 @@ const Metrics = {
       fixationRate,
       focusScore,
       gazeEnabled,
+      mood:        Checkin.todayMood(),
+      difficulty:  S.todayDifficulty || Config.get().difficulty,
       rounds:      [...this.rounds],
     };
   },
@@ -1199,8 +1446,20 @@ function renderHome() {
   $('h-xp').textContent          = S.xp;
   $('streak-count').textContent  = S.streak;
   $('stat-xp').textContent       = S.xp;
-  $('stat-best').textContent     = S.bestScore != null ? `${S.bestScore}/5` : '—';
+  $('stat-best').textContent     = S.bestScore != null ? `${S.bestScore}/${TOTAL_ROUNDS}` : '—';
   $('stat-lessons').textContent  = S.lessonsCompleted;
+
+  // Week progress banner
+  const cfg = Config.load();
+  const wrapEl = $('week-banner-wrap');
+  if (cfg && wrapEl) {
+    const daysDiff   = Math.floor((Date.now() - new Date(cfg.startDate).getTime()) / 86400000);
+    const weekNum    = Math.min(Math.floor(daysDiff / 7) + 1, cfg.weeks);
+    wrapEl.style.display = 'block';
+    wrapEl.innerHTML = `<div class="week-banner"><div class="week-banner-left">Program Progress · ${cfg.difficulty}</div><div class="week-banner-right">Week ${weekNum} / ${cfg.weeks}</div></div>`;
+  } else if (wrapEl) {
+    wrapEl.style.display = 'none';
+  }
 
   const msgs = [
     'Start your journey today!',
@@ -1231,14 +1490,78 @@ function renderHome() {
 }
 
 // ════════════════════════════════════════════════════════════════
+//  ONBOARDING
+// ════════════════════════════════════════════════════════════════
+let obWeeksVal = 6, obDurVal = 10, obDiffVal = 'Moderate';
+
+function obWeeksUpdate(v) {
+  obWeeksVal = +v;
+  $('ob-weeks-val').innerHTML = `${v} <small>weeks</small>`;
+}
+function obDurSelect(min, btn) {
+  obDurVal = min;
+  document.querySelectorAll('.dur-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function obDiffSelect(diff, btn) {
+  obDiffVal = diff;
+  document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function saveOnboarding() {
+  Config.save({ weeks: obWeeksVal, sessionMin: obDurVal, difficulty: obDiffVal, startDate: new Date().toDateString() });
+  showScreen('screen-home');
+  renderHome();
+}
+
+// ════════════════════════════════════════════════════════════════
+//  CHECK-IN
+// ════════════════════════════════════════════════════════════════
+function selectMood(mood) {
+  Checkin.save(mood);
+  const cfg = Config.get();
+  const levels = ['Easy', 'Moderate', 'Hard'];
+  const adj = $('checkin-adj');
+  if (mood === 'Bad') {
+    const idx = levels.indexOf(cfg.difficulty);
+    const newDiff = idx > 0 ? levels[idx - 1] : 'Easy';
+    adj.textContent = `Difficulty adjusted to ${newDiff} today — take it easy! 💙`;
+    adj.classList.add('show');
+    setTimeout(startSessionFlow, 1200);
+  } else {
+    adj.classList.remove('show');
+    setTimeout(startSessionFlow, 400);
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
 //  CALIBRATION
 // ════════════════════════════════════════════════════════════════
 let calIndex = 0;
 
 function requestLesson() {
-  // Reset session state
+  if (!Checkin.isDoneToday()) {
+    showScreen('screen-checkin');
+    $('checkin-day-text').textContent = new Date().toLocaleDateString('en', { weekday: 'long', month: 'long', day: 'numeric' });
+    $('checkin-adj').classList.remove('show');
+    return;
+  }
+  startSessionFlow();
+}
+
+function startSessionFlow() {
   S.round = 0; S.roundScore = 0; S.sessionXP = 0; S.input = [];
   Metrics.reset();
+
+  // Determine today's difficulty from config + mood
+  const cfg = Config.get();
+  const levels = ['Easy', 'Moderate', 'Hard'];
+  let diff = cfg.difficulty || 'Moderate';
+  if (Checkin.todayMood() === 'Bad') {
+    const idx = levels.indexOf(diff);
+    diff = idx > 0 ? levels[idx - 1] : 'Easy';
+  }
+  S.todayDifficulty = diff;
 
   showScreen('screen-calibration');
   $('cal-header-sub').textContent = 'Loading…';
@@ -1385,7 +1708,8 @@ function updateSegBar() {
 function beginRound() {
   hideFeedback();
   updateSegBar();
-  S.seq   = randSeq(SEQ_LENGTHS[S.round]);
+  const seqLens = (S.todayDifficulty && DIFF_SETTINGS[S.todayDifficulty]) || SEQ_LENGTHS;
+  S.seq   = randSeq(seqLens[Math.min(S.round, seqLens.length - 1)]);
   S.input = [];
   showPhase('phase-ready');
   runCountdown(3, showWatchPhase);
@@ -1709,7 +2033,7 @@ function destroyCharts() {
 }
 
 function renderHistory() {
-  const sessions = loadSessions().slice().reverse(); // newest first
+  const sessions = loadSessions().slice().reverse();
   const list  = $('history-list');
   const empty = $('hist-empty');
   list.innerHTML = '';
@@ -1717,35 +2041,148 @@ function renderHistory() {
   empty.style.display = 'none';
 
   sessions.forEach(s => {
-    const card = document.createElement('div');
-    card.className = 'hist-card';
-    const rtStr      = s.avgRT != null ? (s.avgRT/1000).toFixed(2)+'s' : '—';
-    const fixStr     = s.fixationRate != null ? Math.round(s.fixationRate*100)+'%' : '—';
-    const badgeCls   = s.focusScore >= 70 ? 'high' : s.focusScore >= 40 ? 'medium' : s.focusScore > 0 ? 'low' : 'na';
+    const card      = document.createElement('div');
+    card.className  = 'hist-card';
+    const rtStr     = s.avgRT != null ? (s.avgRT/1000).toFixed(2)+'s' : '—';
+    const fixStr    = s.fixationRate != null ? Math.round(s.fixationRate*100)+'%' : '—';
+    const badgeCls  = s.focusScore >= 70 ? 'high' : s.focusScore >= 40 ? 'medium' : s.focusScore > 0 ? 'low' : 'na';
+    const moodIcon  = s.mood === 'Good' ? '😊' : s.mood === 'Bad' ? '😔' : s.mood === 'Moderate' ? '😐' : '';
+    const moodHtml  = s.mood ? `<span class="mood-chip ${s.mood}">${moodIcon} ${s.mood}</span>` : '';
+    const hasGaze   = s.rounds?.some(r => r.gazePoints?.length > 0);
+    const sid       = s.id;
     card.innerHTML = `
       <div class="hist-card-top">
-        <div class="hist-date">${s.displayDate || s.date}</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          ${moodHtml}<div class="hist-date">${s.displayDate || s.date}</div>
+        </div>
         <div class="focus-badge ${badgeCls}">Focus ${s.focusScore}</div>
       </div>
       <div class="hist-metrics">
-        <div class="hist-metric">
-          <div class="hist-metric-val green">${s.correctRounds}/${TOTAL_ROUNDS}</div>
-          <div class="hist-metric-name">Score</div>
-        </div>
-        <div class="hist-metric">
-          <div class="hist-metric-val blue">${Math.round(s.accuracy*100)}%</div>
-          <div class="hist-metric-name">Accuracy</div>
-        </div>
-        <div class="hist-metric">
-          <div class="hist-metric-val purple">${rtStr}</div>
-          <div class="hist-metric-name">Avg RT</div>
-        </div>
-        <div class="hist-metric">
-          <div class="hist-metric-val orange">${fixStr}</div>
-          <div class="hist-metric-name">Fixation</div>
-        </div>
-      </div>`;
+        <div class="hist-metric"><div class="hist-metric-val green">${s.correctRounds}/${TOTAL_ROUNDS}</div><div class="hist-metric-name">Score</div></div>
+        <div class="hist-metric"><div class="hist-metric-val blue">${Math.round(s.accuracy*100)}%</div><div class="hist-metric-name">Accuracy</div></div>
+        <div class="hist-metric"><div class="hist-metric-val purple">${rtStr}</div><div class="hist-metric-name">Avg RT</div></div>
+        <div class="hist-metric"><div class="hist-metric-val orange">${fixStr}</div><div class="hist-metric-name">Fixation</div></div>
+      </div>
+      ${hasGaze ? `<button class="toggle-gaze-btn" id="gaze-tog-${sid}" onclick="toggleGazePaths(${sid})">👁 Show Gaze Paths</button><div class="gaze-paths-wrap" id="gaze-wrap-${sid}"></div>` : ''}`;
     list.appendChild(card);
+  });
+}
+
+function toggleGazePaths(sid) {
+  const wrap = $('gaze-wrap-' + sid);
+  const btn  = $('gaze-tog-' + sid);
+  if (!wrap || !btn) return;
+  if (wrap.style.display === 'block') {
+    wrap.style.display = 'none';
+    btn.textContent = '👁 Show Gaze Paths';
+    return;
+  }
+  wrap.style.display = 'block';
+  btn.textContent = '👁 Hide Gaze Paths';
+  if (wrap.innerHTML) return; // already rendered
+  const sess = loadSessions().find(s => s.id == sid);
+  if (!sess) return;
+  sess.rounds.forEach((r, i) => {
+    if (!r.gazePoints?.length) return;
+    const pct   = r.fixation != null ? Math.round(r.fixation*100) : null;
+    const rtStr = r.rt != null ? (r.rt/1000).toFixed(2)+'s' : '—';
+    const cid   = `hgc-${sid}-${i}`;
+    const div   = document.createElement('div');
+    div.className = 'gaze-round-block';
+    div.innerHTML = `
+      <div class="gaze-round-header">
+        <div class="gaze-round-label">Round ${i+1} ${r.correct ? '✅' : '❌'}</div>
+        <div class="gaze-round-meta"><span>⏱ ${rtStr}</span>${pct != null ? `<span>👁 ${pct}% on-target</span>` : ''}</div>
+      </div>
+      <div class="gaze-canvas-wrap"><canvas id="${cid}" width="600" height="260"></canvas></div>`;
+    wrap.appendChild(div);
+    setTimeout(() => drawGazePath(document.getElementById(cid), r.gazePoints, r.targetRect), 60 + i*40);
+  });
+}
+
+async function renderMoodTab() {
+  const body = $('mood-tab-body');
+  if (!body) return;
+  const checkins = Checkin.load();
+
+  if (!checkins.length) {
+    body.innerHTML = '<div class="hist-empty"><div class="hist-empty-icon">😊</div><p>No mood data yet.<br>Complete a daily check-in to start tracking!</p></div>';
+    return;
+  }
+
+  // Build 30-day calendar
+  const today = new Date();
+  const calHtml = Array.from({ length: 30 }, (_, i) => {
+    const d  = new Date(today.getTime() - (29 - i) * 86400000);
+    const ds = d.toDateString();
+    const entry = checkins.find(c => c.date === ds);
+    const isToday = ds === today.toDateString();
+    return `<div class="mcal-day ${entry ? entry.mood : ''} ${isToday ? 'today' : ''}" title="${entry ? entry.mood : 'No data'} · ${d.toLocaleDateString('en',{month:'short',day:'numeric'})}"></div>`;
+  }).join('');
+
+  // Distribution
+  const counts = { Good: 0, Moderate: 0, Bad: 0 };
+  checkins.forEach(c => { if (c.mood in counts) counts[c.mood]++; });
+
+  body.innerHTML = `
+    <div class="chart-section">
+      <div class="chart-section-header"><div class="chart-section-title">30-Day Mood Calendar</div></div>
+      <div class="mood-cal">${calHtml}</div>
+      <div class="mcal-legend">
+        <span><span class="mcal-dot" style="background:var(--green)"></span>Good</span>
+        <span><span class="mcal-dot" style="background:var(--orange)"></span>Moderate</span>
+        <span><span class="mcal-dot" style="background:var(--blue)"></span>Bad</span>
+        <span><span class="mcal-dot" style="background:var(--gray-1)"></span>No data</span>
+      </div>
+    </div>
+    <div class="chart-section">
+      <div class="chart-section-header"><div class="chart-section-title">Distribution</div></div>
+      <div class="mood-dist">
+        <div class="mood-dist-box"><div class="mood-dist-val" style="color:var(--green)">😊 ${counts.Good}</div><div class="mood-dist-lbl">Good</div></div>
+        <div class="mood-dist-box"><div class="mood-dist-val" style="color:var(--orange)">😐 ${counts.Moderate}</div><div class="mood-dist-lbl">Moderate</div></div>
+        <div class="mood-dist-box"><div class="mood-dist-val" style="color:var(--blue)">😔 ${counts.Bad}</div><div class="mood-dist-lbl">Bad</div></div>
+      </div>
+    </div>
+    <div class="chart-section">
+      <div class="chart-section-header">
+        <div class="chart-section-title">Mood Trend</div>
+        <div class="chart-badge green">Last ${Math.min(checkins.length,14)} days</div>
+      </div>
+      <div class="chart-wrap"><canvas id="chart-mood"></canvas></div>
+    </div>`;
+
+  await loadChartJS();
+  if (typeof Chart === 'undefined') return;
+  if (charts.mood) { try { charts.mood.destroy(); } catch {} }
+  const recent = checkins.slice(-14);
+  const moodNum = { Good: 3, Moderate: 2, Bad: 1 };
+  const ctx = document.getElementById('chart-mood')?.getContext('2d');
+  if (!ctx) return;
+  charts.mood = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: recent.map(c => { const d = new Date(c.date); return d.toLocaleDateString('en',{month:'short',day:'numeric'}); }),
+      datasets: [{
+        data: recent.map(c => moodNum[c.mood] || 2),
+        borderColor: '#1CB0F6', backgroundColor: '#1CB0F618',
+        borderWidth: 2.5, pointRadius: 6, fill: true, tension: .35,
+        pointBackgroundColor: recent.map(c => c.mood === 'Good' ? '#58CC02' : c.mood === 'Bad' ? '#1CB0F6' : '#FF9600'),
+      }],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { font: { family: 'Nunito', weight: '700' }, maxRotation: 30 }, grid: { display: false } },
+        y: {
+          min: 0.5, max: 3.5, ticks: {
+            stepSize: 1,
+            callback: v => ({ 1: '😔', 2: '😐', 3: '😊' }[v] || ''),
+            font: { family: 'Nunito', weight: '800', size: 14 },
+          },
+        },
+      },
+    },
   });
 }
 
@@ -1754,6 +2191,7 @@ function switchTab(name, el) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   if (el) el.classList.add('active');
   $('tab-' + name).classList.add('active');
+  if (name === 'mood') renderMoodTab();
 }
 
 function loadChartJS() {
@@ -1925,7 +2363,12 @@ function spawnConfetti(n) {
 //  BOOT
 // ════════════════════════════════════════════════════════════════
 hydrate();
-renderHome();
+if (!Config.isSetup()) {
+  showScreen('screen-onboarding');
+} else {
+  showScreen('screen-home');
+  renderHome();
+}
 </script>
 </body>
 </html>
