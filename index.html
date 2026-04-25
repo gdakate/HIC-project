@@ -450,6 +450,41 @@
     .rcard-sub { font-size: 12px; color: var(--gray-2); font-weight: 600; margin-top: 1px; }
     .results-actions { padding: 20px 16px 36px; display: flex; flex-direction: column; gap: 10px; }
 
+    /* gaze breakdown in results */
+    .gaze-breakdown {
+      background: var(--white); border-radius: 18px; padding: 18px 20px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.08), 0 0 0 1px var(--gray-1);
+      animation: cardIn .4s ease-out .55s both;
+    }
+    .gaze-breakdown-title {
+      font-size: 13px; font-weight: 900; color: var(--gray-3);
+      text-transform: uppercase; letter-spacing: .8px; margin-bottom: 14px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .gaze-row {
+      display: grid; grid-template-columns: 48px 1fr 38px 52px;
+      align-items: center; gap: 10px; margin-bottom: 10px;
+    }
+    .gaze-row:last-child { margin-bottom: 0; }
+    .gaze-row-label { font-size: 13px; font-weight: 800; color: var(--gray-3); }
+    .gaze-bar-track {
+      background: var(--gray-1); border-radius: 99px; height: 10px; overflow: hidden;
+    }
+    .gaze-bar-fill {
+      height: 100%; border-radius: 99px;
+      transition: width .8s cubic-bezier(.22,1,.36,1);
+    }
+    .gaze-bar-fill.high   { background: var(--green); }
+    .gaze-bar-fill.medium { background: var(--orange); }
+    .gaze-bar-fill.low    { background: var(--red); }
+    .gaze-bar-fill.na     { background: var(--gray-2); }
+    .gaze-pct { font-size: 12px; font-weight: 800; text-align: right; }
+    .gaze-pct.high   { color: var(--green-dark); }
+    .gaze-pct.medium { color: var(--orange); }
+    .gaze-pct.low    { color: var(--red); }
+    .gaze-pct.na     { color: var(--gray-2); }
+    .gaze-result { font-size: 16px; text-align: center; }
+
     /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
        REPORTS SCREEN
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -777,6 +812,14 @@
     </div>
   </div>
 
+  <!-- Gaze breakdown (rendered by JS) -->
+  <div class="results-cards" style="padding-top:0">
+    <div class="gaze-breakdown" id="gaze-breakdown" style="display:none">
+      <div class="gaze-breakdown-title">👁 Gaze per Round</div>
+      <div id="gaze-breakdown-rows"></div>
+    </div>
+  </div>
+
   <div class="results-actions">
     <button class="btn btn-green" onclick="goHome()">CONTINUE</button>
     <button class="btn btn-outline" onclick="requestLesson()">PLAY AGAIN</button>
@@ -845,8 +888,8 @@
 // ════════════════════════════════════════════════════════════════
 //  CONSTANTS
 // ════════════════════════════════════════════════════════════════
-const TOTAL_ROUNDS  = 5;
-const SEQ_LENGTHS   = [3, 3, 4, 4, 5];
+const TOTAL_ROUNDS  = 3;
+const SEQ_LENGTHS   = [3, 4, 5];
 const XP_CORRECT    = 20;
 const XP_PARTIAL    = 8;
 const DAILY_GOAL    = 50;
@@ -1483,6 +1526,38 @@ function showResults(sess) {
     ? `fixation ${Math.round((sess.fixationRate||0)*100)}% · gaze tracked`
     : 'based on accuracy + reaction time';
   fc.className = 'rcard-val ' + focusColor(sess.focusScore);
+
+  // Gaze per-round breakdown
+  const bd    = $('gaze-breakdown');
+  const bdRows = $('gaze-breakdown-rows');
+  const hasAnyGaze = sess.rounds.some(r => r.fixation != null);
+  if (hasAnyGaze) {
+    bd.style.display = 'block';
+    bdRows.innerHTML = '';
+    sess.rounds.forEach((r, i) => {
+      const pct = r.fixation != null ? Math.round(r.fixation * 100) : null;
+      const tier = pct == null ? 'na' : pct >= 70 ? 'high' : pct >= 40 ? 'medium' : 'low';
+      const rtStr = r.rt != null ? (r.rt / 1000).toFixed(2) + 's' : '—';
+      const row = document.createElement('div');
+      row.className = 'gaze-row';
+      row.innerHTML = `
+        <div class="gaze-row-label">R${i + 1} · ${rtStr}</div>
+        <div class="gaze-bar-track">
+          <div class="gaze-bar-fill ${tier}" style="width:0%" data-w="${pct ?? 0}%"></div>
+        </div>
+        <div class="gaze-pct ${tier}">${pct != null ? pct + '%' : '—'}</div>
+        <div class="gaze-result">${r.correct ? '✅' : '❌'}</div>`;
+      bdRows.appendChild(row);
+    });
+    // Animate bars after paint
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      bdRows.querySelectorAll('.gaze-bar-fill').forEach(el => {
+        el.style.width = el.dataset.w;
+      });
+    }));
+  } else {
+    bd.style.display = 'none';
+  }
 }
 
 // ════════════════════════════════════════════════════════════════
