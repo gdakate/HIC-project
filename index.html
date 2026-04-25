@@ -12,7 +12,6 @@
       --green:        #58CC02;
       --green-dark:   #46A302;
       --green-light:  #D7FFB8;
-      --green-bg:     #F0FFF4;
       --orange:       #FF9600;
       --orange-dark:  #D47800;
       --blue:         #1CB0F6;
@@ -35,790 +34,548 @@
       min-height: 100vh;
       max-width: 480px;
       margin: 0 auto;
-      position: relative;
       overflow-x: hidden;
     }
 
-    /* ── SCREENS ──────────────────────────────────────────── */
-    .screen {
-      display: none;
-      min-height: 100vh;
-      flex-direction: column;
-    }
+    .screen { display: none; min-height: 100vh; flex-direction: column; }
     .screen.active { display: flex; }
 
-    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-       HOME SCREEN
-    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-    .home-header {
-      background: var(--white);
-      padding: 14px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 2px solid var(--gray-1);
-      position: sticky;
-      top: 0;
-      z-index: 10;
+    /* ── WebGazer DOM overrides ───────────────────────────── */
+    #webgazerVideoCanvas,
+    #webgazerFaceOverlay,
+    #webgazerGazeDot { display: none !important; }
+
+    #webgazerVideoFeed {
+      position: fixed;
+      border-radius: 10px;
+      border: 2.5px solid var(--green);
+      object-fit: cover;
+      z-index: 600;
+      display: none;
+      transition: all .3s ease;
     }
 
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .logo-badge {
-      width: 38px;
-      height: 38px;
-      background: var(--green);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      box-shadow: 0 3px 0 var(--green-dark);
-    }
-
-    .logo-text {
-      font-size: 22px;
-      font-weight: 900;
-      color: var(--green);
-      letter-spacing: -0.5px;
-    }
-
-    .header-stats {
-      display: flex;
-      gap: 14px;
-      align-items: center;
-    }
-
-    .hstat {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-weight: 800;
-      font-size: 15px;
-    }
-
-    .hstat-icon { font-size: 20px; }
-    .hstat-streak { color: var(--orange); }
-    .hstat-xp     { color: var(--blue); }
-
-    .home-body {
-      flex: 1;
-      padding: 20px 16px 32px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    /* Card base */
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       SHARED COMPONENTS
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
     .card {
       background: var(--white);
       border-radius: 18px;
       padding: 20px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.07), 0 0 0 1px var(--gray-1);
     }
-
     .card-label {
-      font-size: 11px;
-      font-weight: 800;
-      color: var(--gray-2);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 12px;
+      font-size: 11px; font-weight: 800; color: var(--gray-2);
+      text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;
     }
 
-    /* Daily goal */
-    .progress-track {
-      background: var(--gray-1);
-      border-radius: 99px;
-      height: 18px;
-      overflow: hidden;
-      margin-bottom: 8px;
+    .btn {
+      display: block; width: 100%; padding: 15px;
+      border: none; border-radius: 14px;
+      font-family: 'Nunito', sans-serif; font-size: 16px;
+      font-weight: 900; cursor: pointer;
+      text-transform: uppercase; letter-spacing: .8px;
+      transition: transform .08s, box-shadow .08s, filter .1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-green {
+      background: var(--green); color: white;
+      box-shadow: 0 4px 0 var(--green-dark);
+    }
+    .btn-green:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--green-dark); }
+    .btn-outline {
+      background: transparent; color: var(--green);
+      border: 2.5px solid var(--green); box-shadow: none;
+    }
+    .btn-outline:active { transform: scale(.98); }
+    .btn-ghost {
+      background: transparent; color: var(--gray-2);
+      border: 2px solid var(--gray-1); box-shadow: none;
     }
 
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       HOME SCREEN
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    .home-header {
+      background: var(--white); padding: 14px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 2px solid var(--gray-1);
+      position: sticky; top: 0; z-index: 10;
+    }
+    .logo { display: flex; align-items: center; gap: 8px; }
+    .logo-badge {
+      width: 38px; height: 38px; background: var(--green);
+      border-radius: 12px; display: flex; align-items: center;
+      justify-content: center; font-size: 22px;
+      box-shadow: 0 3px 0 var(--green-dark);
+    }
+    .logo-text { font-size: 22px; font-weight: 900; color: var(--green); letter-spacing: -.5px; }
+
+    .header-stats { display: flex; gap: 14px; align-items: center; }
+    .hstat { display: flex; align-items: center; gap: 4px; font-weight: 800; font-size: 15px; }
+    .hstat-icon { font-size: 20px; }
+    .hstat-streak { color: var(--orange); }
+    .hstat-xp     { color: var(--blue); }
+
+    .home-body { flex: 1; padding: 20px 16px 32px; display: flex; flex-direction: column; gap: 16px; }
+
+    .progress-track { background: var(--gray-1); border-radius: 99px; height: 18px; overflow: hidden; margin-bottom: 8px; }
     .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--green), #89E219);
-      border-radius: 99px;
-      transition: width 0.6s cubic-bezier(.22,1,.36,1);
-      position: relative;
+      height: 100%; background: linear-gradient(90deg, var(--green), #89E219);
+      border-radius: 99px; transition: width .6s cubic-bezier(.22,1,.36,1); position: relative;
     }
-
     .progress-fill::after {
-      content: '';
-      position: absolute;
-      inset: 3px 8px auto 8px;
-      height: 5px;
-      background: rgba(255,255,255,0.45);
-      border-radius: 99px;
+      content: ''; position: absolute; inset: 3px 8px auto 8px;
+      height: 5px; background: rgba(255,255,255,.45); border-radius: 99px;
     }
-
-    .progress-caption {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--gray-2);
-    }
-
+    .progress-caption { font-size: 13px; font-weight: 700; color: var(--gray-2); }
     .progress-caption strong { color: var(--green-dark); }
 
-    /* Streak card */
     .streak-card {
-      background: linear-gradient(135deg, #FF9600 0%, #FFBA00 100%);
-      border-radius: 18px;
-      padding: 20px 24px;
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      box-shadow: 0 6px 20px rgba(255,150,0,0.35), 0 3px 0 var(--orange-dark);
+      background: linear-gradient(135deg, #FF9600, #FFBA00);
+      border-radius: 18px; padding: 20px 24px;
+      display: flex; align-items: center; gap: 18px;
+      box-shadow: 0 6px 20px rgba(255,150,0,.35), 0 3px 0 var(--orange-dark);
       color: white;
     }
-
     .streak-flame { font-size: 52px; line-height: 1; }
-
     .streak-body { flex: 1; }
+    .streak-count { font-size: 40px; font-weight: 900; line-height: 1; }
+    .streak-unit  { font-size: 15px; font-weight: 800; opacity: .9; }
+    .streak-msg   { font-size: 12px; opacity: .8; font-weight: 600; margin-top: 2px; }
 
-    .streak-count {
-      font-size: 40px;
-      font-weight: 900;
-      line-height: 1;
-    }
-
-    .streak-unit {
-      font-size: 15px;
-      font-weight: 800;
-      opacity: .9;
-    }
-
-    .streak-msg {
-      font-size: 12px;
-      opacity: .8;
-      font-weight: 600;
-      margin-top: 2px;
-    }
-
-    /* Lesson card */
-    .lesson-card .lesson-row {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 18px;
-    }
-
+    .lesson-card .lesson-row { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
     .lesson-icon-wrap {
-      width: 52px;
-      height: 52px;
-      background: var(--green-light);
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 26px;
-      flex-shrink: 0;
+      width: 52px; height: 52px; background: var(--green-light);
+      border-radius: 14px; display: flex; align-items: center;
+      justify-content: center; font-size: 26px; flex-shrink: 0;
     }
+    .lesson-meta h3 { font-size: 18px; font-weight: 900; }
+    .lesson-meta p  { font-size: 13px; color: var(--gray-2); font-weight: 600; margin-top: 1px; }
 
-    .lesson-meta h3 {
-      font-size: 18px;
-      font-weight: 900;
-    }
+    .home-btn-row { display: flex; gap: 10px; }
+    .home-btn-row .btn { padding: 13px; font-size: 14px; }
 
-    .lesson-meta p {
-      font-size: 13px;
-      color: var(--gray-2);
-      font-weight: 600;
-      margin-top: 1px;
-    }
-
-    /* Stats row */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-
-    .stat-box {
-      background: var(--bg);
-      border-radius: 12px;
-      padding: 14px 8px;
-      text-align: center;
-    }
-
-    .stat-val {
-      font-size: 22px;
-      font-weight: 900;
-    }
-
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .stat-box { background: var(--bg); border-radius: 12px; padding: 14px 8px; text-align: center; }
+    .stat-val { font-size: 22px; font-weight: 900; }
     .stat-val.blue   { color: var(--blue); }
     .stat-val.green  { color: var(--green); }
     .stat-val.orange { color: var(--orange); }
+    .stat-name { font-size: 10px; font-weight: 800; color: var(--gray-2); text-transform: uppercase; letter-spacing: .5px; margin-top: 2px; }
 
-    .stat-name {
-      font-size: 10px;
-      font-weight: 800;
-      color: var(--gray-2);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-top: 2px;
-    }
-
-    /* Buttons */
-    .btn {
-      display: block;
-      width: 100%;
-      padding: 15px;
-      border: none;
-      border-radius: 14px;
-      font-family: 'Nunito', sans-serif;
-      font-size: 16px;
-      font-weight: 900;
-      cursor: pointer;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      transition: transform .08s, box-shadow .08s;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .btn-green {
-      background: var(--green);
-      color: white;
-      box-shadow: 0 4px 0 var(--green-dark);
-    }
-
-    .btn-green:hover { filter: brightness(1.04); }
-
-    .btn-green:active {
-      transform: translateY(3px);
-      box-shadow: 0 1px 0 var(--green-dark);
-    }
-
-    .btn-outline {
-      background: transparent;
-      color: var(--green);
-      border: 2.5px solid var(--green);
-      box-shadow: none;
-    }
-
-    .btn-outline:active { transform: scale(.98); }
-
-    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-       LESSON SCREEN
-    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-    .lesson-header {
-      background: var(--white);
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       CALIBRATION SCREEN
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    .cal-header {
+      background: var(--white); padding: 12px 20px;
+      display: flex; align-items: center; justify-content: space-between;
       border-bottom: 2px solid var(--gray-1);
     }
+    .cal-header-mid { text-align: center; }
+    .cal-header-mid h2 { font-size: 16px; font-weight: 900; }
+    .cal-sub { font-size: 12px; color: var(--gray-2); font-weight: 700; }
+    .btn-text {
+      background: none; border: none; cursor: pointer;
+      font-family: 'Nunito', sans-serif; font-size: 14px;
+      font-weight: 800; color: var(--gray-2); padding: 8px 4px;
+    }
+    .btn-text-green { color: var(--green); }
 
+    .cal-body {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; padding: 20px;
+      position: relative; overflow: hidden;
+    }
+
+    /* cal states */
+    .cal-state { display: none; flex-direction: column; align-items: center; gap: 14px; text-align: center; width: 100%; }
+    .cal-state.active { display: flex; }
+    .cal-state h3 { font-size: 22px; font-weight: 900; }
+    .cal-state p  { font-size: 14px; color: var(--gray-3); font-weight: 600; line-height: 1.6; max-width: 280px; }
+
+    .cal-spinner {
+      width: 48px; height: 48px; border: 4px solid var(--gray-1);
+      border-top-color: var(--green); border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .cal-big-icon { font-size: 64px; }
+    .cal-checkmark { font-size: 56px; color: var(--green); animation: popIn .5s cubic-bezier(.34,1.56,.64,1); }
+
+    /* calibration dot area */
+    .cal-dots-area {
+      display: none; position: absolute; inset: 0;
+    }
+    .cal-dots-area.active { display: block; }
+
+    .cal-dot {
+      position: absolute; width: 52px; height: 52px;
+      border-radius: 50%; transform: translate(-50%, -50%);
+      cursor: pointer; display: flex; align-items: center;
+      justify-content: center; transition: transform .2s, opacity .3s;
+      background: var(--gray-1); border: 3px solid var(--gray-2);
+    }
+    .cal-dot.active {
+      background: var(--green); border-color: var(--green-dark);
+      animation: calPulse 1.1s ease-in-out infinite alternate;
+    }
+    .cal-dot.done {
+      background: var(--green-light); border-color: var(--green);
+      animation: none; opacity: .6; cursor: default;
+    }
+    .cal-dot-num { font-size: 13px; font-weight: 900; color: white; }
+    .cal-dot.done .cal-dot-num { color: var(--green-dark); }
+    .cal-dot:not(.active):not(.done) .cal-dot-num { color: var(--gray-2); }
+
+    @keyframes calPulse {
+      from { transform: translate(-50%,-50%) scale(1); box-shadow: 0 0 0 0 rgba(88,204,2,.4); }
+      to   { transform: translate(-50%,-50%) scale(1.1); box-shadow: 0 0 0 12px rgba(88,204,2,0); }
+    }
+
+    .cal-instruct-overlay {
+      position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: rgba(0,0,0,.65); color: white; border-radius: 12px;
+      padding: 10px 18px; font-size: 13px; font-weight: 700;
+      white-space: nowrap; z-index: 2;
+    }
+
+    .cal-progress-bar-wrap { width: 100%; max-width: 280px; }
+    .cal-prog-track { background: var(--gray-1); height: 8px; border-radius: 99px; margin-top: 12px; overflow: hidden; }
+    .cal-prog-fill { height: 100%; background: var(--green); border-radius: 99px; transition: width .3s ease; }
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       LESSON SCREEN
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    .lesson-header {
+      background: var(--white); padding: 12px 16px;
+      display: flex; align-items: center; gap: 10px;
+      border-bottom: 2px solid var(--gray-1);
+    }
     .btn-x {
-      width: 36px;
-      height: 36px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 10px;
-      font-size: 18px;
-      color: var(--gray-2);
-      flex-shrink: 0;
-      -webkit-tap-highlight-color: transparent;
-      transition: background .15s;
+      width: 36px; height: 36px; background: none; border: none;
+      cursor: pointer; display: flex; align-items: center;
+      justify-content: center; border-radius: 10px; font-size: 18px;
+      color: var(--gray-2); flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent; transition: background .15s;
     }
-
     .btn-x:hover { background: var(--bg); }
-
-    .seg-bar {
-      flex: 1;
-      display: flex;
-      gap: 5px;
-    }
-
+    .seg-bar { flex: 1; display: flex; gap: 5px; }
     .seg {
-      flex: 1;
-      height: 8px;
-      background: var(--gray-1);
-      border-radius: 99px;
-      overflow: hidden;
+      flex: 1; height: 8px; background: var(--gray-1);
+      border-radius: 99px; overflow: hidden; transition: background .3s;
+    }
+    .seg.done { background: var(--green); }
+    .round-label { font-size: 13px; font-weight: 800; color: var(--gray-2); flex-shrink: 0; }
+
+    /* gaze indicator */
+    .gaze-ind {
+      display: none; align-items: center; gap: 4px;
+      font-size: 12px; font-weight: 800; flex-shrink: 0;
+    }
+    .gaze-ind.visible { display: flex; }
+    .gaze-dot {
+      width: 10px; height: 10px; border-radius: 50%; background: var(--gray-1);
       transition: background .3s;
     }
+    .gaze-ind.on  .gaze-dot { background: var(--green); }
+    .gaze-ind.off .gaze-dot { background: var(--red); }
+    .gaze-ind.on  .gaze-label { color: var(--green-dark); }
+    .gaze-ind.off .gaze-label { color: var(--red); }
+    .gaze-label { font-size: 11px; }
 
-    .seg.done { background: var(--green); }
-
-    .round-label {
-      font-size: 13px;
-      font-weight: 800;
-      color: var(--gray-2);
-      flex-shrink: 0;
-    }
-
-    /* Phases */
-    .lesson-body {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      padding: 24px 16px 20px;
-    }
-
-    .phase {
-      display: none;
-      flex: 1;
-      flex-direction: column;
-    }
-
+    .lesson-body { flex: 1; display: flex; flex-direction: column; padding: 24px 16px 20px; }
+    .phase { display: none; flex: 1; flex-direction: column; }
     .phase.active { display: flex; }
 
-    /* ── Ready phase ── */
-    .phase-ready {
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      text-align: center;
-    }
-
-    .ready-brain {
-      font-size: 72px;
-      animation: floatBrain 2s ease-in-out infinite alternate;
-    }
-
+    /* ready phase */
+    .phase-ready { align-items: center; justify-content: center; gap: 16px; text-align: center; }
+    .ready-brain { font-size: 72px; animation: floatBrain 2s ease-in-out infinite alternate; }
     @keyframes floatBrain {
       from { transform: translateY(0) rotate(-3deg); }
       to   { transform: translateY(-8px) rotate(3deg); }
     }
-
-    .ready-title {
-      font-size: 26px;
-      font-weight: 900;
-    }
-
-    .ready-desc {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--gray-3);
-      max-width: 260px;
-      line-height: 1.5;
-    }
-
+    .ready-title { font-size: 26px; font-weight: 900; }
+    .ready-desc  { font-size: 14px; font-weight: 600; color: var(--gray-3); max-width: 260px; line-height: 1.5; }
     .countdown-num {
-      font-size: 64px;
-      font-weight: 900;
-      color: var(--green);
-      min-height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      font-size: 64px; font-weight: 900; color: var(--green);
+      min-height: 80px; display: flex; align-items: center; justify-content: center;
     }
-
-    .count-anim {
-      animation: popIn .45s cubic-bezier(.34,1.56,.64,1);
-    }
-
+    .count-anim { animation: popIn .45s cubic-bezier(.34,1.56,.64,1); }
     @keyframes popIn {
       from { transform: scale(.4); opacity: 0; }
-      to   { transform: scale(1); opacity: 1; }
+      to   { transform: scale(1);  opacity: 1; }
     }
 
-    /* ── Watch phase ── */
-    .phase-watch {
-      align-items: center;
-      justify-content: center;
-      gap: 28px;
-    }
-
-    .watch-label {
-      font-size: 13px;
-      font-weight: 800;
-      color: var(--gray-2);
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-    }
-
+    /* watch phase */
+    .phase-watch { align-items: center; justify-content: center; gap: 28px; }
+    .watch-label { font-size: 13px; font-weight: 800; color: var(--gray-2); text-transform: uppercase; letter-spacing: 1.5px; }
     .digit-box {
-      width: 150px;
-      height: 150px;
-      background: var(--white);
-      border-radius: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 80px;
-      font-weight: 900;
-      color: var(--text);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.1), 0 4px 0 var(--gray-1);
-      transition: background .15s;
+      width: 150px; height: 150px; background: var(--white);
+      border-radius: 28px; display: flex; align-items: center;
+      justify-content: center; font-size: 80px; font-weight: 900;
+      color: var(--text); box-shadow: 0 6px 20px rgba(0,0,0,.1), 0 4px 0 var(--gray-1);
+      transition: background .15s, box-shadow .2s;
     }
-
-    .digit-box.blank {
-      background: var(--gray-1);
-      box-shadow: 0 4px 0 #D0D0D0;
-    }
-
-    .digit-box.pop {
-      animation: digitPop .28s cubic-bezier(.34,1.56,.64,1);
-    }
-
+    .digit-box.blank { background: var(--gray-1); box-shadow: 0 4px 0 #D0D0D0; }
+    .digit-box.pop   { animation: digitPop .28s cubic-bezier(.34,1.56,.64,1); }
+    .digit-box.gaze-on { box-shadow: 0 6px 20px rgba(88,204,2,.3), 0 4px 0 var(--green-dark); }
     @keyframes digitPop {
       from { transform: scale(.55); opacity: 0; }
       to   { transform: scale(1);   opacity: 1; }
     }
-
-    .pip-row {
-      display: flex;
-      gap: 9px;
-    }
-
+    .pip-row { display: flex; gap: 9px; }
     .pip {
-      width: 13px;
-      height: 13px;
-      border-radius: 50%;
-      background: var(--gray-1);
-      transition: background .2s, transform .2s;
+      width: 13px; height: 13px; border-radius: 50%;
+      background: var(--gray-1); transition: background .2s, transform .2s;
     }
+    .pip.lit { background: var(--green); transform: scale(1.15); }
 
-    .pip.lit {
-      background: var(--green);
-      transform: scale(1.15);
-    }
-
-    /* ── Recall phase ── */
+    /* recall phase */
     .phase-recall { gap: 16px; }
-
-    .recall-title {
-      font-size: 20px;
-      font-weight: 900;
-      text-align: center;
-    }
-
-    .recall-title small {
-      display: block;
-      font-size: 13px;
-      color: var(--gray-2);
-      font-weight: 600;
-      margin-top: 2px;
-    }
-
+    .recall-title { font-size: 20px; font-weight: 900; text-align: center; }
+    .recall-title small { display: block; font-size: 13px; color: var(--gray-2); font-weight: 600; margin-top: 2px; }
     .slot-row {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      flex-wrap: wrap;
-      min-height: 72px;
-      align-items: center;
+      display: flex; gap: 10px; justify-content: center;
+      flex-wrap: wrap; min-height: 72px; align-items: center;
     }
-
     .slot {
-      width: 56px;
-      height: 68px;
-      background: var(--white);
-      border: 3px solid var(--gray-1);
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 30px;
-      font-weight: 900;
-      transition: border-color .2s, background .2s;
+      width: 56px; height: 68px; background: var(--white);
+      border: 3px solid var(--gray-1); border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 30px; font-weight: 900; transition: border-color .2s, background .2s;
     }
-
-    .slot.filled {
-      border-color: var(--blue);
-      animation: slotIn .18s ease-out;
-    }
-
-    @keyframes slotIn {
-      from { transform: translateY(-8px); opacity: .4; }
-      to   { transform: translateY(0);    opacity: 1; }
-    }
-
-    .slot.correct {
-      border-color: var(--green);
-      background: var(--green-light);
-      color: var(--green-dark);
-    }
-
-    .slot.wrong {
-      border-color: var(--red);
-      background: #FFE5E5;
-      color: var(--red);
-      animation: shake .4s ease-out;
-    }
-
+    .slot.filled { border-color: var(--blue); animation: slotIn .18s ease-out; }
+    @keyframes slotIn { from { transform: translateY(-8px); opacity: .4; } to { transform: translateY(0); opacity: 1; } }
+    .slot.correct { border-color: var(--green); background: var(--green-light); color: var(--green-dark); }
+    .slot.wrong   { border-color: var(--red);   background: #FFE5E5;            color: var(--red); animation: shake .4s ease-out; }
     @keyframes shake {
       0%,100% { transform: translateX(0); }
-      20%      { transform: translateX(-7px); }
-      40%      { transform: translateX(7px); }
-      60%      { transform: translateX(-5px); }
-      80%      { transform: translateX(5px); }
+      20% { transform: translateX(-7px); } 40% { transform: translateX(7px); }
+      60% { transform: translateX(-5px); } 80% { transform: translateX(5px); }
     }
-
     .spacer { flex: 1; }
-
-    /* Numpad */
-    .numpad {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 9px;
-    }
-
+    .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
     .nk {
-      background: var(--white);
-      border: 2.5px solid var(--gray-1);
-      border-radius: 14px;
-      padding: 14px 0;
-      font-family: 'Nunito', sans-serif;
-      font-size: 26px;
-      font-weight: 900;
-      color: var(--text);
-      cursor: pointer;
-      box-shadow: 0 3px 0 var(--gray-1);
+      background: var(--white); border: 2.5px solid var(--gray-1);
+      border-radius: 14px; padding: 14px 0;
+      font-family: 'Nunito', sans-serif; font-size: 26px; font-weight: 900;
+      color: var(--text); cursor: pointer; box-shadow: 0 3px 0 var(--gray-1);
       transition: transform .08s, box-shadow .08s, background .1s;
       -webkit-tap-highlight-color: transparent;
     }
-
-    .nk:active {
-      transform: translateY(2px);
-      box-shadow: 0 1px 0 var(--gray-1);
-      background: var(--bg);
-    }
-
+    .nk:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--gray-1); background: var(--bg); }
     .nk.del-key { font-size: 20px; color: var(--gray-2); }
-
     .nk.check-key {
-      background: var(--green);
-      color: white;
-      border-color: var(--green-dark);
-      box-shadow: 0 3px 0 var(--green-dark);
-      font-size: 14px;
-      letter-spacing: .5px;
+      background: var(--green); color: white;
+      border-color: var(--green-dark); box-shadow: 0 3px 0 var(--green-dark);
+      font-size: 14px; letter-spacing: .5px;
     }
+    .nk.check-key:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--green-dark); }
+    .nk:disabled { opacity: .4; cursor: not-allowed; transform: none !important; }
+    .nk.check-key:disabled { background: var(--gray-1); border-color: var(--gray-1); color: var(--gray-2); box-shadow: none !important; }
 
-    .nk.check-key:active {
-      transform: translateY(2px);
-      box-shadow: 0 1px 0 var(--green-dark);
+    /* RT timer chip */
+    .rt-chip {
+      display: none; align-items: center; gap: 6px;
+      background: var(--bg); border: 2px solid var(--gray-1);
+      border-radius: 99px; padding: 5px 12px;
+      font-size: 13px; font-weight: 800; color: var(--gray-3);
+      align-self: center;
     }
+    .rt-chip.visible { display: flex; }
+    .rt-chip-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red); animation: rtPulse .8s ease-in-out infinite alternate; }
+    @keyframes rtPulse { from { opacity: 1; } to { opacity: .3; } }
 
-    .nk:disabled {
-      opacity: .45;
-      cursor: not-allowed;
-      transform: none !important;
-      box-shadow: 0 3px 0 var(--gray-1) !important;
-    }
-
-    .nk.check-key:disabled {
-      background: var(--gray-1);
-      border-color: var(--gray-1);
-      color: var(--gray-2);
-      box-shadow: none !important;
-    }
-
-    /* ── Feedback banner ── */
+    /* feedback strip */
     .feedback-strip {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
+      position: fixed; bottom: 0; left: 50%;
       transform: translate(-50%, 100%);
-      width: 100%;
-      max-width: 480px;
-      padding: 20px 20px 36px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      z-index: 50;
-      transition: transform .3s cubic-bezier(.22,1,.36,1);
+      width: 100%; max-width: 480px;
+      padding: 20px 20px 36px; display: flex; flex-direction: column; gap: 12px;
+      z-index: 50; transition: transform .3s cubic-bezier(.22,1,.36,1);
     }
-
     .feedback-strip.show { transform: translate(-50%, 0); }
-
     .feedback-strip.ok  { background: var(--green-light); border-top: 3px solid var(--green); }
     .feedback-strip.err { background: #FFE5E5;            border-top: 3px solid var(--red); }
-
-    .fb-title {
-      font-size: 19px;
-      font-weight: 900;
-    }
-
+    .fb-title { font-size: 19px; font-weight: 900; }
     .feedback-strip.ok  .fb-title { color: var(--green-dark); }
     .feedback-strip.err .fb-title { color: var(--red); }
-
-    .fb-detail {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--gray-3);
-    }
-
+    .fb-detail { font-size: 14px; font-weight: 600; color: var(--gray-3); line-height: 1.5; }
     .fb-btn {
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 14px;
-      font-family: 'Nunito', sans-serif;
-      font-size: 16px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: .8px;
-      cursor: pointer;
-      color: white;
+      width: 100%; padding: 14px; border: none; border-radius: 14px;
+      font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 900;
+      text-transform: uppercase; letter-spacing: .8px; cursor: pointer; color: white;
       -webkit-tap-highlight-color: transparent;
     }
-
     .feedback-strip.ok  .fb-btn { background: var(--green); }
     .feedback-strip.err .fb-btn { background: var(--red); }
 
-    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
        RESULTS SCREEN
-    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
     #screen-results { background: var(--white); }
-
-    .results-hero {
-      background: var(--green);
-      padding: 36px 20px 52px;
-      text-align: center;
-      color: white;
-    }
-
+    .results-hero { background: var(--green); padding: 36px 20px 52px; text-align: center; color: white; }
     .results-emoji {
-      font-size: 72px;
-      display: block;
+      font-size: 72px; display: block;
       animation: heroPop .55s cubic-bezier(.34,1.56,.64,1) .15s both;
     }
-
     @keyframes heroPop {
       from { transform: scale(.2) rotate(-15deg); opacity: 0; }
-      to   { transform: scale(1) rotate(0deg);    opacity: 1; }
+      to   { transform: scale(1)  rotate(0deg);   opacity: 1; }
     }
-
-    .results-title {
-      font-size: 30px;
-      font-weight: 900;
-      margin-top: 10px;
-    }
-
-    .results-sub {
-      font-size: 15px;
-      font-weight: 600;
-      opacity: .9;
-      margin-top: 4px;
-    }
-
-    .results-cards {
-      padding: 0 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-top: -28px;
-    }
-
+    .results-title { font-size: 30px; font-weight: 900; margin-top: 10px; }
+    .results-sub   { font-size: 15px; font-weight: 600; opacity: .9; margin-top: 4px; }
+    .results-cards { padding: 0 16px; display: flex; flex-direction: column; gap: 12px; margin-top: -28px; }
     .rcard {
-      background: var(--white);
-      border-radius: 18px;
-      padding: 18px 20px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.08), 0 0 0 1px var(--gray-1);
+      background: var(--white); border-radius: 18px; padding: 18px 20px;
+      display: flex; align-items: center; gap: 16px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.08), 0 0 0 1px var(--gray-1);
       animation: cardIn .4s ease-out both;
     }
-
     .rcard:nth-child(1) { animation-delay: .1s; }
     .rcard:nth-child(2) { animation-delay: .2s; }
     .rcard:nth-child(3) { animation-delay: .3s; }
-
-    @keyframes cardIn {
-      from { transform: translateY(20px); opacity: 0; }
-      to   { transform: translateY(0);    opacity: 1; }
-    }
-
+    .rcard:nth-child(4) { animation-delay: .4s; }
+    .rcard:nth-child(5) { animation-delay: .5s; }
+    @keyframes cardIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     .rcard-icon { font-size: 38px; width: 48px; text-align: center; }
-
-    .rcard-label {
-      font-size: 11px;
-      font-weight: 800;
-      color: var(--gray-2);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .rcard-val {
-      font-size: 30px;
-      font-weight: 900;
-      line-height: 1.1;
-    }
-
+    .rcard-label { font-size: 11px; font-weight: 800; color: var(--gray-2); text-transform: uppercase; letter-spacing: 1px; }
+    .rcard-val { font-size: 30px; font-weight: 900; line-height: 1.1; }
     .rcard-val.green  { color: var(--green-dark); }
     .rcard-val.blue   { color: var(--blue); }
     .rcard-val.orange { color: var(--orange); }
+    .rcard-val.purple { color: var(--purple); }
+    .rcard-sub { font-size: 12px; color: var(--gray-2); font-weight: 600; margin-top: 1px; }
+    .results-actions { padding: 20px 16px 36px; display: flex; flex-direction: column; gap: 10px; }
 
-    .results-actions {
-      padding: 20px 16px 36px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       REPORTS SCREEN
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    .rep-header {
+      background: var(--white); padding: 12px 16px;
+      display: flex; align-items: center; gap: 12px;
+      border-bottom: 2px solid var(--gray-1);
+      position: sticky; top: 0; z-index: 10;
     }
+    .rep-title { font-size: 18px; font-weight: 900; flex: 1; }
+
+    .rep-body { flex: 1; overflow-y: auto; padding-bottom: 32px; }
+
+    /* summary row */
+    .rep-summary {
+      padding: 16px 16px 0;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+    }
+    .sum-box {
+      background: var(--white); border-radius: 14px; padding: 14px 10px;
+      text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,.06), 0 0 0 1px var(--gray-1);
+    }
+    .sum-val { font-size: 24px; font-weight: 900; }
+    .sum-val.green  { color: var(--green); }
+    .sum-val.blue   { color: var(--blue); }
+    .sum-val.purple { color: var(--purple); }
+    .sum-name { font-size: 10px; font-weight: 800; color: var(--gray-2); text-transform: uppercase; letter-spacing: .5px; margin-top: 3px; }
+
+    /* tabs */
+    .tab-bar {
+      display: flex; margin: 16px 16px 0;
+      background: var(--gray-1); border-radius: 12px; padding: 4px; gap: 4px;
+    }
+    .tab {
+      flex: 1; padding: 9px; border: none; border-radius: 9px;
+      font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 800;
+      cursor: pointer; background: transparent; color: var(--gray-2);
+      transition: background .2s, color .2s;
+    }
+    .tab.active { background: var(--white); color: var(--text); box-shadow: 0 2px 6px rgba(0,0,0,.1); }
+
+    .tab-content { display: none; padding: 16px; }
+    .tab-content.active { display: block; }
+
+    /* chart sections */
+    .chart-section {
+      background: var(--white); border-radius: 16px; padding: 16px 16px 12px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06), 0 0 0 1px var(--gray-1);
+    }
+    .chart-section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .chart-section-title { font-size: 14px; font-weight: 900; }
+    .chart-badge {
+      font-size: 11px; font-weight: 800; padding: 3px 9px;
+      border-radius: 99px; background: var(--bg);
+    }
+    .chart-badge.green  { color: var(--green-dark); background: var(--green-light); }
+    .chart-badge.blue   { color: var(--blue-dark);  background: #E0F5FF; }
+    .chart-badge.purple { color: #9B5FCF;            background: #F3E8FF; }
+    .chart-wrap { position: relative; height: 160px; }
+
+    /* history list */
+    .hist-empty {
+      text-align: center; padding: 48px 20px; color: var(--gray-2);
+    }
+    .hist-empty-icon { font-size: 48px; margin-bottom: 12px; }
+    .hist-empty p { font-size: 15px; font-weight: 700; line-height: 1.6; }
+
+    .hist-card {
+      background: var(--white); border-radius: 16px;
+      padding: 16px; margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06), 0 0 0 1px var(--gray-1);
+    }
+    .hist-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .hist-date { font-size: 13px; font-weight: 800; color: var(--gray-3); }
+    .focus-badge {
+      font-size: 13px; font-weight: 900; padding: 4px 12px;
+      border-radius: 99px; color: white;
+    }
+    .focus-badge.high   { background: var(--green); }
+    .focus-badge.medium { background: var(--orange); }
+    .focus-badge.low    { background: var(--red); }
+    .focus-badge.na     { background: var(--gray-2); }
+    .hist-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .hist-metric { text-align: center; }
+    .hist-metric-val { font-size: 16px; font-weight: 900; }
+    .hist-metric-val.green  { color: var(--green-dark); }
+    .hist-metric-val.blue   { color: var(--blue); }
+    .hist-metric-val.purple { color: var(--purple); }
+    .hist-metric-val.orange { color: var(--orange); }
+    .hist-metric-name { font-size: 9px; font-weight: 800; color: var(--gray-2); text-transform: uppercase; letter-spacing: .5px; margin-top: 1px; }
 
     /* ── Confetti ── */
-    .confetti-wrap {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 200;
-      overflow: hidden;
-    }
-
-    .conf-piece {
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      border-radius: 2px;
-      animation: confFall linear forwards;
-    }
-
+    .confetti-wrap { position: fixed; inset: 0; pointer-events: none; z-index: 200; overflow: hidden; }
+    .conf-piece { position: absolute; width: 8px; height: 8px; border-radius: 2px; animation: confFall linear forwards; }
     @keyframes confFall {
-      0%   { transform: translateY(-20px) rotate(0deg);    opacity: 1; }
-      100% { transform: translateY(110vh) rotate(720deg);  opacity: 0; }
+      0%   { transform: translateY(-20px) rotate(0deg);   opacity: 1; }
+      100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
     }
   </style>
 </head>
 <body>
 
-<!-- ════════════════ HOME ════════════════ -->
+<!-- ════════════════════════════ HOME ════════════════════════════ -->
 <div id="screen-home" class="screen active">
-
   <header class="home-header">
     <div class="logo">
       <div class="logo-badge">🧠</div>
       <span class="logo-text">NeuroLingo</span>
     </div>
     <div class="header-stats">
-      <div class="hstat hstat-streak">
-        <span class="hstat-icon">🔥</span>
-        <span id="h-streak">0</span>
-      </div>
-      <div class="hstat hstat-xp">
-        <span class="hstat-icon">⚡</span>
-        <span id="h-xp">0</span>
-      </div>
+      <div class="hstat hstat-streak"><span class="hstat-icon">🔥</span><span id="h-streak">0</span></div>
+      <div class="hstat hstat-xp"><span class="hstat-icon">⚡</span><span id="h-xp">0</span></div>
     </div>
   </header>
 
   <div class="home-body">
 
-    <!-- Daily Goal -->
     <div class="card">
       <div class="card-label">Daily Goal</div>
       <div class="progress-track">
         <div class="progress-fill" id="daily-bar" style="width:0%"></div>
       </div>
-      <div class="progress-caption">
-        <strong id="daily-xp-num">0</strong> / 50 XP today
-      </div>
+      <div class="progress-caption"><strong id="daily-xp-num">0</strong> / 50 XP today</div>
     </div>
 
-    <!-- Streak -->
     <div class="streak-card">
       <div class="streak-flame">🔥</div>
       <div class="streak-body">
@@ -828,7 +585,6 @@
       </div>
     </div>
 
-    <!-- Lesson -->
     <div class="card lesson-card">
       <div class="lesson-row">
         <div class="lesson-icon-wrap">🧩</div>
@@ -837,43 +593,94 @@
           <p>Digit Span Challenge &bull; ~3 min</p>
         </div>
       </div>
-      <button class="btn btn-green" id="start-btn" onclick="startLesson()">START LESSON</button>
+      <div class="home-btn-row" style="margin-bottom:10px">
+        <button class="btn btn-green" id="start-btn" onclick="requestLesson()" style="flex:2">START LESSON</button>
+        <button class="btn btn-ghost" onclick="showReports()" style="flex:1">📊 Stats</button>
+      </div>
     </div>
 
-    <!-- Stats -->
     <div class="card">
       <div class="card-label">Your Progress</div>
       <div class="stats-grid">
-        <div class="stat-box">
-          <div class="stat-val blue" id="stat-xp">0</div>
-          <div class="stat-name">Total XP</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-val green" id="stat-best">—</div>
-          <div class="stat-name">Best Score</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-val orange" id="stat-lessons">0</div>
-          <div class="stat-name">Lessons</div>
-        </div>
+        <div class="stat-box"><div class="stat-val blue" id="stat-xp">0</div><div class="stat-name">Total XP</div></div>
+        <div class="stat-box"><div class="stat-val green" id="stat-best">—</div><div class="stat-name">Best Score</div></div>
+        <div class="stat-box"><div class="stat-val orange" id="stat-lessons">0</div><div class="stat-name">Lessons</div></div>
       </div>
     </div>
 
   </div>
 </div>
 
-<!-- ════════════════ LESSON ════════════════ -->
-<div id="screen-lesson" class="screen">
+<!-- ════════════════════════ CALIBRATION ════════════════════════ -->
+<div id="screen-calibration" class="screen">
+  <div class="cal-header">
+    <button class="btn-text" onclick="skipCalibration()">Skip</button>
+    <div class="cal-header-mid">
+      <h2>Eye Tracking</h2>
+      <div class="cal-sub" id="cal-header-sub">Setting up…</div>
+    </div>
+    <div style="width:44px"></div><!-- spacer -->
+  </div>
 
+  <div class="cal-body">
+
+    <!-- State: loading -->
+    <div class="cal-state active" id="cal-state-loading">
+      <div class="cal-spinner"></div>
+      <h3>Starting camera…</h3>
+      <p>Please allow camera access when prompted.</p>
+    </div>
+
+    <!-- State: error -->
+    <div class="cal-state" id="cal-state-error">
+      <div class="cal-big-icon">📷</div>
+      <h3>Camera Not Available</h3>
+      <p>Eye tracking needs camera access. You can still play without gaze tracking.</p>
+      <button class="btn btn-green" onclick="skipCalibration()" style="max-width:260px;margin-top:8px">Continue Without Gaze</button>
+    </div>
+
+    <!-- State: instructions -->
+    <div class="cal-state" id="cal-state-instructions">
+      <div class="cal-big-icon">👁️</div>
+      <h3>Calibrate Eye Tracking</h3>
+      <p>Look at each numbered dot and click it. This helps the app track where your eyes are on screen.</p>
+      <div class="cal-progress-bar-wrap">
+        <div class="cal-prog-track"><div class="cal-prog-fill" id="cal-prog-fill" style="width:0%"></div></div>
+      </div>
+      <button class="btn btn-green" onclick="startCalDots()" style="max-width:260px;margin-top:4px">Begin (9 points)</button>
+    </div>
+
+    <!-- State: dotting (dots rendered absolutely over cal-body) -->
+    <div class="cal-dots-area" id="cal-dots-area">
+      <!-- dots injected by JS -->
+      <div class="cal-instruct-overlay" id="cal-instruct-overlay">👁 Look at the glowing dot, then click it</div>
+    </div>
+
+    <!-- State: done -->
+    <div class="cal-state" id="cal-state-done">
+      <div class="cal-checkmark">✓</div>
+      <h3>Calibration Complete!</h3>
+      <p>Eye tracking is ready. Starting your lesson now…</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════ LESSON ════════════════════════════ -->
+<div id="screen-lesson" class="screen">
   <div class="lesson-header">
     <button class="btn-x" onclick="exitLesson()">✕</button>
     <div class="seg-bar" id="seg-bar"></div>
     <div class="round-label" id="round-label">1 / 5</div>
+    <div class="gaze-ind" id="gaze-ind">
+      <div class="gaze-dot"></div>
+      <span class="gaze-label" id="gaze-label">👁</span>
+    </div>
   </div>
 
   <div class="lesson-body">
 
-    <!-- Phase: Ready / Countdown -->
+    <!-- Ready phase -->
     <div class="phase phase-ready active" id="phase-ready">
       <div class="ready-brain">🧠</div>
       <div class="ready-title">Get Ready!</div>
@@ -881,24 +688,22 @@
       <div class="countdown-num" id="countdown-num"><span>3</span></div>
     </div>
 
-    <!-- Phase: Watch -->
+    <!-- Watch phase -->
     <div class="phase phase-watch" id="phase-watch">
       <div class="watch-label">Remember this sequence</div>
       <div class="digit-box blank" id="digit-box"></div>
       <div class="pip-row" id="pip-row"></div>
     </div>
 
-    <!-- Phase: Recall -->
+    <!-- Recall phase -->
     <div class="phase phase-recall" id="phase-recall">
       <div class="recall-title">
         What was the sequence?
         <small>Tap numbers in order</small>
       </div>
-
+      <div class="rt-chip" id="rt-chip"><div class="rt-chip-dot"></div><span id="rt-display">0.0s</span></div>
       <div class="slot-row" id="slot-row"></div>
-
       <div class="spacer"></div>
-
       <div class="numpad">
         <button class="nk" onclick="nk(1)">1</button>
         <button class="nk" onclick="nk(2)">2</button>
@@ -915,24 +720,21 @@
       </div>
     </div>
 
-  </div><!-- /lesson-body -->
+  </div>
 
-  <!-- Feedback strip -->
   <div class="feedback-strip" id="feedback-strip">
     <div class="fb-title" id="fb-title">Correct!</div>
     <div class="fb-detail" id="fb-detail"></div>
     <button class="fb-btn" onclick="nextRound()">CONTINUE</button>
   </div>
-
 </div>
 
-<!-- ════════════════ RESULTS ════════════════ -->
-<div id="screen-results" class="screen" id="screen-results">
-
+<!-- ════════════════════════ RESULTS ═════════════════════════════ -->
+<div id="screen-results" class="screen">
   <div class="results-hero">
     <span class="results-emoji" id="res-emoji">🏆</span>
     <div class="results-title" id="res-title">Lesson Complete!</div>
-    <div class="results-sub" id="res-sub">Great work today!</div>
+    <div class="results-sub"   id="res-sub">Great work!</div>
   </div>
 
   <div class="results-cards">
@@ -950,6 +752,22 @@
         <div class="rcard-val blue">+<span id="res-xp">0</span></div>
       </div>
     </div>
+    <div class="rcard" id="res-rt-card">
+      <div class="rcard-icon">⏱️</div>
+      <div>
+        <div class="rcard-label">Avg Reaction Time</div>
+        <div class="rcard-val purple" id="res-rt">—</div>
+        <div class="rcard-sub" id="res-rt-sub"></div>
+      </div>
+    </div>
+    <div class="rcard" id="res-focus-card">
+      <div class="rcard-icon">👁️</div>
+      <div>
+        <div class="rcard-label">Focus Score</div>
+        <div class="rcard-val orange" id="res-focus">—</div>
+        <div class="rcard-sub" id="res-focus-sub"></div>
+      </div>
+    </div>
     <div class="rcard">
       <div class="rcard-icon">🔥</div>
       <div>
@@ -961,139 +779,484 @@
 
   <div class="results-actions">
     <button class="btn btn-green" onclick="goHome()">CONTINUE</button>
-    <button class="btn btn-outline" onclick="startLesson()">PLAY AGAIN</button>
+    <button class="btn btn-outline" onclick="requestLesson()">PLAY AGAIN</button>
   </div>
-
 </div>
 
-<!-- Confetti container -->
+<!-- ════════════════════════ REPORTS ═════════════════════════════ -->
+<div id="screen-reports" class="screen">
+  <div class="rep-header">
+    <button class="btn-x" onclick="goHome()">✕</button>
+    <div class="rep-title">Progress Reports</div>
+  </div>
+
+  <div class="rep-body">
+
+    <div class="rep-summary" id="rep-summary">
+      <div class="sum-box"><div class="sum-val green" id="rep-avg-focus">—</div><div class="sum-name">Avg Focus</div></div>
+      <div class="sum-box"><div class="sum-val blue"  id="rep-avg-acc">—</div><div class="sum-name">Avg Accuracy</div></div>
+      <div class="sum-box"><div class="sum-val purple" id="rep-avg-rt">—</div><div class="sum-name">Avg RT</div></div>
+    </div>
+
+    <div class="tab-bar">
+      <button class="tab active" onclick="switchTab('charts',this)">📈 Charts</button>
+      <button class="tab"        onclick="switchTab('history',this)">📋 History</button>
+    </div>
+
+    <div class="tab-content active" id="tab-charts">
+      <div class="chart-section">
+        <div class="chart-section-header">
+          <div class="chart-section-title">Focus Score</div>
+          <div class="chart-badge green" id="badge-focus">Last 7 sessions</div>
+        </div>
+        <div class="chart-wrap"><canvas id="chart-focus"></canvas></div>
+      </div>
+      <div class="chart-section">
+        <div class="chart-section-header">
+          <div class="chart-section-title">Accuracy</div>
+          <div class="chart-badge blue" id="badge-acc">—</div>
+        </div>
+        <div class="chart-wrap"><canvas id="chart-acc"></canvas></div>
+      </div>
+      <div class="chart-section">
+        <div class="chart-section-header">
+          <div class="chart-section-title">Reaction Time</div>
+          <div class="chart-badge purple" id="badge-rt">lower = faster</div>
+        </div>
+        <div class="chart-wrap"><canvas id="chart-rt"></canvas></div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-history">
+      <div id="history-list"></div>
+      <div class="hist-empty" id="hist-empty" style="display:none">
+        <div class="hist-empty-icon">📊</div>
+        <p>No sessions yet.<br>Complete a lesson to see your progress!</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Confetti -->
 <div class="confetti-wrap" id="confetti-wrap"></div>
 
 <script>
-// ════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
 //  CONSTANTS
-// ════════════════════════════════════════════════════════════
-const TOTAL_ROUNDS    = 5;
-const SEQ_LENGTHS     = [3, 3, 4, 4, 5];   // per-round digit counts
-const XP_CORRECT      = 20;
-const XP_PARTIAL      = 8;
-const XP_WRONG        = 0;
-const DAILY_GOAL      = 50;
-const DIGIT_ON_MS     = 850;
-const DIGIT_OFF_MS    = 180;
+// ════════════════════════════════════════════════════════════════
+const TOTAL_ROUNDS  = 5;
+const SEQ_LENGTHS   = [3, 3, 4, 4, 5];
+const XP_CORRECT    = 20;
+const XP_PARTIAL    = 8;
+const DAILY_GOAL    = 50;
+const DIGIT_ON_MS   = 850;
+const DIGIT_OFF_MS  = 180;
+const GAZE_SAMPLE_MS = 100;   // gaze poll interval
+const GAZE_PADDING  = 80;     // px tolerance around digit box
+
+// 9-point calibration grid (% of cal-body dimensions)
+const CAL_POINTS = [
+  { x: 15, y: 15 }, { x: 50, y: 15 }, { x: 85, y: 15 },
+  { x: 15, y: 50 }, { x: 50, y: 50 }, { x: 85, y: 50 },
+  { x: 15, y: 85 }, { x: 50, y: 85 }, { x: 85, y: 85 },
+];
 
 const CONF_COLORS = ['#58CC02','#FF9600','#1CB0F6','#FF4B4B','#CE82FF','#FFBA00'];
 
-// ════════════════════════════════════════════════════════════
-//  STATE
-// ════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
+//  PERSISTENT STATE
+// ════════════════════════════════════════════════════════════════
 let S = {
-  // Persisted
-  streak: 0,
-  xp: 0,
-  dailyXP: 0,
-  lastPlayed: null,
-  bestScore: null,
-  lessonsCompleted: 0,
-  // Session (not persisted)
-  round: 0,
-  roundScore: 0,
-  sessionXP: 0,
-  seq: [],
-  input: [],
+  streak: 0, xp: 0, dailyXP: 0,
+  lastPlayed: null, bestScore: null, lessonsCompleted: 0,
+  // session (not persisted)
+  round: 0, roundScore: 0, sessionXP: 0, seq: [], input: [],
 };
 
 function persist() {
-  const d = {
-    streak:           S.streak,
-    xp:               S.xp,
-    dailyXP:          S.dailyXP,
-    lastPlayed:       S.lastPlayed,
-    bestScore:        S.bestScore,
+  localStorage.setItem('nl_state_v3', JSON.stringify({
+    streak: S.streak, xp: S.xp, dailyXP: S.dailyXP,
+    lastPlayed: S.lastPlayed, bestScore: S.bestScore,
     lessonsCompleted: S.lessonsCompleted,
-  };
-  localStorage.setItem('neurolingo_v2', JSON.stringify(d));
+  }));
 }
 
 function hydrate() {
-  const raw = localStorage.getItem('neurolingo_v2');
+  const raw = localStorage.getItem('nl_state_v3');
   if (!raw) return;
   const d = JSON.parse(raw);
   const today     = new Date().toDateString();
   const yesterday = new Date(Date.now() - 86400000).toDateString();
-
   S.xp               = d.xp || 0;
   S.bestScore        = d.bestScore != null ? d.bestScore : null;
   S.lessonsCompleted = d.lessonsCompleted || 0;
   S.lastPlayed       = d.lastPlayed || null;
-
-  // Streak
-  S.streak = d.streak || 0;
-  if (S.lastPlayed && S.lastPlayed !== today && S.lastPlayed !== yesterday) {
-    S.streak = 0;
-  }
-
-  // Daily XP resets each calendar day
+  S.streak           = d.streak || 0;
+  if (S.lastPlayed && S.lastPlayed !== today && S.lastPlayed !== yesterday) S.streak = 0;
   S.dailyXP = (S.lastPlayed === today) ? (d.dailyXP || 0) : 0;
 }
 
-// ════════════════════════════════════════════════════════════
-//  HOME UI
-// ════════════════════════════════════════════════════════════
+// ── Session history ──────────────────────────────────────────
+function loadSessions() {
+  try { return JSON.parse(localStorage.getItem('nl_sessions_v1') || '[]'); }
+  catch { return []; }
+}
+function saveSessions(arr) {
+  localStorage.setItem('nl_sessions_v1', JSON.stringify(arr.slice(-100))); // keep last 100
+}
+function pushSession(sess) {
+  const arr = loadSessions();
+  arr.push(sess);
+  saveSessions(arr);
+}
+
+// ════════════════════════════════════════════════════════════════
+//  WEBGAZER MODULE
+// ════════════════════════════════════════════════════════════════
+const Gazer = {
+  loaded:     false,
+  calibrated: false,
+  pos:        null,
+  _ticker:    null,
+
+  load() {
+    return new Promise((resolve) => {
+      if (typeof webgazer !== 'undefined') { this.loaded = true; resolve(true); return; }
+      const s = document.createElement('script');
+      s.src = 'https://webgazer.cs.brown.edu/webgazer.js';
+      const timeout = setTimeout(() => resolve(false), 12000);
+      s.onload  = () => { clearTimeout(timeout); this.loaded = true; resolve(true); };
+      s.onerror = () => { clearTimeout(timeout); resolve(false); };
+      document.head.appendChild(s);
+    });
+  },
+
+  async begin() {
+    if (!this.loaded) return false;
+    try {
+      webgazer
+        .setRegression('ridge')
+        .setGazeListener((data) => { this.pos = data ? { x: data.x, y: data.y } : null; });
+      await webgazer.begin();
+      webgazer.showPredictionPoints(false);
+      webgazer.showVideoPreview(true);
+      return true;
+    } catch (e) {
+      console.warn('WebGazer begin failed:', e);
+      return false;
+    }
+  },
+
+  end() {
+    if (!this.loaded) return;
+    try { webgazer.end(); } catch {}
+    this.calibrated = false;
+    this.pos = null;
+    this.hideVideo();
+  },
+
+  isOnTarget(el) {
+    if (!this.loaded || !this.pos) return null;
+    const r = el.getBoundingClientRect();
+    return (
+      this.pos.x >= r.left  - GAZE_PADDING &&
+      this.pos.x <= r.right + GAZE_PADDING &&
+      this.pos.y >= r.top   - GAZE_PADDING &&
+      this.pos.y <= r.bottom + GAZE_PADDING
+    );
+  },
+
+  positionVideo(mode) {
+    const el = document.getElementById('webgazerVideoFeed');
+    if (!el) return;
+    if (mode === 'hide') { el.style.display = 'none'; return; }
+    if (mode === 'cal') {
+      Object.assign(el.style, {
+        display: 'block', top: '70px', right: 'auto',
+        left: '50%', transform: 'translateX(-50%)',
+        width: '180px', height: '135px', borderRadius: '14px',
+        border: '2.5px solid var(--green)',
+      });
+    } else { // lesson: small corner
+      Object.assign(el.style, {
+        display: 'block', top: '62px', right: '8px',
+        left: 'auto', transform: 'none',
+        width: '72px', height: '54px', borderRadius: '8px',
+        border: '2px solid var(--green)', opacity: '.75',
+      });
+    }
+  },
+
+  hideVideo() { this.positionVideo('hide'); },
+};
+
+// ════════════════════════════════════════════════════════════════
+//  METRICS TRACKER
+// ════════════════════════════════════════════════════════════════
+const Metrics = {
+  rounds:      [],   // per-round data
+  recallStart: null, // for RT
+  firstInput:  null, // for RT
+  rtTicker:    null, // display interval
+  gazeSamples:    [],
+  gazeOnTarget:   0,
+  gazeInterval:   null,
+  gazeIndicatorInterval: null,
+
+  reset() {
+    this.rounds = []; this.recallStart = null; this.firstInput = null;
+    this.gazeSamples = []; this.gazeOnTarget = 0;
+    clearInterval(this.gazeInterval);
+    clearInterval(this.rtTicker);
+    clearInterval(this.gazeIndicatorInterval);
+  },
+
+  startRT() {
+    this.recallStart = performance.now();
+    this.firstInput  = null;
+    // Show live ticker
+    const chip = $('rt-chip');
+    const disp = $('rt-display');
+    chip.classList.add('visible');
+    this.rtTicker = setInterval(() => {
+      const elapsed = (performance.now() - this.recallStart) / 1000;
+      disp.textContent = elapsed.toFixed(1) + 's';
+    }, 100);
+  },
+
+  recordFirstInput() {
+    if (this.recallStart !== null && this.firstInput === null) {
+      this.firstInput = performance.now() - this.recallStart;
+      clearInterval(this.rtTicker);
+    }
+  },
+
+  startGaze(targetEl) {
+    if (!Gazer.loaded) return;
+    this.gazeSamples  = [];
+    this.gazeOnTarget = 0;
+    clearInterval(this.gazeInterval);
+    this.gazeInterval = setInterval(() => {
+      const hit = Gazer.isOnTarget(targetEl);
+      if (hit !== null) {
+        this.gazeSamples.push(hit ? 1 : 0);
+        if (hit) this.gazeOnTarget++;
+        // visual feedback on digit box
+        targetEl.classList.toggle('gaze-on', hit);
+      }
+    }, GAZE_SAMPLE_MS);
+  },
+
+  stopGaze() {
+    clearInterval(this.gazeInterval);
+    const el = $('digit-box');
+    if (el) el.classList.remove('gaze-on');
+    if (!this.gazeSamples.length) return null;
+    return this.gazeOnTarget / this.gazeSamples.length;
+  },
+
+  startGazeIndicator() {
+    const ind = $('gaze-ind');
+    if (!Gazer.loaded) { ind.classList.remove('visible'); return; }
+    ind.classList.add('visible');
+    this.gazeIndicatorInterval = setInterval(() => {
+      const hit = Gazer.isOnTarget($('digit-box'));
+      ind.classList.toggle('on',  hit === true);
+      ind.classList.toggle('off', hit === false);
+    }, 500);
+  },
+
+  stopGazeIndicator() {
+    clearInterval(this.gazeIndicatorInterval);
+    $('gaze-ind').classList.remove('visible', 'on', 'off');
+  },
+
+  saveRound(roundNum, seqLen, correct) {
+    const fixation = this.stopGaze();
+    const rt = this.firstInput;
+    $('rt-chip').classList.remove('visible');
+    this.rounds.push({ roundNum, seqLen, correct, rt, fixation });
+  },
+
+  computeSession(roundScore, sessionXP) {
+    const accuracy = roundScore / TOTAL_ROUNDS;
+    const rts = this.rounds.map(r => r.rt).filter(r => r != null);
+    const avgRT = rts.length ? avg(rts) : null;
+    const fixations = this.rounds.map(r => r.fixation).filter(f => f != null);
+    const fixationRate = fixations.length ? avg(fixations) : null;
+    const gazeEnabled  = fixations.length > 0;
+
+    // Focus score
+    const normRT = avgRT != null ? clamp((3000 - avgRT) / 2500, 0, 1) : null;
+    let focusScore;
+    if (gazeEnabled) {
+      focusScore = Math.round(fixationRate * 50 + accuracy * 30 + (normRT ?? 0.5) * 20);
+    } else if (normRT != null) {
+      focusScore = Math.round(accuracy * 70 + normRT * 30);
+    } else {
+      focusScore = Math.round(accuracy * 100);
+    }
+
+    const now = new Date();
+    return {
+      id:          now.getTime(),
+      date:        now.toDateString(),
+      displayDate: now.toLocaleDateString('en', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+      accuracy,
+      correctRounds: roundScore,
+      xp:          sessionXP,
+      avgRT,
+      fixationRate,
+      focusScore,
+      gazeEnabled,
+      rounds:      [...this.rounds],
+    };
+  },
+};
+
+// ════════════════════════════════════════════════════════════════
+//  HOME SCREEN
+// ════════════════════════════════════════════════════════════════
 function renderHome() {
   const today = new Date().toDateString();
+  $('h-streak').textContent      = S.streak;
+  $('h-xp').textContent          = S.xp;
+  $('streak-count').textContent  = S.streak;
+  $('stat-xp').textContent       = S.xp;
+  $('stat-best').textContent     = S.bestScore != null ? `${S.bestScore}/5` : '—';
+  $('stat-lessons').textContent  = S.lessonsCompleted;
 
-  $('h-streak').textContent   = S.streak;
-  $('h-xp').textContent       = S.xp;
-  $('streak-count').textContent = S.streak;
-  $('stat-xp').textContent    = S.xp;
-  $('stat-best').textContent  = S.bestScore != null ? `${S.bestScore}/5` : '—';
-  $('stat-lessons').textContent = S.lessonsCompleted;
-
-  // Streak message
   const msgs = [
     'Start your journey today!',
     "You're on a roll! Keep it up!",
     'Two days strong! Amazing!',
-    'Three days! You\'re building a habit!',
+    "Three days — you're building a habit!",
     'Four days! Your brain thanks you!',
     'Five days — incredible focus!',
     'Six days in a row! Unstoppable!',
   ];
   $('streak-msg').textContent =
-    S.streak === 0 ? msgs[0] :
-    S.streak < msgs.length ? msgs[S.streak] :
-    `🔥 ${S.streak} days in a row! Phenomenal!`;
+    S.streak < msgs.length ? msgs[S.streak] : `🔥 ${S.streak} days in a row! Phenomenal!`;
 
-  // Daily goal bar
-  const pct = Math.min(100, Math.round((S.dailyXP / DAILY_GOAL) * 100));
-  $('daily-bar').style.width       = pct + '%';
-  $('daily-xp-num').textContent    = S.dailyXP;
+  const pct = Math.min(100, (S.dailyXP / DAILY_GOAL) * 100);
+  $('daily-bar').style.width   = pct + '%';
+  $('daily-xp-num').textContent = S.dailyXP;
 
-  // Button state
   const btn = $('start-btn');
   if (S.lastPlayed === today && S.dailyXP >= DAILY_GOAL) {
-    btn.textContent         = '✓ GOAL REACHED TODAY';
-    btn.style.background    = 'var(--blue)';
-    btn.style.boxShadow     = '0 4px 0 var(--blue-dark)';
+    btn.textContent      = '✓ GOAL REACHED TODAY';
+    btn.style.background = 'var(--blue)';
+    btn.style.boxShadow  = '0 4px 0 var(--blue-dark)';
   } else {
-    btn.textContent         = 'START LESSON';
-    btn.style.background    = '';
-    btn.style.boxShadow     = '';
+    btn.textContent      = 'START LESSON';
+    btn.style.background = '';
+    btn.style.boxShadow  = '';
   }
 }
 
-// ════════════════════════════════════════════════════════════
-//  LESSON FLOW
-// ════════════════════════════════════════════════════════════
-function startLesson() {
-  S.round      = 0;
-  S.roundScore = 0;
-  S.sessionXP  = 0;
-  S.input      = [];
+// ════════════════════════════════════════════════════════════════
+//  CALIBRATION
+// ════════════════════════════════════════════════════════════════
+let calIndex = 0;
 
+function requestLesson() {
+  // Reset session state
+  S.round = 0; S.roundScore = 0; S.sessionXP = 0; S.input = [];
+  Metrics.reset();
+
+  showScreen('screen-calibration');
+  $('cal-header-sub').textContent = 'Loading…';
+  showCalState('loading');
+
+  Gazer.load().then(loaded => {
+    if (!loaded) { showCalState('error'); return; }
+    return Gazer.begin().then(ok => {
+      if (!ok) { showCalState('error'); return; }
+      Gazer.positionVideo('cal');
+      showCalState('instructions');
+      $('cal-header-sub').textContent = 'Position yourself facing the camera';
+    });
+  });
+}
+
+function showCalState(name) {
+  document.querySelectorAll('.cal-state').forEach(el => el.classList.remove('active'));
+  const el = $('cal-state-' + name);
+  if (el) el.classList.add('active');
+  const area = $('cal-dots-area');
+  area.classList.toggle('active', name === 'dots');
+}
+
+function startCalDots() {
+  showCalState('dots');
+  calIndex = 0;
+  renderCalDots();
+  activateCalDot(0);
+}
+
+function renderCalDots() {
+  const area = $('cal-dots-area');
+  // Remove old dots (keep overlay)
+  area.querySelectorAll('.cal-dot').forEach(d => d.remove());
+
+  CAL_POINTS.forEach((p, i) => {
+    const dot = document.createElement('div');
+    dot.className    = 'cal-dot';
+    dot.id           = 'cal-dot-' + i;
+    dot.style.left   = p.x + '%';
+    dot.style.top    = p.y + '%';
+    dot.innerHTML    = `<span class="cal-dot-num">${i + 1}</span>`;
+    dot.onclick      = () => handleCalClick(i);
+    area.appendChild(dot);
+  });
+}
+
+function activateCalDot(i) {
+  document.querySelectorAll('.cal-dot').forEach((d, idx) => {
+    d.classList.toggle('active', idx === i);
+    d.classList.toggle('done',   idx < i);
+  });
+  $('cal-header-sub').textContent = `Point ${i + 1} / ${CAL_POINTS.length}`;
+  $('cal-prog-fill') && ($('cal-prog-fill').style.width = (i / CAL_POINTS.length * 100) + '%');
+}
+
+function handleCalClick(i) {
+  if (i !== calIndex) return; // only active dot responds
+  const dot = $('cal-dot-' + i);
+  dot.classList.remove('active');
+  dot.classList.add('done');
+
+  calIndex++;
+  if (calIndex >= CAL_POINTS.length) {
+    finishCalibration();
+  } else {
+    activateCalDot(calIndex);
+  }
+}
+
+function finishCalibration() {
+  Gazer.calibrated = true;
+  Gazer.positionVideo('lesson');
+  $('cal-dots-area').classList.remove('active');
+  showCalState('done');
+  setTimeout(startLesson, 1200);
+}
+
+function skipCalibration() {
+  if (Gazer.loaded) Gazer.end();
+  Gazer.calibrated = false;
+  startLesson();
+}
+
+// ════════════════════════════════════════════════════════════════
+//  LESSON FLOW
+// ════════════════════════════════════════════════════════════════
+function startLesson() {
   showScreen('screen-lesson');
   buildSegBar();
+  if (Gazer.calibrated) Gazer.positionVideo('lesson');
+  Metrics.startGazeIndicator();
   beginRound();
 }
 
@@ -1102,26 +1265,22 @@ function buildSegBar() {
   bar.innerHTML = '';
   for (let i = 0; i < TOTAL_ROUNDS; i++) {
     const s = document.createElement('div');
-    s.className = 'seg';
-    s.id = 'seg-' + i;
+    s.className = 'seg'; s.id = 'seg-' + i;
     bar.appendChild(s);
   }
 }
 
 function updateSegBar() {
-  for (let i = 0; i < TOTAL_ROUNDS; i++) {
+  for (let i = 0; i < TOTAL_ROUNDS; i++)
     $('seg-' + i).classList.toggle('done', i < S.round);
-  }
   $('round-label').textContent = `${S.round + 1} / ${TOTAL_ROUNDS}`;
 }
 
 function beginRound() {
   hideFeedback();
   updateSegBar();
-
   S.seq   = randSeq(SEQ_LENGTHS[S.round]);
   S.input = [];
-
   showPhase('phase-ready');
   runCountdown(3, showWatchPhase);
 }
@@ -1130,7 +1289,6 @@ function runCountdown(from, cb) {
   const el = $('countdown-num');
   let n = from;
   el.innerHTML = `<span>${n}</span>`;
-
   const tick = setInterval(() => {
     n--;
     if (n <= 0) { clearInterval(tick); cb(); return; }
@@ -1138,63 +1296,48 @@ function runCountdown(from, cb) {
   }, 700);
 }
 
-// ── Watch phase ──────────────────────────────────────────
 function showWatchPhase() {
   showPhase('phase-watch');
-
   const box  = $('digit-box');
   const pips = $('pip-row');
-
-  // Build pips
   pips.innerHTML = '';
   S.seq.forEach((_, i) => {
     const p = document.createElement('div');
-    p.className = 'pip';
-    p.id = 'pip-' + i;
+    p.className = 'pip'; p.id = 'pip-' + i;
     pips.appendChild(p);
   });
+  box.textContent = ''; box.classList.add('blank');
 
-  box.textContent = '';
-  box.classList.add('blank');
+  // Start gaze tracking for this round
+  Metrics.startGaze(box);
 
   let idx = 0;
-
   function flash() {
     if (idx >= S.seq.length) {
-      // End: blank then go to recall
-      box.textContent = '';
-      box.classList.add('blank');
+      box.textContent = ''; box.classList.add('blank');
       setTimeout(showRecallPhase, 500);
       return;
     }
-
     box.classList.remove('blank', 'pop');
-    void box.offsetWidth;                     // reflow for re-trigger
+    void box.offsetWidth;
     box.classList.add('pop');
     box.textContent = S.seq[idx];
-
-    const pip = $('pip-' + idx);
-    if (pip) pip.classList.add('lit');
-
+    const pip = $('pip-' + idx); if (pip) pip.classList.add('lit');
     idx++;
-
     setTimeout(() => {
-      box.textContent = '';
-      box.classList.add('blank');
+      box.textContent = ''; box.classList.add('blank');
       setTimeout(flash, DIGIT_OFF_MS);
     }, DIGIT_ON_MS);
   }
-
   setTimeout(flash, 250);
 }
 
-// ── Recall phase ─────────────────────────────────────────
 function showRecallPhase() {
   showPhase('phase-recall');
-  // Re-enable all numpad keys
   document.querySelectorAll('.nk').forEach(b => b.disabled = false);
   $('check-btn').disabled = true;
   renderSlots();
+  Metrics.startRT();
 }
 
 function renderSlots() {
@@ -1211,6 +1354,7 @@ function renderSlots() {
 
 function nk(d) {
   if (S.input.length >= S.seq.length) return;
+  Metrics.recordFirstInput();
   S.input.push(d);
   renderSlots();
   $('check-btn').disabled = (S.input.length < S.seq.length);
@@ -1218,13 +1362,11 @@ function nk(d) {
 
 function nkDel() {
   if (!S.input.length) return;
-  S.input.pop();
-  renderSlots();
+  S.input.pop(); renderSlots();
   $('check-btn').disabled = true;
 }
 
 function checkAnswer() {
-  // Determine result per slot
   let allCorrect = true;
   for (let i = 0; i < S.seq.length; i++) {
     const sl = $('sl-' + i);
@@ -1232,16 +1374,14 @@ function checkAnswer() {
     sl.classList.add(ok ? 'correct' : 'wrong');
     if (!ok) allCorrect = false;
   }
-
-  // Count correct positions
   const hits = S.seq.filter((d, i) => d === S.input[i]).length;
-
-  // Disable numpad
   document.querySelectorAll('.nk').forEach(b => b.disabled = true);
 
-  let xp = allCorrect ? XP_CORRECT : hits > 0 ? XP_PARTIAL : XP_WRONG;
+  const xp = allCorrect ? XP_CORRECT : hits > 0 ? XP_PARTIAL : 0;
   S.sessionXP += xp;
   if (allCorrect) S.roundScore++;
+
+  Metrics.saveRound(S.round, S.seq.length, allCorrect);
 
   setTimeout(() => showFeedback(allCorrect, hits, xp), 500);
 }
@@ -1249,170 +1389,315 @@ function checkAnswer() {
 function showFeedback(allCorrect, hits, xp) {
   const strip = $('feedback-strip');
   strip.classList.remove('ok', 'err');
-
-  const seqStr = S.seq.join(' ');
+  const seqStr = S.seq.join(' → ');
+  const rt = Metrics.rounds[Metrics.rounds.length - 1]?.rt;
+  const rtStr = rt != null ? `  •  RT: ${(rt/1000).toFixed(2)}s` : '';
 
   if (allCorrect) {
     strip.classList.add('ok');
     $('fb-title').textContent  = '✓ Perfect recall!';
-    $('fb-detail').textContent = `+${xp} XP  •  Sequence: ${seqStr}`;
+    $('fb-detail').textContent = `+${xp} XP${rtStr}  •  ${seqStr}`;
   } else if (hits > 0) {
     strip.classList.add('err');
-    $('fb-title').textContent  = `✗ ${hits}/${S.seq.length} correct`;
-    $('fb-detail').textContent = `The sequence was: ${seqStr}  •  +${xp} XP`;
+    $('fb-title').textContent  = `✗ ${hits} / ${S.seq.length} correct`;
+    $('fb-detail').textContent = `Sequence was: ${seqStr}${rtStr}  •  +${xp} XP`;
   } else {
     strip.classList.add('err');
-    $('fb-title').textContent  = '✗ Not quite';
-    $('fb-detail').textContent = `The sequence was: ${seqStr}`;
+    $('fb-title').textContent  = '✗ Not quite — keep going!';
+    $('fb-detail').textContent = `Sequence was: ${seqStr}`;
   }
-
   strip.classList.add('show');
 }
 
-function hideFeedback() {
-  $('feedback-strip').classList.remove('show');
-}
+function hideFeedback() { $('feedback-strip').classList.remove('show'); }
 
 function nextRound() {
   S.round++;
-  if (S.round >= TOTAL_ROUNDS) {
-    finishLesson();
-  } else {
-    beginRound();
-  }
+  if (S.round >= TOTAL_ROUNDS) finishLesson();
+  else beginRound();
 }
 
-// ════════════════════════════════════════════════════════════
-//  FINISH
-// ════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
+//  FINISH LESSON
+// ════════════════════════════════════════════════════════════════
 function finishLesson() {
   hideFeedback();
+  Metrics.stopGazeIndicator();
+  Gazer.end();
 
   const today     = new Date().toDateString();
   const yesterday = new Date(Date.now() - 86400000).toDateString();
-
-  // Streak
   if (S.lastPlayed !== today) {
-    if (S.lastPlayed === yesterday || S.lastPlayed === null) {
-      S.streak++;
-    } else {
-      S.streak = 1;
-    }
+    S.streak = (S.lastPlayed === yesterday || S.lastPlayed === null) ? S.streak + 1 : 1;
     S.lastPlayed = today;
   }
-
   S.xp               += S.sessionXP;
   S.dailyXP          += S.sessionXP;
   S.lessonsCompleted++;
-
-  if (S.bestScore === null || S.roundScore > S.bestScore) {
-    S.bestScore = S.roundScore;
-  }
-
+  if (S.bestScore === null || S.roundScore > S.bestScore) S.bestScore = S.roundScore;
   persist();
-  showResults();
+
+  const sess = Metrics.computeSession(S.roundScore, S.sessionXP);
+  pushSession(sess);
+
+  showResults(sess);
 }
 
-function showResults() {
+// ════════════════════════════════════════════════════════════════
+//  RESULTS SCREEN
+// ════════════════════════════════════════════════════════════════
+function showResults(sess) {
   showScreen('screen-results');
-
-  const pct = S.roundScore / TOTAL_ROUNDS;
+  const pct = sess.correctRounds / TOTAL_ROUNDS;
 
   if (pct === 1) {
-    $('res-emoji').textContent = '🏆';
-    $('res-title').textContent = 'Perfect!';
-    $('res-sub').textContent   = 'Flawless memory — every digit in order!';
+    $('res-emoji').textContent = '🏆'; $('res-title').textContent = 'Perfect!';
+    $('res-sub').textContent   = 'Flawless! Every digit recalled in order!';
     spawnConfetti(80);
   } else if (pct >= 0.6) {
-    $('res-emoji').textContent = '⭐';
-    $('res-title').textContent = 'Great Work!';
-    $('res-sub').textContent   = 'Keep practicing to hit perfection!';
+    $('res-emoji').textContent = '⭐'; $('res-title').textContent = 'Great Work!';
+    $('res-sub').textContent   = 'Keep practicing to reach perfection!';
     spawnConfetti(30);
   } else {
-    $('res-emoji').textContent = '💪';
-    $('res-title').textContent = 'Keep Going!';
+    $('res-emoji').textContent = '💪'; $('res-title').textContent = 'Keep Going!';
     $('res-sub').textContent   = 'Every practice strengthens your memory!';
   }
 
-  $('res-score').textContent  = `${S.roundScore} / ${TOTAL_ROUNDS}`;
+  $('res-score').textContent  = `${sess.correctRounds} / ${TOTAL_ROUNDS}`;
   $('res-streak').textContent = S.streak;
+  countUp($('res-xp'), 0, sess.xp, 900);
 
-  countUp($('res-xp'), 0, S.sessionXP, 900);
+  // Reaction time
+  if (sess.avgRT != null) {
+    $('res-rt').textContent     = (sess.avgRT / 1000).toFixed(2) + 's';
+    $('res-rt-sub').textContent = 'avg time to first key press';
+  } else {
+    $('res-rt').textContent     = '—';
+    $('res-rt-sub').textContent = '';
+  }
+
+  // Focus score
+  const fc = $('res-focus');
+  fc.textContent = sess.focusScore;
+  $('res-focus-sub').textContent = sess.gazeEnabled
+    ? `fixation ${Math.round((sess.fixationRate||0)*100)}% · gaze tracked`
+    : 'based on accuracy + reaction time';
+  fc.className = 'rcard-val ' + focusColor(sess.focusScore);
 }
 
-// ════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
+//  REPORTS SCREEN
+// ════════════════════════════════════════════════════════════════
+let charts = {};
+
+async function showReports() {
+  showScreen('screen-reports');
+  await loadChartJS();
+  renderReportsSummary();
+  renderCharts();
+  renderHistory();
+  switchTab('charts', document.querySelector('.tab'));
+}
+
+function renderReportsSummary() {
+  const sessions = loadSessions();
+  if (!sessions.length) {
+    $('rep-avg-focus').textContent = '—';
+    $('rep-avg-acc').textContent   = '—';
+    $('rep-avg-rt').textContent    = '—';
+    return;
+  }
+  $('rep-avg-focus').textContent = Math.round(avg(sessions.map(s => s.focusScore)));
+  $('rep-avg-acc').textContent   = Math.round(avg(sessions.map(s => s.accuracy)) * 100) + '%';
+  const rts = sessions.map(s => s.avgRT).filter(r => r != null);
+  $('rep-avg-rt').textContent = rts.length ? (avg(rts)/1000).toFixed(2)+'s' : '—';
+}
+
+function renderCharts() {
+  const sessions = loadSessions().slice(-7); // last 7 sessions
+
+  const labels    = sessions.map(s => s.displayDate || s.date);
+  const focusData = sessions.map(s => s.focusScore);
+  const accData   = sessions.map(s => Math.round(s.accuracy * 100));
+  const rtData    = sessions.map(s => s.avgRT != null ? Math.round(s.avgRT) : null);
+
+  destroyCharts();
+
+  const baseOpts = {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { titleFont: { family: 'Nunito', weight: '800' }, bodyFont: { family: 'Nunito' } } },
+    scales: {
+      x: { ticks: { font: { family: 'Nunito', weight: '700' }, maxRotation: 30 }, grid: { display: false } },
+      y: { ticks: { font: { family: 'Nunito', weight: '700' } }, grid: { color: 'rgba(0,0,0,.05)' } },
+    },
+  };
+
+  const makeLine = (id, data, color, yLabel, min, max) => {
+    const ctx = document.getElementById(id)?.getContext('2d');
+    if (!ctx) return null;
+    return new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          data, borderColor: color, backgroundColor: color + '18',
+          borderWidth: 2.5, pointRadius: 5, pointHoverRadius: 7,
+          pointBackgroundColor: color, fill: true, tension: .35,
+          spanGaps: true,
+        }],
+      },
+      options: { ...baseOpts, scales: { ...baseOpts.scales, y: { ...baseOpts.scales.y, min, max, title: { display: false } } } },
+    });
+  };
+
+  charts.focus = makeLine('chart-focus', focusData, '#58CC02', 'Score', 0, 100);
+  charts.acc   = makeLine('chart-acc',   accData,   '#1CB0F6', '%',     0, 100);
+  charts.rt    = makeLine('chart-rt',    rtData,    '#CE82FF', 'ms',    0, null);
+
+  // Badge text
+  if (sessions.length) {
+    const lastFocus = focusData[focusData.length-1];
+    $('badge-focus').textContent = lastFocus != null ? `Last: ${lastFocus}` : 'Last 7 sessions';
+    const lastAcc = accData[accData.length-1];
+    $('badge-acc').textContent = lastAcc != null ? `Last: ${lastAcc}%` : '—';
+  }
+}
+
+function destroyCharts() {
+  Object.values(charts).forEach(c => { try { c?.destroy(); } catch {} });
+  charts = {};
+}
+
+function renderHistory() {
+  const sessions = loadSessions().slice().reverse(); // newest first
+  const list  = $('history-list');
+  const empty = $('hist-empty');
+  list.innerHTML = '';
+  if (!sessions.length) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  sessions.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'hist-card';
+    const rtStr      = s.avgRT != null ? (s.avgRT/1000).toFixed(2)+'s' : '—';
+    const fixStr     = s.fixationRate != null ? Math.round(s.fixationRate*100)+'%' : '—';
+    const badgeCls   = s.focusScore >= 70 ? 'high' : s.focusScore >= 40 ? 'medium' : s.focusScore > 0 ? 'low' : 'na';
+    card.innerHTML = `
+      <div class="hist-card-top">
+        <div class="hist-date">${s.displayDate || s.date}</div>
+        <div class="focus-badge ${badgeCls}">Focus ${s.focusScore}</div>
+      </div>
+      <div class="hist-metrics">
+        <div class="hist-metric">
+          <div class="hist-metric-val green">${s.correctRounds}/${TOTAL_ROUNDS}</div>
+          <div class="hist-metric-name">Score</div>
+        </div>
+        <div class="hist-metric">
+          <div class="hist-metric-val blue">${Math.round(s.accuracy*100)}%</div>
+          <div class="hist-metric-name">Accuracy</div>
+        </div>
+        <div class="hist-metric">
+          <div class="hist-metric-val purple">${rtStr}</div>
+          <div class="hist-metric-name">Avg RT</div>
+        </div>
+        <div class="hist-metric">
+          <div class="hist-metric-val orange">${fixStr}</div>
+          <div class="hist-metric-name">Fixation</div>
+        </div>
+      </div>`;
+    list.appendChild(card);
+  });
+}
+
+function switchTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+  $('tab-' + name).classList.add('active');
+}
+
+function loadChartJS() {
+  return new Promise(resolve => {
+    if (typeof Chart !== 'undefined') { resolve(); return; }
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js';
+    s.onload  = resolve;
+    s.onerror = resolve; // graceful fail
+    document.head.appendChild(s);
+  });
+}
+
+// ════════════════════════════════════════════════════════════════
 //  NAVIGATION
-// ════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0, 0);
-}
-
-function showPhase(id) {
-  document.querySelectorAll('.phase').forEach(p => p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  // Hide gazer video when not on calibration/lesson
+  if (id !== 'screen-calibration' && id !== 'screen-lesson') Gazer.hideVideo();
 }
 
 function exitLesson() {
-  if (confirm('Exit lesson? Your progress this round will be lost.')) {
+  if (confirm('Exit lesson? Progress this round will be lost.')) {
     hideFeedback();
+    Metrics.stopGazeIndicator();
+    Gazer.end();
     showScreen('screen-home');
     renderHome();
   }
 }
 
 function goHome() {
+  Gazer.end();
+  destroyCharts();
   showScreen('screen-home');
   renderHome();
 }
 
-// ════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
 //  HELPERS
-// ════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
 function $(id) { return document.getElementById(id); }
-
-function randSeq(len) {
-  return Array.from({ length: len }, () => Math.floor(Math.random() * 10));
+function showPhase(id) {
+  document.querySelectorAll('.phase').forEach(p => p.classList.remove('active'));
+  $(id).classList.add('active');
+  if (id === 'phase-recall') {
+    document.querySelectorAll('.nk').forEach(b => b.disabled = false);
+    $('check-btn').disabled = true;
+  }
 }
-
+function randSeq(len) { return Array.from({ length: len }, () => Math.floor(Math.random() * 10)); }
+function avg(arr)  { return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0; }
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function focusColor(score) {
+  if (score >= 70) return 'green';
+  if (score >= 40) return 'orange';
+  return 'red' in document.documentElement.style ? 'red' : 'orange';
+}
 function countUp(el, from, to, ms) {
   const t0 = performance.now();
   const frame = (now) => {
     const p = Math.min((now - t0) / ms, 1);
-    const e = 1 - Math.pow(1 - p, 3);      // ease-out cubic
-    el.textContent = Math.round(from + (to - from) * e);
+    el.textContent = Math.round(from + (to - from) * (1 - Math.pow(1 - p, 3)));
     if (p < 1) requestAnimationFrame(frame);
   };
   requestAnimationFrame(frame);
 }
-
-function spawnConfetti(count) {
-  const wrap = $('confetti-wrap');
-  wrap.innerHTML = '';
-  for (let i = 0; i < count; i++) {
-    const el   = document.createElement('div');
-    el.className = 'conf-piece';
-    const x    = Math.random() * 100;
-    const dur  = 1.4 + Math.random() * 1.4;
-    const delay= Math.random() * 0.6;
-    el.style.cssText = `
-      left: ${x}%;
-      background: ${CONF_COLORS[Math.floor(Math.random() * CONF_COLORS.length)]};
-      animation-duration: ${dur}s;
-      animation-delay: ${delay}s;
-      border-radius: ${Math.random() > .5 ? '50%' : '2px'};
-      width: ${6 + Math.random() * 6}px;
-      height: ${6 + Math.random() * 6}px;
-    `;
+function spawnConfetti(n) {
+  const wrap = $('confetti-wrap'); wrap.innerHTML = '';
+  for (let i = 0; i < n; i++) {
+    const el = document.createElement('div'); el.className = 'conf-piece';
+    const dur = 1.4 + Math.random() * 1.4, delay = Math.random() * .6;
+    el.style.cssText = `left:${Math.random()*100}%;background:${CONF_COLORS[Math.floor(Math.random()*CONF_COLORS.length)]};animation-duration:${dur}s;animation-delay:${delay}s;border-radius:${Math.random()>.5?'50%':'2px'};width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;`;
     wrap.appendChild(el);
   }
-  setTimeout(() => { wrap.innerHTML = ''; }, 3200);
+  setTimeout(() => { wrap.innerHTML = ''; }, 3500);
 }
 
-// ════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
 //  BOOT
-// ════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
 hydrate();
 renderHome();
 </script>
