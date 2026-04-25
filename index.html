@@ -1245,27 +1245,22 @@ const Gazer = {
     return new Promise((resolve) => {
       if (typeof webgazer !== 'undefined') { this.loaded = true; resolve(true); return; }
 
-      const CDNS = [
-        'https://cdn.jsdelivr.net/npm/webgazer/webgazer.js',
-        'https://unpkg.com/webgazer/webgazer.js',
-        'https://webgazer.cs.brown.edu/webgazer.js',
-      ];
-
-      const tryNext = (i) => {
-        if (i >= CDNS.length) { resolve(false); return; }
-        const s = document.createElement('script');
-        s.src = CDNS[i];
-        const t = setTimeout(() => { s.remove(); tryNext(i + 1); }, 10000);
-        s.onload  = () => { clearTimeout(t); this.loaded = true; resolve(true); };
-        s.onerror = () => { clearTimeout(t); tryNext(i + 1); };
-        document.head.appendChild(s);
-      };
-      tryNext(0);
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/webgazer@2.0.1/webgazer.js';
+      const t = setTimeout(() => { s.remove(); resolve(false); }, 15000);
+      s.onload  = () => { clearTimeout(t); this.loaded = true; resolve(true); };
+      s.onerror = () => { clearTimeout(t); resolve(false); };
+      document.head.appendChild(s);
     });
   },
 
   async begin() {
     if (!this.loaded) return false;
+    try {
+      webgazer.params.showVideoPreview    = false;
+      webgazer.params.showFaceOverlay     = false;
+      webgazer.params.showFaceFeedbackBox = false;
+    } catch {}
     try {
       const r = webgazer.begin();
       if (r && typeof r.then === 'function') await r;
