@@ -461,29 +461,19 @@
       text-transform: uppercase; letter-spacing: .8px; margin-bottom: 14px;
       display: flex; align-items: center; gap: 6px;
     }
-    .gaze-row {
-      display: grid; grid-template-columns: 48px 1fr 38px 52px;
-      align-items: center; gap: 10px; margin-bottom: 10px;
+    .gaze-round-block { margin-bottom: 18px; }
+    .gaze-round-block:last-child { margin-bottom: 0; }
+    .gaze-round-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 6px;
     }
-    .gaze-row:last-child { margin-bottom: 0; }
-    .gaze-row-label { font-size: 13px; font-weight: 800; color: var(--gray-3); }
-    .gaze-bar-track {
-      background: var(--gray-1); border-radius: 99px; height: 10px; overflow: hidden;
+    .gaze-round-label { font-size: 13px; font-weight: 800; color: var(--gray-3); }
+    .gaze-round-meta  { font-size: 12px; font-weight: 700; color: var(--gray-2); display: flex; gap: 8px; }
+    .gaze-canvas-wrap {
+      border-radius: 12px; overflow: hidden; background: #F0F4F0;
+      border: 1.5px solid var(--gray-1);
     }
-    .gaze-bar-fill {
-      height: 100%; border-radius: 99px;
-      transition: width .8s cubic-bezier(.22,1,.36,1);
-    }
-    .gaze-bar-fill.high   { background: var(--green); }
-    .gaze-bar-fill.medium { background: var(--orange); }
-    .gaze-bar-fill.low    { background: var(--red); }
-    .gaze-bar-fill.na     { background: var(--gray-2); }
-    .gaze-pct { font-size: 12px; font-weight: 800; text-align: right; }
-    .gaze-pct.high   { color: var(--green-dark); }
-    .gaze-pct.medium { color: var(--orange); }
-    .gaze-pct.low    { color: var(--red); }
-    .gaze-pct.na     { color: var(--gray-2); }
-    .gaze-result { font-size: 16px; text-align: center; }
+    .gaze-canvas-wrap canvas { display: block; width: 100%; }
 
     /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
        REPORTS SCREEN
@@ -680,11 +670,11 @@
     <div class="cal-state" id="cal-state-instructions">
       <div class="cal-big-icon">👁️</div>
       <h3>Calibrate Eye Tracking</h3>
-      <p>Look at each numbered dot and click it. This helps the app track where your eyes are on screen.</p>
+      <p>👀 숫자 점을 <strong>바라보면서</strong> 클릭하세요.<br>앱이 시선 위치를 학습해요. (5번만 하면 돼요)</p>
       <div class="cal-progress-bar-wrap">
         <div class="cal-prog-track"><div class="cal-prog-fill" id="cal-prog-fill" style="width:0%"></div></div>
       </div>
-      <button class="btn btn-green" onclick="startCalDots()" style="max-width:260px;margin-top:4px">Begin (9 points)</button>
+      <button class="btn btn-green" onclick="startCalDots()" style="max-width:260px;margin-top:4px">시작 (5 포인트)</button>
     </div>
 
     <!-- State: dotting (dots rendered absolutely over cal-body) -->
@@ -900,11 +890,11 @@ const DIGIT_OFF_MS  = 180;
 const GAZE_SAMPLE_MS = 100;   // gaze poll interval
 const GAZE_PADDING  = 80;     // px tolerance around digit box
 
-// 9-point calibration grid (% of cal-body dimensions)
+// 5-point calibration (corners + center)
 const CAL_POINTS = [
-  { x: 15, y: 15 }, { x: 50, y: 15 }, { x: 85, y: 15 },
-  { x: 15, y: 50 }, { x: 50, y: 50 }, { x: 85, y: 50 },
-  { x: 15, y: 85 }, { x: 50, y: 85 }, { x: 85, y: 85 },
+  { x: 50, y: 18 },
+  { x: 15, y: 50 }, { x: 85, y: 50 },
+  { x: 20, y: 82 }, { x: 80, y: 82 },
 ];
 
 const CONF_COLORS = ['#58CC02','#FF9600','#1CB0F6','#FF4B4B','#CE82FF','#FFBA00'];
@@ -1060,14 +1050,15 @@ const Metrics = {
   recallStart: null, // for RT
   firstInput:  null, // for RT
   rtTicker:    null, // display interval
-  gazeSamples:    [],
+  gazePoints:     [], // [{nx,ny,onTarget}] normalized 0-1
   gazeOnTarget:   0,
   gazeInterval:   null,
   gazeIndicatorInterval: null,
+  targetRect:     null, // normalized bounding rect of digit box
 
   reset() {
     this.rounds = []; this.recallStart = null; this.firstInput = null;
-    this.gazeSamples = []; this.gazeOnTarget = 0;
+    this.gazePoints = []; this.gazeOnTarget = 0; this.targetRect = null;
     clearInterval(this.gazeInterval);
     clearInterval(this.rtTicker);
     clearInterval(this.gazeIndicatorInterval);
@@ -1095,15 +1086,26 @@ const Metrics = {
 
   startGaze(targetEl) {
     if (!Gazer.loaded) return;
-    this.gazeSamples  = [];
+    this.gazePoints   = [];
     this.gazeOnTarget = 0;
+    // Capture normalized target rect once
+    const r = targetEl.getBoundingClientRect();
+    this.targetRect = {
+      x: r.left   / window.innerWidth,
+      y: r.top    / window.innerHeight,
+      w: r.width  / window.innerWidth,
+      h: r.height / window.innerHeight,
+    };
     clearInterval(this.gazeInterval);
     this.gazeInterval = setInterval(() => {
       const hit = Gazer.isOnTarget(targetEl);
-      if (hit !== null) {
-        this.gazeSamples.push(hit ? 1 : 0);
+      if (hit !== null && Gazer.pos) {
+        this.gazePoints.push({
+          nx: Gazer.pos.x / window.innerWidth,
+          ny: Gazer.pos.y / window.innerHeight,
+          onTarget: hit,
+        });
         if (hit) this.gazeOnTarget++;
-        // visual feedback on digit box
         targetEl.classList.toggle('gaze-on', hit);
       }
     }, GAZE_SAMPLE_MS);
@@ -1113,8 +1115,8 @@ const Metrics = {
     clearInterval(this.gazeInterval);
     const el = $('digit-box');
     if (el) el.classList.remove('gaze-on');
-    if (!this.gazeSamples.length) return null;
-    return this.gazeOnTarget / this.gazeSamples.length;
+    if (!this.gazePoints.length) return null;
+    return this.gazeOnTarget / this.gazePoints.length;
   },
 
   startGazeIndicator() {
@@ -1137,7 +1139,11 @@ const Metrics = {
     const fixation = this.stopGaze();
     const rt = this.firstInput;
     $('rt-chip').classList.remove('visible');
-    this.rounds.push({ roundNum, seqLen, correct, rt, fixation });
+    this.rounds.push({
+      roundNum, seqLen, correct, rt, fixation,
+      gazePoints:  [...this.gazePoints],
+      targetRect:  this.targetRect ? { ...this.targetRect } : null,
+    });
   },
 
   computeSession(roundScore, sessionXP) {
@@ -1568,34 +1574,34 @@ function showResults(sess) {
     : 'based on accuracy + reaction time';
   fc.className = 'rcard-val ' + focusColor(sess.focusScore);
 
-  // Gaze per-round breakdown
-  const bd    = $('gaze-breakdown');
+  // Gaze per-round path visualization
+  const bd     = $('gaze-breakdown');
   const bdRows = $('gaze-breakdown-rows');
-  const hasAnyGaze = sess.rounds.some(r => r.fixation != null);
+  const hasAnyGaze = sess.rounds.some(r => r.gazePoints && r.gazePoints.length > 0);
   if (hasAnyGaze) {
     bd.style.display = 'block';
     bdRows.innerHTML = '';
     sess.rounds.forEach((r, i) => {
-      const pct = r.fixation != null ? Math.round(r.fixation * 100) : null;
-      const tier = pct == null ? 'na' : pct >= 70 ? 'high' : pct >= 40 ? 'medium' : 'low';
+      const pct   = r.fixation != null ? Math.round(r.fixation * 100) : null;
       const rtStr = r.rt != null ? (r.rt / 1000).toFixed(2) + 's' : '—';
-      const row = document.createElement('div');
-      row.className = 'gaze-row';
-      row.innerHTML = `
-        <div class="gaze-row-label">R${i + 1} · ${rtStr}</div>
-        <div class="gaze-bar-track">
-          <div class="gaze-bar-fill ${tier}" style="width:0%" data-w="${pct ?? 0}%"></div>
+      const block = document.createElement('div');
+      block.className = 'gaze-round-block';
+      const canvasId = `gaze-canvas-${i}`;
+      block.innerHTML = `
+        <div class="gaze-round-header">
+          <div class="gaze-round-label">Round ${i + 1} &nbsp;${r.correct ? '✅' : '❌'}</div>
+          <div class="gaze-round-meta">
+            <span>⏱ ${rtStr}</span>
+            ${pct != null ? `<span>👁 ${pct}% on-target</span>` : ''}
+          </div>
         </div>
-        <div class="gaze-pct ${tier}">${pct != null ? pct + '%' : '—'}</div>
-        <div class="gaze-result">${r.correct ? '✅' : '❌'}</div>`;
-      bdRows.appendChild(row);
+        <div class="gaze-canvas-wrap">
+          <canvas id="${canvasId}" width="600" height="260"></canvas>
+        </div>`;
+      bdRows.appendChild(block);
+      // Draw after DOM insert
+      requestAnimationFrame(() => drawGazePath($$(canvasId), r.gazePoints, r.targetRect));
     });
-    // Animate bars after paint
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      bdRows.querySelectorAll('.gaze-bar-fill').forEach(el => {
-        el.style.width = el.dataset.w;
-      });
-    }));
   } else {
     bd.style.display = 'none';
   }
@@ -1774,7 +1780,93 @@ function goHome() {
 // ════════════════════════════════════════════════════════════════
 //  HELPERS
 // ════════════════════════════════════════════════════════════════
-function $(id) { return document.getElementById(id); }
+function $(id)  { return document.getElementById(id); }
+function $$(id) { return document.getElementById(id); } // alias for clarity
+
+function drawGazePath(canvas, gazePoints, targetRect) {
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  // Background
+  ctx.fillStyle = '#F0F4F0';
+  ctx.fillRect(0, 0, W, H);
+
+  // Grid lines (subtle)
+  ctx.strokeStyle = 'rgba(0,0,0,0.05)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x <= W; x += W / 6) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+  for (let y = 0; y <= H; y += H / 4) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+  // Target box (digit display area)
+  if (targetRect) {
+    const bx = targetRect.x * W, by = targetRect.y * H;
+    const bw = targetRect.w * W, bh = targetRect.h * H;
+    ctx.fillStyle = 'rgba(88,204,2,0.12)';
+    ctx.fillRect(bx, by, bw, bh);
+    ctx.strokeStyle = '#58CC02';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(bx, by, bw, bh);
+    // label
+    ctx.fillStyle = '#46A302';
+    ctx.font = 'bold 11px system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText('Target', bx + bw / 2, by - 5 > 10 ? by - 5 : by + bh + 14);
+  }
+
+  if (!gazePoints || gazePoints.length === 0) {
+    ctx.fillStyle = '#AFAFAF'; ctx.textAlign = 'center';
+    ctx.font = '13px system-ui';
+    ctx.fillText('No gaze data recorded', W / 2, H / 2);
+    return;
+  }
+
+  // Path line
+  ctx.beginPath();
+  ctx.strokeStyle = 'rgba(100,100,100,0.2)';
+  ctx.lineWidth = 1.5;
+  gazePoints.forEach((p, i) => {
+    const x = p.nx * W, y = p.ny * H;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  // Dots — colored by on-target, opacity by time
+  gazePoints.forEach((p, i) => {
+    const x = p.nx * W, y = p.ny * H;
+    const t = (i + 1) / gazePoints.length;
+    const alpha = 0.35 + 0.65 * t;
+    ctx.beginPath();
+    ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+    ctx.fillStyle = p.onTarget
+      ? `rgba(88,204,2,${alpha})`
+      : `rgba(255,150,0,${alpha})`;
+    ctx.fill();
+  });
+
+  // Start marker (blue) and end marker (red)
+  const drawMarker = (p, color, label) => {
+    const x = p.nx * W, y = p.ny * H;
+    ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2);
+    ctx.fillStyle = color; ctx.fill();
+    ctx.fillStyle = 'white'; ctx.font = 'bold 8px system-ui'; ctx.textAlign = 'center';
+    ctx.fillText(label, x, y + 3);
+  };
+  drawMarker(gazePoints[0], '#1CB0F6', 'S');
+  drawMarker(gazePoints[gazePoints.length - 1], '#FF4B4B', 'E');
+
+  // Legend
+  const legendY = H - 14;
+  ctx.font = '10px system-ui'; ctx.textAlign = 'left';
+  ctx.fillStyle = 'rgba(88,204,2,0.9)'; ctx.fillRect(8, legendY - 8, 10, 10);
+  ctx.fillStyle = '#555'; ctx.fillText('on target', 22, legendY);
+  ctx.fillStyle = 'rgba(255,150,0,0.9)'; ctx.fillRect(82, legendY - 8, 10, 10);
+  ctx.fillStyle = '#555'; ctx.fillText('off target', 96, legendY);
+  ctx.fillStyle = '#1CB0F6'; ctx.beginPath(); ctx.arc(163, legendY - 3, 5, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#555'; ctx.fillText('start', 172, legendY);
+  ctx.fillStyle = '#FF4B4B'; ctx.beginPath(); ctx.arc(205, legendY - 3, 5, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#555'; ctx.fillText('end', 214, legendY);
+}
 function showPhase(id) {
   document.querySelectorAll('.phase').forEach(p => p.classList.remove('active'));
   $(id).classList.add('active');
