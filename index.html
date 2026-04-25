@@ -668,10 +668,11 @@
 
     <!-- State: error -->
     <div class="cal-state" id="cal-state-error">
-      <div class="cal-big-icon">📷</div>
-      <h3>Camera Not Available</h3>
-      <p>Eye tracking needs camera access. You can still play without gaze tracking.</p>
-      <button class="btn btn-green" onclick="skipCalibration()" style="max-width:260px;margin-top:8px">Continue Without Gaze</button>
+      <div class="cal-big-icon">🔄</div>
+      <h3>Eye Tracking Unavailable</h3>
+      <p>Couldn't load the gaze model (network or camera issue).<br>All other features work normally without it.</p>
+      <button class="btn btn-green" onclick="retryCalibration()" style="max-width:260px;margin-top:8px">Retry</button>
+      <button class="btn btn-ghost" onclick="skipCalibration()" style="max-width:260px">Continue Without Gaze</button>
     </div>
 
     <!-- State: instructions -->
@@ -967,7 +968,8 @@ const Gazer = {
     return new Promise((resolve) => {
       if (typeof webgazer !== 'undefined') { this.loaded = true; resolve(true); return; }
       const s = document.createElement('script');
-      s.src = 'https://webgazer.cs.brown.edu/webgazer.js';
+      // Try unpkg first, fall back to Brown CDN
+      s.src = 'https://unpkg.com/webgazer@2.1.0/webgazer.js';
       const timeout = setTimeout(() => resolve(false), 12000);
       s.onload  = () => { clearTimeout(timeout); this.loaded = true; resolve(true); };
       s.onerror = () => { clearTimeout(timeout); resolve(false); };
@@ -1284,6 +1286,23 @@ function finishCalibration() {
   $('cal-dots-area').classList.remove('active');
   showCalState('done');
   setTimeout(startLesson, 1200);
+}
+
+function retryCalibration() {
+  // Reset loaded flag so script is re-fetched if needed
+  if (typeof webgazer !== 'undefined') Gazer.loaded = true;
+  else Gazer.loaded = false;
+  showCalState('loading');
+  $('cal-header-sub').textContent = 'Retrying…';
+  Gazer.load().then(loaded => {
+    if (!loaded) { showCalState('error'); return; }
+    return Gazer.begin().then(ok => {
+      if (!ok) { showCalState('error'); return; }
+      Gazer.positionVideo('cal');
+      showCalState('instructions');
+      $('cal-header-sub').textContent = 'Position yourself facing the camera';
+    });
+  });
 }
 
 function skipCalibration() {
