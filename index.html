@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>NeuroLingo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --green:        #58CC02;
+      --green-dark:   #46A302;
+      --green-light:  #D7FFB8;
+      --green-bg:     #F0FFF4;
+      --orange:       #FF9600;
+      --orange-dark:  #D47800;
+      --blue:         #1CB0F6;
+      --blue-dark:    #0099DA;
+      --red:          #FF4B4B;
+      --red-dark:     #EA2B2B;
+      --purple:       #CE82FF;
+      --gray-1:       #E5E5E5;
+      --gray-2:       #AFAFAF;
+      --gray-3:       #777777;
+      --text:         #3C3C3C;
+      --bg:           #F7F7F7;
+      --white:        #FFFFFF;
+    }
+
+    body {
+      font-family: 'Nunito', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      max-width: 480px;
+      margin: 0 auto;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ── SCREENS ──────────────────────────────────────────── */
+    .screen {
+      display: none;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+    .screen.active { display: flex; }
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       HOME SCREEN
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    .home-header {
+      background: var(--white);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid var(--gray-1);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-badge {
+      width: 38px;
+      height: 38px;
+      background: var(--green);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 3px 0 var(--green-dark);
+    }
+
+    .logo-text {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--green);
+      letter-spacing: -0.5px;
+    }
+
+    .header-stats {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .hstat {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 800;
+      font-size: 15px;
+    }
+
+    .hstat-icon { font-size: 20px; }
+    .hstat-streak { color: var(--orange); }
+    .hstat-xp     { color: var(--blue); }
+
+    .home-body {
+      flex: 1;
+      padding: 20px 16px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Card base */
+    .card {
+      background: var(--white);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07), 0 0 0 1px var(--gray-1);
+    }
+
+    .card-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--gray-2);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    /* Daily goal */
+    .progress-track {
+      background: var(--gray-1);
+      border-radius: 99px;
+      height: 18px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--green), #89E219);
+      border-radius: 99px;
+      transition: width 0.6s cubic-bezier(.22,1,.36,1);
+      position: relative;
+    }
+
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      inset: 3px 8px auto 8px;
+      height: 5px;
+      background: rgba(255,255,255,0.45);
+      border-radius: 99px;
+    }
+
+    .progress-caption {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gray-2);
+    }
+
+    .progress-caption strong { color: var(--green-dark); }
+
+    /* Streak card */
+    .streak-card {
+      background: linear-gradient(135deg, #FF9600 0%, #FFBA00 100%);
+      border-radius: 18px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      box-shadow: 0 6px 20px rgba(255,150,0,0.35), 0 3px 0 var(--orange-dark);
+      color: white;
+    }
+
+    .streak-flame { font-size: 52px; line-height: 1; }
+
+    .streak-body { flex: 1; }
+
+    .streak-count {
+      font-size: 40px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .streak-unit {
+      font-size: 15px;
+      font-weight: 800;
+      opacity: .9;
+    }
+
+    .streak-msg {
+      font-size: 12px;
+      opacity: .8;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    /* Lesson card */
+    .lesson-card .lesson-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .lesson-icon-wrap {
+      width: 52px;
+      height: 52px;
+      background: var(--green-light);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      flex-shrink: 0;
+    }
+
+    .lesson-meta h3 {
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .lesson-meta p {
+      font-size: 13px;
+      color: var(--gray-2);
+      font-weight: 600;
+      margin-top: 1px;
+    }
+
+    /* Stats row */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .stat-box {
+      background: var(--bg);
+      border-radius: 12px;
+      padding: 14px 8px;
+      text-align: center;
+    }
+
+    .stat-val {
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .stat-val.blue   { color: var(--blue); }
+    .stat-val.green  { color: var(--green); }
+    .stat-val.orange { color: var(--orange); }
+
+    .stat-name {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--gray-2);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 14px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      transition: transform .08s, box-shadow .08s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-green {
+      background: var(--green);
+      color: white;
+      box-shadow: 0 4px 0 var(--green-dark);
+    }
+
+    .btn-green:hover { filter: brightness(1.04); }
+
+    .btn-green:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 var(--green-dark);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--green);
+      border: 2.5px solid var(--green);
+      box-shadow: none;
+    }
+
+    .btn-outline:active { transform: scale(.98); }
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       LESSON SCREEN
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    .lesson-header {
+      background: var(--white);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 2px solid var(--gray-1);
+    }
+
+    .btn-x {
+      width: 36px;
+      height: 36px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      font-size: 18px;
+      color: var(--gray-2);
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+      transition: background .15s;
+    }
+
+    .btn-x:hover { background: var(--bg); }
+
+    .seg-bar {
+      flex: 1;
+      display: flex;
+      gap: 5px;
+    }
+
+    .seg {
+      flex: 1;
+      height: 8px;
+      background: var(--gray-1);
+      border-radius: 99px;
+      overflow: hidden;
+      transition: background .3s;
+    }
+
+    .seg.done { background: var(--green); }
+
+    .round-label {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--gray-2);
+      flex-shrink: 0;
+    }
+
+    /* Phases */
+    .lesson-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 16px 20px;
+    }
+
+    .phase {
+      display: none;
+      flex: 1;
+      flex-direction: column;
+    }
+
+    .phase.active { display: flex; }
+
+    /* ── Ready phase ── */
+    .phase-ready {
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      text-align: center;
+    }
+
+    .ready-brain {
+      font-size: 72px;
+      animation: floatBrain 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatBrain {
+      from { transform: translateY(0) rotate(-3deg); }
+      to   { transform: translateY(-8px) rotate(3deg); }
+    }
+
+    .ready-title {
+      font-size: 26px;
+      font-weight: 900;
+    }
+
+    .ready-desc {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray-3);
+      max-width: 260px;
+      line-height: 1.5;
+    }
+
+    .countdown-num {
+      font-size: 64px;
+      font-weight: 900;
+      color: var(--green);
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .count-anim {
+      animation: popIn .45s cubic-bezier(.34,1.56,.64,1);
+    }
+
+    @keyframes popIn {
+      from { transform: scale(.4); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    /* ── Watch phase ── */
+    .phase-watch {
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+    }
+
+    .watch-label {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--gray-2);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .digit-box {
+      width: 150px;
+      height: 150px;
+      background: var(--white);
+      border-radius: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 80px;
+      font-weight: 900;
+      color: var(--text);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1), 0 4px 0 var(--gray-1);
+      transition: background .15s;
+    }
+
+    .digit-box.blank {
+      background: var(--gray-1);
+      box-shadow: 0 4px 0 #D0D0D0;
+    }
+
+    .digit-box.pop {
+      animation: digitPop .28s cubic-bezier(.34,1.56,.64,1);
+    }
+
+    @keyframes digitPop {
+      from { transform: scale(.55); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    .pip-row {
+      display: flex;
+      gap: 9px;
+    }
+
+    .pip {
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: var(--gray-1);
+      transition: background .2s, transform .2s;
+    }
+
+    .pip.lit {
+      background: var(--green);
+      transform: scale(1.15);
+    }
+
+    /* ── Recall phase ── */
+    .phase-recall { gap: 16px; }
+
+    .recall-title {
+      font-size: 20px;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .recall-title small {
+      display: block;
+      font-size: 13px;
+      color: var(--gray-2);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .slot-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      min-height: 72px;
+      align-items: center;
+    }
+
+    .slot {
+      width: 56px;
+      height: 68px;
+      background: var(--white);
+      border: 3px solid var(--gray-1);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      font-weight: 900;
+      transition: border-color .2s, background .2s;
+    }
+
+    .slot.filled {
+      border-color: var(--blue);
+      animation: slotIn .18s ease-out;
+    }
+
+    @keyframes slotIn {
+      from { transform: translateY(-8px); opacity: .4; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    .slot.correct {
+      border-color: var(--green);
+      background: var(--green-light);
+      color: var(--green-dark);
+    }
+
+    .slot.wrong {
+      border-color: var(--red);
+      background: #FFE5E5;
+      color: var(--red);
+      animation: shake .4s ease-out;
+    }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%      { transform: translateX(-7px); }
+      40%      { transform: translateX(7px); }
+      60%      { transform: translateX(-5px); }
+      80%      { transform: translateX(5px); }
+    }
+
+    .spacer { flex: 1; }
+
+    /* Numpad */
+    .numpad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+    }
+
+    .nk {
+      background: var(--white);
+      border: 2.5px solid var(--gray-1);
+      border-radius: 14px;
+      padding: 14px 0;
+      font-family: 'Nunito', sans-serif;
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--text);
+      cursor: pointer;
+      box-shadow: 0 3px 0 var(--gray-1);
+      transition: transform .08s, box-shadow .08s, background .1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .nk:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 var(--gray-1);
+      background: var(--bg);
+    }
+
+    .nk.del-key { font-size: 20px; color: var(--gray-2); }
+
+    .nk.check-key {
+      background: var(--green);
+      color: white;
+      border-color: var(--green-dark);
+      box-shadow: 0 3px 0 var(--green-dark);
+      font-size: 14px;
+      letter-spacing: .5px;
+    }
+
+    .nk.check-key:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 var(--green-dark);
+    }
+
+    .nk:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: 0 3px 0 var(--gray-1) !important;
+    }
+
+    .nk.check-key:disabled {
+      background: var(--gray-1);
+      border-color: var(--gray-1);
+      color: var(--gray-2);
+      box-shadow: none !important;
+    }
+
+    /* ── Feedback banner ── */
+    .feedback-strip {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translate(-50%, 100%);
+      width: 100%;
+      max-width: 480px;
+      padding: 20px 20px 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 50;
+      transition: transform .3s cubic-bezier(.22,1,.36,1);
+    }
+
+    .feedback-strip.show { transform: translate(-50%, 0); }
+
+    .feedback-strip.ok  { background: var(--green-light); border-top: 3px solid var(--green); }
+    .feedback-strip.err { background: #FFE5E5;            border-top: 3px solid var(--red); }
+
+    .fb-title {
+      font-size: 19px;
+      font-weight: 900;
+    }
+
+    .feedback-strip.ok  .fb-title { color: var(--green-dark); }
+    .feedback-strip.err .fb-title { color: var(--red); }
+
+    .fb-detail {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray-3);
+    }
+
+    .fb-btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 14px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 16px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      cursor: pointer;
+      color: white;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .feedback-strip.ok  .fb-btn { background: var(--green); }
+    .feedback-strip.err .fb-btn { background: var(--red); }
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       RESULTS SCREEN
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    #screen-results { background: var(--white); }
+
+    .results-hero {
+      background: var(--green);
+      padding: 36px 20px 52px;
+      text-align: center;
+      color: white;
+    }
+
+    .results-emoji {
+      font-size: 72px;
+      display: block;
+      animation: heroPop .55s cubic-bezier(.34,1.56,.64,1) .15s both;
+    }
+
+    @keyframes heroPop {
+      from { transform: scale(.2) rotate(-15deg); opacity: 0; }
+      to   { transform: scale(1) rotate(0deg);    opacity: 1; }
+    }
+
+    .results-title {
+      font-size: 30px;
+      font-weight: 900;
+      margin-top: 10px;
+    }
+
+    .results-sub {
+      font-size: 15px;
+      font-weight: 600;
+      opacity: .9;
+      margin-top: 4px;
+    }
+
+    .results-cards {
+      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: -28px;
+    }
+
+    .rcard {
+      background: var(--white);
+      border-radius: 18px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.08), 0 0 0 1px var(--gray-1);
+      animation: cardIn .4s ease-out both;
+    }
+
+    .rcard:nth-child(1) { animation-delay: .1s; }
+    .rcard:nth-child(2) { animation-delay: .2s; }
+    .rcard:nth-child(3) { animation-delay: .3s; }
+
+    @keyframes cardIn {
+      from { transform: translateY(20px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    .rcard-icon { font-size: 38px; width: 48px; text-align: center; }
+
+    .rcard-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--gray-2);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .rcard-val {
+      font-size: 30px;
+      font-weight: 900;
+      line-height: 1.1;
+    }
+
+    .rcard-val.green  { color: var(--green-dark); }
+    .rcard-val.blue   { color: var(--blue); }
+    .rcard-val.orange { color: var(--orange); }
+
+    .results-actions {
+      padding: 20px 16px 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* ── Confetti ── */
+    .confetti-wrap {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 200;
+      overflow: hidden;
+    }
+
+    .conf-piece {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      animation: confFall linear forwards;
+    }
+
+    @keyframes confFall {
+      0%   { transform: translateY(-20px) rotate(0deg);    opacity: 1; }
+      100% { transform: translateY(110vh) rotate(720deg);  opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════ HOME ════════════════ -->
+<div id="screen-home" class="screen active">
+
+  <header class="home-header">
+    <div class="logo">
+      <div class="logo-badge">🧠</div>
+      <span class="logo-text">NeuroLingo</span>
+    </div>
+    <div class="header-stats">
+      <div class="hstat hstat-streak">
+        <span class="hstat-icon">🔥</span>
+        <span id="h-streak">0</span>
+      </div>
+      <div class="hstat hstat-xp">
+        <span class="hstat-icon">⚡</span>
+        <span id="h-xp">0</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="home-body">
+
+    <!-- Daily Goal -->
+    <div class="card">
+      <div class="card-label">Daily Goal</div>
+      <div class="progress-track">
+        <div class="progress-fill" id="daily-bar" style="width:0%"></div>
+      </div>
+      <div class="progress-caption">
+        <strong id="daily-xp-num">0</strong> / 50 XP today
+      </div>
+    </div>
+
+    <!-- Streak -->
+    <div class="streak-card">
+      <div class="streak-flame">🔥</div>
+      <div class="streak-body">
+        <div class="streak-count" id="streak-count">0</div>
+        <div class="streak-unit">Day Streak</div>
+        <div class="streak-msg" id="streak-msg">Start your journey today!</div>
+      </div>
+    </div>
+
+    <!-- Lesson -->
+    <div class="card lesson-card">
+      <div class="lesson-row">
+        <div class="lesson-icon-wrap">🧩</div>
+        <div class="lesson-meta">
+          <h3>Working Memory</h3>
+          <p>Digit Span Challenge &bull; ~3 min</p>
+        </div>
+      </div>
+      <button class="btn btn-green" id="start-btn" onclick="startLesson()">START LESSON</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="card">
+      <div class="card-label">Your Progress</div>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-val blue" id="stat-xp">0</div>
+          <div class="stat-name">Total XP</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val green" id="stat-best">—</div>
+          <div class="stat-name">Best Score</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val orange" id="stat-lessons">0</div>
+          <div class="stat-name">Lessons</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════ LESSON ════════════════ -->
+<div id="screen-lesson" class="screen">
+
+  <div class="lesson-header">
+    <button class="btn-x" onclick="exitLesson()">✕</button>
+    <div class="seg-bar" id="seg-bar"></div>
+    <div class="round-label" id="round-label">1 / 5</div>
+  </div>
+
+  <div class="lesson-body">
+
+    <!-- Phase: Ready / Countdown -->
+    <div class="phase phase-ready active" id="phase-ready">
+      <div class="ready-brain">🧠</div>
+      <div class="ready-title">Get Ready!</div>
+      <div class="ready-desc">Watch each number carefully, then recall the full sequence in order.</div>
+      <div class="countdown-num" id="countdown-num"><span>3</span></div>
+    </div>
+
+    <!-- Phase: Watch -->
+    <div class="phase phase-watch" id="phase-watch">
+      <div class="watch-label">Remember this sequence</div>
+      <div class="digit-box blank" id="digit-box"></div>
+      <div class="pip-row" id="pip-row"></div>
+    </div>
+
+    <!-- Phase: Recall -->
+    <div class="phase phase-recall" id="phase-recall">
+      <div class="recall-title">
+        What was the sequence?
+        <small>Tap numbers in order</small>
+      </div>
+
+      <div class="slot-row" id="slot-row"></div>
+
+      <div class="spacer"></div>
+
+      <div class="numpad">
+        <button class="nk" onclick="nk(1)">1</button>
+        <button class="nk" onclick="nk(2)">2</button>
+        <button class="nk" onclick="nk(3)">3</button>
+        <button class="nk" onclick="nk(4)">4</button>
+        <button class="nk" onclick="nk(5)">5</button>
+        <button class="nk" onclick="nk(6)">6</button>
+        <button class="nk" onclick="nk(7)">7</button>
+        <button class="nk" onclick="nk(8)">8</button>
+        <button class="nk" onclick="nk(9)">9</button>
+        <button class="nk del-key" onclick="nkDel()">⌫</button>
+        <button class="nk" onclick="nk(0)">0</button>
+        <button class="nk check-key" id="check-btn" onclick="checkAnswer()" disabled>CHECK</button>
+      </div>
+    </div>
+
+  </div><!-- /lesson-body -->
+
+  <!-- Feedback strip -->
+  <div class="feedback-strip" id="feedback-strip">
+    <div class="fb-title" id="fb-title">Correct!</div>
+    <div class="fb-detail" id="fb-detail"></div>
+    <button class="fb-btn" onclick="nextRound()">CONTINUE</button>
+  </div>
+
+</div>
+
+<!-- ════════════════ RESULTS ════════════════ -->
+<div id="screen-results" class="screen" id="screen-results">
+
+  <div class="results-hero">
+    <span class="results-emoji" id="res-emoji">🏆</span>
+    <div class="results-title" id="res-title">Lesson Complete!</div>
+    <div class="results-sub" id="res-sub">Great work today!</div>
+  </div>
+
+  <div class="results-cards">
+    <div class="rcard">
+      <div class="rcard-icon">🎯</div>
+      <div>
+        <div class="rcard-label">Score</div>
+        <div class="rcard-val green" id="res-score">0/5</div>
+      </div>
+    </div>
+    <div class="rcard">
+      <div class="rcard-icon">⚡</div>
+      <div>
+        <div class="rcard-label">XP Earned</div>
+        <div class="rcard-val blue">+<span id="res-xp">0</span></div>
+      </div>
+    </div>
+    <div class="rcard">
+      <div class="rcard-icon">🔥</div>
+      <div>
+        <div class="rcard-label">Streak</div>
+        <div class="rcard-val orange"><span id="res-streak">0</span> days</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="results-actions">
+    <button class="btn btn-green" onclick="goHome()">CONTINUE</button>
+    <button class="btn btn-outline" onclick="startLesson()">PLAY AGAIN</button>
+  </div>
+
+</div>
+
+<!-- Confetti container -->
+<div class="confetti-wrap" id="confetti-wrap"></div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+//  CONSTANTS
+// ════════════════════════════════════════════════════════════
+const TOTAL_ROUNDS    = 5;
+const SEQ_LENGTHS     = [3, 3, 4, 4, 5];   // per-round digit counts
+const XP_CORRECT      = 20;
+const XP_PARTIAL      = 8;
+const XP_WRONG        = 0;
+const DAILY_GOAL      = 50;
+const DIGIT_ON_MS     = 850;
+const DIGIT_OFF_MS    = 180;
+
+const CONF_COLORS = ['#58CC02','#FF9600','#1CB0F6','#FF4B4B','#CE82FF','#FFBA00'];
+
+// ════════════════════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════════════════════
+let S = {
+  // Persisted
+  streak: 0,
+  xp: 0,
+  dailyXP: 0,
+  lastPlayed: null,
+  bestScore: null,
+  lessonsCompleted: 0,
+  // Session (not persisted)
+  round: 0,
+  roundScore: 0,
+  sessionXP: 0,
+  seq: [],
+  input: [],
+};
+
+function persist() {
+  const d = {
+    streak:           S.streak,
+    xp:               S.xp,
+    dailyXP:          S.dailyXP,
+    lastPlayed:       S.lastPlayed,
+    bestScore:        S.bestScore,
+    lessonsCompleted: S.lessonsCompleted,
+  };
+  localStorage.setItem('neurolingo_v2', JSON.stringify(d));
+}
+
+function hydrate() {
+  const raw = localStorage.getItem('neurolingo_v2');
+  if (!raw) return;
+  const d = JSON.parse(raw);
+  const today     = new Date().toDateString();
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+
+  S.xp               = d.xp || 0;
+  S.bestScore        = d.bestScore != null ? d.bestScore : null;
+  S.lessonsCompleted = d.lessonsCompleted || 0;
+  S.lastPlayed       = d.lastPlayed || null;
+
+  // Streak
+  S.streak = d.streak || 0;
+  if (S.lastPlayed && S.lastPlayed !== today && S.lastPlayed !== yesterday) {
+    S.streak = 0;
+  }
+
+  // Daily XP resets each calendar day
+  S.dailyXP = (S.lastPlayed === today) ? (d.dailyXP || 0) : 0;
+}
+
+// ════════════════════════════════════════════════════════════
+//  HOME UI
+// ════════════════════════════════════════════════════════════
+function renderHome() {
+  const today = new Date().toDateString();
+
+  $('h-streak').textContent   = S.streak;
+  $('h-xp').textContent       = S.xp;
+  $('streak-count').textContent = S.streak;
+  $('stat-xp').textContent    = S.xp;
+  $('stat-best').textContent  = S.bestScore != null ? `${S.bestScore}/5` : '—';
+  $('stat-lessons').textContent = S.lessonsCompleted;
+
+  // Streak message
+  const msgs = [
+    'Start your journey today!',
+    "You're on a roll! Keep it up!",
+    'Two days strong! Amazing!',
+    'Three days! You\'re building a habit!',
+    'Four days! Your brain thanks you!',
+    'Five days — incredible focus!',
+    'Six days in a row! Unstoppable!',
+  ];
+  $('streak-msg').textContent =
+    S.streak === 0 ? msgs[0] :
+    S.streak < msgs.length ? msgs[S.streak] :
+    `🔥 ${S.streak} days in a row! Phenomenal!`;
+
+  // Daily goal bar
+  const pct = Math.min(100, Math.round((S.dailyXP / DAILY_GOAL) * 100));
+  $('daily-bar').style.width       = pct + '%';
+  $('daily-xp-num').textContent    = S.dailyXP;
+
+  // Button state
+  const btn = $('start-btn');
+  if (S.lastPlayed === today && S.dailyXP >= DAILY_GOAL) {
+    btn.textContent         = '✓ GOAL REACHED TODAY';
+    btn.style.background    = 'var(--blue)';
+    btn.style.boxShadow     = '0 4px 0 var(--blue-dark)';
+  } else {
+    btn.textContent         = 'START LESSON';
+    btn.style.background    = '';
+    btn.style.boxShadow     = '';
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+//  LESSON FLOW
+// ════════════════════════════════════════════════════════════
+function startLesson() {
+  S.round      = 0;
+  S.roundScore = 0;
+  S.sessionXP  = 0;
+  S.input      = [];
+
+  showScreen('screen-lesson');
+  buildSegBar();
+  beginRound();
+}
+
+function buildSegBar() {
+  const bar = $('seg-bar');
+  bar.innerHTML = '';
+  for (let i = 0; i < TOTAL_ROUNDS; i++) {
+    const s = document.createElement('div');
+    s.className = 'seg';
+    s.id = 'seg-' + i;
+    bar.appendChild(s);
+  }
+}
+
+function updateSegBar() {
+  for (let i = 0; i < TOTAL_ROUNDS; i++) {
+    $('seg-' + i).classList.toggle('done', i < S.round);
+  }
+  $('round-label').textContent = `${S.round + 1} / ${TOTAL_ROUNDS}`;
+}
+
+function beginRound() {
+  hideFeedback();
+  updateSegBar();
+
+  S.seq   = randSeq(SEQ_LENGTHS[S.round]);
+  S.input = [];
+
+  showPhase('phase-ready');
+  runCountdown(3, showWatchPhase);
+}
+
+function runCountdown(from, cb) {
+  const el = $('countdown-num');
+  let n = from;
+  el.innerHTML = `<span>${n}</span>`;
+
+  const tick = setInterval(() => {
+    n--;
+    if (n <= 0) { clearInterval(tick); cb(); return; }
+    el.innerHTML = `<span class="count-anim">${n}</span>`;
+  }, 700);
+}
+
+// ── Watch phase ──────────────────────────────────────────
+function showWatchPhase() {
+  showPhase('phase-watch');
+
+  const box  = $('digit-box');
+  const pips = $('pip-row');
+
+  // Build pips
+  pips.innerHTML = '';
+  S.seq.forEach((_, i) => {
+    const p = document.createElement('div');
+    p.className = 'pip';
+    p.id = 'pip-' + i;
+    pips.appendChild(p);
+  });
+
+  box.textContent = '';
+  box.classList.add('blank');
+
+  let idx = 0;
+
+  function flash() {
+    if (idx >= S.seq.length) {
+      // End: blank then go to recall
+      box.textContent = '';
+      box.classList.add('blank');
+      setTimeout(showRecallPhase, 500);
+      return;
+    }
+
+    box.classList.remove('blank', 'pop');
+    void box.offsetWidth;                     // reflow for re-trigger
+    box.classList.add('pop');
+    box.textContent = S.seq[idx];
+
+    const pip = $('pip-' + idx);
+    if (pip) pip.classList.add('lit');
+
+    idx++;
+
+    setTimeout(() => {
+      box.textContent = '';
+      box.classList.add('blank');
+      setTimeout(flash, DIGIT_OFF_MS);
+    }, DIGIT_ON_MS);
+  }
+
+  setTimeout(flash, 250);
+}
+
+// ── Recall phase ─────────────────────────────────────────
+function showRecallPhase() {
+  showPhase('phase-recall');
+  // Re-enable all numpad keys
+  document.querySelectorAll('.nk').forEach(b => b.disabled = false);
+  $('check-btn').disabled = true;
+  renderSlots();
+}
+
+function renderSlots() {
+  const row = $('slot-row');
+  row.innerHTML = '';
+  S.seq.forEach((_, i) => {
+    const sl = document.createElement('div');
+    sl.className = 'slot' + (i < S.input.length ? ' filled' : '');
+    sl.id = 'sl-' + i;
+    if (i < S.input.length) sl.textContent = S.input[i];
+    row.appendChild(sl);
+  });
+}
+
+function nk(d) {
+  if (S.input.length >= S.seq.length) return;
+  S.input.push(d);
+  renderSlots();
+  $('check-btn').disabled = (S.input.length < S.seq.length);
+}
+
+function nkDel() {
+  if (!S.input.length) return;
+  S.input.pop();
+  renderSlots();
+  $('check-btn').disabled = true;
+}
+
+function checkAnswer() {
+  // Determine result per slot
+  let allCorrect = true;
+  for (let i = 0; i < S.seq.length; i++) {
+    const sl = $('sl-' + i);
+    const ok = S.input[i] === S.seq[i];
+    sl.classList.add(ok ? 'correct' : 'wrong');
+    if (!ok) allCorrect = false;
+  }
+
+  // Count correct positions
+  const hits = S.seq.filter((d, i) => d === S.input[i]).length;
+
+  // Disable numpad
+  document.querySelectorAll('.nk').forEach(b => b.disabled = true);
+
+  let xp = allCorrect ? XP_CORRECT : hits > 0 ? XP_PARTIAL : XP_WRONG;
+  S.sessionXP += xp;
+  if (allCorrect) S.roundScore++;
+
+  setTimeout(() => showFeedback(allCorrect, hits, xp), 500);
+}
+
+function showFeedback(allCorrect, hits, xp) {
+  const strip = $('feedback-strip');
+  strip.classList.remove('ok', 'err');
+
+  const seqStr = S.seq.join(' ');
+
+  if (allCorrect) {
+    strip.classList.add('ok');
+    $('fb-title').textContent  = '✓ Perfect recall!';
+    $('fb-detail').textContent = `+${xp} XP  •  Sequence: ${seqStr}`;
+  } else if (hits > 0) {
+    strip.classList.add('err');
+    $('fb-title').textContent  = `✗ ${hits}/${S.seq.length} correct`;
+    $('fb-detail').textContent = `The sequence was: ${seqStr}  •  +${xp} XP`;
+  } else {
+    strip.classList.add('err');
+    $('fb-title').textContent  = '✗ Not quite';
+    $('fb-detail').textContent = `The sequence was: ${seqStr}`;
+  }
+
+  strip.classList.add('show');
+}
+
+function hideFeedback() {
+  $('feedback-strip').classList.remove('show');
+}
+
+function nextRound() {
+  S.round++;
+  if (S.round >= TOTAL_ROUNDS) {
+    finishLesson();
+  } else {
+    beginRound();
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+//  FINISH
+// ════════════════════════════════════════════════════════════
+function finishLesson() {
+  hideFeedback();
+
+  const today     = new Date().toDateString();
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+
+  // Streak
+  if (S.lastPlayed !== today) {
+    if (S.lastPlayed === yesterday || S.lastPlayed === null) {
+      S.streak++;
+    } else {
+      S.streak = 1;
+    }
+    S.lastPlayed = today;
+  }
+
+  S.xp               += S.sessionXP;
+  S.dailyXP          += S.sessionXP;
+  S.lessonsCompleted++;
+
+  if (S.bestScore === null || S.roundScore > S.bestScore) {
+    S.bestScore = S.roundScore;
+  }
+
+  persist();
+  showResults();
+}
+
+function showResults() {
+  showScreen('screen-results');
+
+  const pct = S.roundScore / TOTAL_ROUNDS;
+
+  if (pct === 1) {
+    $('res-emoji').textContent = '🏆';
+    $('res-title').textContent = 'Perfect!';
+    $('res-sub').textContent   = 'Flawless memory — every digit in order!';
+    spawnConfetti(80);
+  } else if (pct >= 0.6) {
+    $('res-emoji').textContent = '⭐';
+    $('res-title').textContent = 'Great Work!';
+    $('res-sub').textContent   = 'Keep practicing to hit perfection!';
+    spawnConfetti(30);
+  } else {
+    $('res-emoji').textContent = '💪';
+    $('res-title').textContent = 'Keep Going!';
+    $('res-sub').textContent   = 'Every practice strengthens your memory!';
+  }
+
+  $('res-score').textContent  = `${S.roundScore} / ${TOTAL_ROUNDS}`;
+  $('res-streak').textContent = S.streak;
+
+  countUp($('res-xp'), 0, S.sessionXP, 900);
+}
+
+// ════════════════════════════════════════════════════════════
+//  NAVIGATION
+// ════════════════════════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function showPhase(id) {
+  document.querySelectorAll('.phase').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function exitLesson() {
+  if (confirm('Exit lesson? Your progress this round will be lost.')) {
+    hideFeedback();
+    showScreen('screen-home');
+    renderHome();
+  }
+}
+
+function goHome() {
+  showScreen('screen-home');
+  renderHome();
+}
+
+// ════════════════════════════════════════════════════════════
+//  HELPERS
+// ════════════════════════════════════════════════════════════
+function $(id) { return document.getElementById(id); }
+
+function randSeq(len) {
+  return Array.from({ length: len }, () => Math.floor(Math.random() * 10));
+}
+
+function countUp(el, from, to, ms) {
+  const t0 = performance.now();
+  const frame = (now) => {
+    const p = Math.min((now - t0) / ms, 1);
+    const e = 1 - Math.pow(1 - p, 3);      // ease-out cubic
+    el.textContent = Math.round(from + (to - from) * e);
+    if (p < 1) requestAnimationFrame(frame);
+  };
+  requestAnimationFrame(frame);
+}
+
+function spawnConfetti(count) {
+  const wrap = $('confetti-wrap');
+  wrap.innerHTML = '';
+  for (let i = 0; i < count; i++) {
+    const el   = document.createElement('div');
+    el.className = 'conf-piece';
+    const x    = Math.random() * 100;
+    const dur  = 1.4 + Math.random() * 1.4;
+    const delay= Math.random() * 0.6;
+    el.style.cssText = `
+      left: ${x}%;
+      background: ${CONF_COLORS[Math.floor(Math.random() * CONF_COLORS.length)]};
+      animation-duration: ${dur}s;
+      animation-delay: ${delay}s;
+      border-radius: ${Math.random() > .5 ? '50%' : '2px'};
+      width: ${6 + Math.random() * 6}px;
+      height: ${6 + Math.random() * 6}px;
+    `;
+    wrap.appendChild(el);
+  }
+  setTimeout(() => { wrap.innerHTML = ''; }, 3200);
+}
+
+// ════════════════════════════════════════════════════════════
+//  BOOT
+// ════════════════════════════════════════════════════════════
+hydrate();
+renderHome();
+</script>
+</body>
+</html>
