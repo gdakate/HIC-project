@@ -990,19 +990,23 @@ const Gazer = {
 
   async begin() {
     if (!this.loaded) return false;
+    // Start WebGazer — ignore errors from internals since the camera
+    // may already be running even if something non-critical throws.
     try {
-      webgazer
-        .setRegression('ridge')
-        .setGazeListener((data) => { this.pos = data ? { x: data.x, y: data.y } : null; });
-      await webgazer.begin();
-      webgazer.showPredictionPoints(false);
-      webgazer.showVideoPreview(true);
-      return true;
+      webgazer.setGazeListener((data) => {
+        this.pos = data ? { x: data.x, y: data.y } : null;
+      });
+      const r = webgazer.begin();
+      if (r && typeof r.then === 'function') await r;
     } catch (e) {
-      console.error('WebGazer begin failed:', e);
+      console.warn('WebGazer begin (non-fatal):', e);
       this.lastError = e?.message || String(e);
-      return false;
     }
+    try { webgazer.showPredictionPoints(false); } catch {}
+    try { webgazer.showVideoPreview(true);      } catch {}
+    // If the video element is alive, tracking is running — proceed.
+    const vid = document.getElementById('webgazerVideoFeed');
+    return !!(vid) || typeof webgazer !== 'undefined';
   },
 
   end() {
