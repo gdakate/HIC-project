@@ -671,6 +671,7 @@
       <div class="cal-big-icon">🔄</div>
       <h3>Eye Tracking Unavailable</h3>
       <p>Couldn't load the gaze model (network or camera issue).<br>All other features work normally without it.</p>
+      <code id="cal-error-detail" style="font-size:11px;color:var(--gray-2);word-break:break-all;max-width:300px;display:none"></code>
       <button class="btn btn-green" onclick="retryCalibration()" style="max-width:260px;margin-top:8px">Retry</button>
       <button class="btn btn-ghost" onclick="skipCalibration()" style="max-width:260px">Continue Without Gaze</button>
     </div>
@@ -967,13 +968,23 @@ const Gazer = {
   load() {
     return new Promise((resolve) => {
       if (typeof webgazer !== 'undefined') { this.loaded = true; resolve(true); return; }
-      const s = document.createElement('script');
-      // Try unpkg first, fall back to Brown CDN
-      s.src = 'https://unpkg.com/webgazer@2.1.0/webgazer.js';
-      const timeout = setTimeout(() => resolve(false), 12000);
-      s.onload  = () => { clearTimeout(timeout); this.loaded = true; resolve(true); };
-      s.onerror = () => { clearTimeout(timeout); resolve(false); };
-      document.head.appendChild(s);
+
+      const CDNS = [
+        'https://cdn.jsdelivr.net/npm/webgazer/webgazer.js',
+        'https://unpkg.com/webgazer/webgazer.js',
+        'https://webgazer.cs.brown.edu/webgazer.js',
+      ];
+
+      const tryNext = (i) => {
+        if (i >= CDNS.length) { resolve(false); return; }
+        const s = document.createElement('script');
+        s.src = CDNS[i];
+        const t = setTimeout(() => { s.remove(); tryNext(i + 1); }, 10000);
+        s.onload  = () => { clearTimeout(t); this.loaded = true; resolve(true); };
+        s.onerror = () => { clearTimeout(t); tryNext(i + 1); };
+        document.head.appendChild(s);
+      };
+      tryNext(0);
     });
   },
 
@@ -988,7 +999,8 @@ const Gazer = {
       webgazer.showVideoPreview(true);
       return true;
     } catch (e) {
-      console.warn('WebGazer begin failed:', e);
+      console.error('WebGazer begin failed:', e);
+      this.lastError = e?.message || String(e);
       return false;
     }
   },
@@ -1217,7 +1229,7 @@ function requestLesson() {
   Gazer.load().then(loaded => {
     if (!loaded) { showCalState('error'); return; }
     return Gazer.begin().then(ok => {
-      if (!ok) { showCalState('error'); return; }
+      if (!ok) { showCalError(Gazer.lastError); return; }
       Gazer.positionVideo('cal');
       showCalState('instructions');
       $('cal-header-sub').textContent = 'Position yourself facing the camera';
@@ -1231,6 +1243,12 @@ function showCalState(name) {
   if (el) el.classList.add('active');
   const area = $('cal-dots-area');
   area.classList.toggle('active', name === 'dots');
+}
+
+function showCalError(detail) {
+  showCalState('error');
+  const d = $('cal-error-detail');
+  if (d && detail) { d.textContent = detail; d.style.display = 'block'; }
 }
 
 function startCalDots() {
@@ -1297,7 +1315,7 @@ function retryCalibration() {
   Gazer.load().then(loaded => {
     if (!loaded) { showCalState('error'); return; }
     return Gazer.begin().then(ok => {
-      if (!ok) { showCalState('error'); return; }
+      if (!ok) { showCalError(Gazer.lastError); return; }
       Gazer.positionVideo('cal');
       showCalState('instructions');
       $('cal-header-sub').textContent = 'Position yourself facing the camera';
