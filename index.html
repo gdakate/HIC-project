@@ -674,6 +674,27 @@
     .week-banner-left  { font-size: 13px; font-weight: 800; opacity: .9; }
     .week-banner-right { font-size: 22px; font-weight: 900; }
 
+    /* ── Gaze modal ── */
+    .gaze-modal {
+      position: fixed; inset: 0; z-index: 500;
+      background: rgba(0,0,0,0.65); overflow-y: auto; padding: 20px;
+      display: none;
+    }
+    .gaze-modal.open { display: block; }
+    .gaze-modal-inner {
+      background: var(--white); border-radius: 20px;
+      max-width: 480px; margin: 0 auto; overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+    .gaze-modal-header {
+      padding: 16px 20px; display: flex; align-items: center;
+      justify-content: space-between; border-bottom: 2px solid var(--gray-1);
+      position: sticky; top: 0; background: var(--white); z-index: 1;
+    }
+    .gaze-modal-title { font-size: 16px; font-weight: 900; }
+    .gaze-modal-sub   { font-size: 12px; color: var(--gray-2); font-weight: 700; margin-top: 2px; }
+    .gaze-modal-body  { padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+
     /* ── Confetti ── */
     .confetti-wrap { position: fixed; inset: 0; pointer-events: none; z-index: 200; overflow: hidden; }
     .conf-piece { position: absolute; width: 8px; height: 8px; border-radius: 2px; animation: confFall linear forwards; }
@@ -1075,6 +1096,20 @@
   </div>
 </div>
 
+<!-- Gaze detail modal -->
+<div class="gaze-modal" id="gaze-modal" onclick="closeGazeModal(event)">
+  <div class="gaze-modal-inner" id="gaze-modal-inner">
+    <div class="gaze-modal-header">
+      <div>
+        <div class="gaze-modal-title" id="gaze-modal-title"></div>
+        <div class="gaze-modal-sub"   id="gaze-modal-sub"></div>
+      </div>
+      <button class="btn-x" onclick="closeGazeModal()">✕</button>
+    </div>
+    <div class="gaze-modal-body" id="gaze-modal-body"></div>
+  </div>
+</div>
+
 <!-- Confetti -->
 <div class="confetti-wrap" id="confetti-wrap"></div>
 
@@ -1400,7 +1435,11 @@ const Metrics = {
     this.rounds.push({
       roundNum, seqLen, correct, rt, fixation,
       gazeActive:  Gazer.active,
-      gazePoints:  [...currentRoundGazeData],   // raw {x,y,timestamp}
+      gazePoints:  currentRoundGazeData.map(p => ({
+        nx: p.x / window.innerWidth,
+        ny: p.y / window.innerHeight,
+        timestamp: p.timestamp,
+      })),
       targetRect:  this.targetRect ? { ...this.targetRect } : null,
     });
   },
@@ -2057,55 +2096,81 @@ function renderHistory() {
   empty.style.display = 'none';
 
   sessions.forEach(s => {
-    const card      = document.createElement('div');
-    card.className  = 'hist-card';
-    const rtStr     = s.avgRT != null ? (s.avgRT/1000).toFixed(2)+'s' : '—';
-    const fixStr    = s.fixationRate != null ? Math.round(s.fixationRate*100)+'%' : '—';
-    const badgeCls  = s.focusScore >= 70 ? 'high' : s.focusScore >= 40 ? 'medium' : s.focusScore > 0 ? 'low' : 'na';
-    const moodIcon  = s.mood === 'Good' ? '😊' : s.mood === 'Bad' ? '😔' : s.mood === 'Moderate' ? '😐' : '';
-    const moodHtml  = s.mood ? `<span class="mood-chip ${s.mood}">${moodIcon} ${s.mood}</span>` : '';
-    const hasGaze   = s.rounds?.some(r => r.gazePoints?.length > 0);
-    const sid       = s.id;
+    const card     = document.createElement('div');
+    card.className = 'hist-card';
+    card.style.cursor = 'pointer';
+    card.onclick   = () => openGazeModal(s.id);
+    const rtStr    = s.avgRT != null ? (s.avgRT/1000).toFixed(2)+'s' : '—';
+    const fixStr   = s.fixationRate != null ? Math.round(s.fixationRate*100)+'%' : '—';
+    const badgeCls = s.focusScore >= 70 ? 'high' : s.focusScore >= 40 ? 'medium' : s.focusScore > 0 ? 'low' : 'na';
+    const moodIcon = s.mood === 'Good' ? '😊' : s.mood === 'Bad' ? '😔' : s.mood === 'Moderate' ? '😐' : '';
+    const moodHtml = s.mood ? `<span class="mood-chip ${s.mood}">${moodIcon} ${s.mood}</span>` : '';
+    const hasGaze  = s.rounds?.some(r => r.gazePoints?.length > 0);
     card.innerHTML = `
       <div class="hist-card-top">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
           ${moodHtml}<div class="hist-date">${s.displayDate || s.date}</div>
         </div>
-        <div class="focus-badge ${badgeCls}">Focus ${s.focusScore}</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          ${hasGaze ? '<span style="font-size:13px">👁</span>' : ''}
+          <div class="focus-badge ${badgeCls}">Focus ${s.focusScore}</div>
+        </div>
       </div>
       <div class="hist-metrics">
         <div class="hist-metric"><div class="hist-metric-val green">${s.correctRounds}/${TOTAL_ROUNDS}</div><div class="hist-metric-name">Score</div></div>
         <div class="hist-metric"><div class="hist-metric-val blue">${Math.round(s.accuracy*100)}%</div><div class="hist-metric-name">Accuracy</div></div>
         <div class="hist-metric"><div class="hist-metric-val purple">${rtStr}</div><div class="hist-metric-name">Avg RT</div></div>
         <div class="hist-metric"><div class="hist-metric-val orange">${fixStr}</div><div class="hist-metric-name">Fixation</div></div>
-      </div>
-      ${hasGaze ? `<div class="gaze-paths-wrap" id="gaze-wrap-${sid}"></div>` : ''}`;
+      </div>`;
     list.appendChild(card);
-
-    // Auto-render thumbnail canvases for sessions that have gaze data
-    if (hasGaze) {
-      const wrap = $('gaze-wrap-' + sid);
-      if (wrap) {
-        wrap.style.display = 'block';
-        s.rounds.forEach((r, i) => {
-          if (!r.gazePoints?.length) return;
-          const pct   = r.fixation != null ? Math.round(r.fixation * 100) : null;
-          const rtStr = r.rt != null ? (r.rt / 1000).toFixed(2) + 's' : '—';
-          const cid   = `hgc-${sid}-${i}`;
-          const div   = document.createElement('div');
-          div.className = 'gaze-round-block';
-          div.innerHTML = `
-            <div class="gaze-round-header">
-              <div class="gaze-round-label">Round ${i+1} ${r.correct ? '✅' : '❌'}</div>
-              <div class="gaze-round-meta"><span>⏱ ${rtStr}</span>${pct != null ? `<span>👁 ${pct}%</span>` : ''}</div>
-            </div>
-            <div class="gaze-canvas-wrap"><canvas id="${cid}" width="600" height="220"></canvas></div>`;
-          wrap.appendChild(div);
-          setTimeout(() => drawGazePath(document.getElementById(cid), r.gazePoints, r.targetRect, r.gazeActive), 80 + i * 50);
-        });
-      }
-    }
   });
+}
+
+function openGazeModal(sid) {
+  const sessions = loadSessions();
+  const sess = sessions.find(s => s.id == sid);
+  if (!sess) return;
+
+  const badgeCls = sess.focusScore >= 70 ? 'high' : sess.focusScore >= 40 ? 'medium' : sess.focusScore > 0 ? 'low' : 'na';
+  $('gaze-modal-title').textContent = sess.displayDate || sess.date;
+  $('gaze-modal-sub').innerHTML =
+    `Focus <span class="focus-badge ${badgeCls}" style="margin-left:4px">` +
+    `${sess.focusScore}</span>&nbsp;&nbsp;` +
+    `${sess.correctRounds}/${TOTAL_ROUNDS} correct` +
+    (sess.mood ? `&nbsp;&nbsp;${sess.mood === 'Good' ? '😊' : sess.mood === 'Bad' ? '😔' : '😐'} ${sess.mood}` : '');
+
+  const body = $('gaze-modal-body');
+  body.innerHTML = '';
+
+  sess.rounds.forEach((r, i) => {
+    const pct   = r.fixation != null ? Math.round(r.fixation * 100) : null;
+    const rtStr = r.rt != null ? (r.rt / 1000).toFixed(2) + 's' : '—';
+    const cid   = `modal-gaze-${sid}-${i}`;
+    const block = document.createElement('div');
+    block.className = 'gaze-round-block';
+    block.innerHTML = `
+      <div class="gaze-round-header">
+        <div class="gaze-round-label">Round ${i + 1} &nbsp;${r.correct ? '✅' : '❌'}</div>
+        <div class="gaze-round-meta">
+          <span>⏱ ${rtStr}</span>
+          ${pct != null ? `<span>👁 ${pct}% on-target</span>` : ''}
+          <span style="color:var(--gray-2)">${r.gazePoints?.length ?? 0} pts</span>
+        </div>
+      </div>
+      <div class="gaze-canvas-wrap"><canvas id="${cid}" width="600" height="260"></canvas></div>`;
+    body.appendChild(block);
+    setTimeout(() => drawGazePath(document.getElementById(cid), r.gazePoints, r.targetRect, r.gazeActive), 60 + i * 60);
+  });
+
+  $('gaze-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeGazeModal(event) {
+  // Close when clicking the backdrop (outside modal-inner) or the X button
+  if (event && event.target !== $('gaze-modal')) return;
+  $('gaze-modal').classList.remove('open');
+  document.body.style.overflow = '';
 }
 
 async function renderMoodTab() {
@@ -2273,30 +2338,25 @@ function drawGazePath(canvas, gazePoints, targetRect, gazeActive) {
     ctx.fillText('Target', bx + bw/2, by - 5 > 10 ? by - 5 : by + bh + 14);
   }
 
+  console.log('gazePoints sample:', gazePoints.slice(0, 3));
+
   if (!gazePoints || gazePoints.length === 0) {
     ctx.fillStyle = '#AFAFAF'; ctx.textAlign = 'center'; ctx.font = '13px system-ui';
     ctx.fillText(gazeActive === false ? 'Camera not available' : 'No gaze data recorded', W/2, H/2);
     return;
   }
 
-  // Normalise points to canvas coordinates.
-  // New format: {x, y, timestamp}  — raw screen pixels → scale to canvas
-  // Old format: {nx, ny, onTarget} — already 0-1 normalised
-  const isSrcCoords = 'x' in gazePoints[0] && !('nx' in gazePoints[0]);
-  const scaleX = isSrcCoords ? W / window.innerWidth  : W;
-  const scaleY = isSrcCoords ? H / window.innerHeight : H;
-  const padX   = targetRect ? GAZE_PADDING / window.innerWidth  : 0;
-  const padY   = targetRect ? GAZE_PADDING / window.innerHeight : 0;
+  // All points are normalised {nx, ny} — multiply directly by canvas size.
+  const padX = targetRect ? GAZE_PADDING / window.innerWidth  : 0;
+  const padY = targetRect ? GAZE_PADDING / window.innerHeight : 0;
 
   const pts = gazePoints.map(p => {
-    const cx = isSrcCoords ? p.x * scaleX : p.nx * W;
-    const cy = isSrcCoords ? p.y * scaleY : p.ny * H;
-    let onTarget = p.onTarget;          // old format pre-computed
+    const cx = p.nx * W;
+    const cy = p.ny * H;
+    let onTarget = p.onTarget;
     if (onTarget === undefined && targetRect) {
-      const nx = isSrcCoords ? p.x / window.innerWidth  : p.nx;
-      const ny = isSrcCoords ? p.y / window.innerHeight : p.ny;
-      onTarget  = nx >= targetRect.x - padX && nx <= targetRect.x + targetRect.w + padX &&
-                  ny >= targetRect.y - padY && ny <= targetRect.y + targetRect.h + padY;
+      onTarget = p.nx >= targetRect.x - padX && p.nx <= targetRect.x + targetRect.w + padX &&
+                 p.ny >= targetRect.y - padY && p.ny <= targetRect.y + targetRect.h + padY;
     }
     return { cx, cy, onTarget: !!onTarget };
   });
