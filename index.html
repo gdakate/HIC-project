@@ -450,6 +450,31 @@
     .rcard-sub { font-size: 12px; color: var(--gray-2); font-weight: 600; margin-top: 1px; }
     .results-actions { padding: 20px 16px 36px; display: flex; flex-direction: column; gap: 10px; }
 
+    /* gaze breakdown in results */
+    .gaze-breakdown {
+      background: var(--white); border-radius: 18px; padding: 18px 20px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.08), 0 0 0 1px var(--gray-1);
+      animation: cardIn .4s ease-out .55s both;
+    }
+    .gaze-breakdown-title {
+      font-size: 13px; font-weight: 900; color: var(--gray-3);
+      text-transform: uppercase; letter-spacing: .8px; margin-bottom: 14px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .gaze-round-block { margin-bottom: 18px; }
+    .gaze-round-block:last-child { margin-bottom: 0; }
+    .gaze-round-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 6px;
+    }
+    .gaze-round-label { font-size: 13px; font-weight: 800; color: var(--gray-3); }
+    .gaze-round-meta  { font-size: 12px; font-weight: 700; color: var(--gray-2); display: flex; gap: 8px; }
+    .gaze-canvas-wrap {
+      border-radius: 12px; overflow: hidden; background: #F0F4F0;
+      border: 1.5px solid var(--gray-1);
+    }
+    .gaze-canvas-wrap canvas { display: block; width: 100%; }
+
     /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
        REPORTS SCREEN
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -633,21 +658,23 @@
 
     <!-- State: error -->
     <div class="cal-state" id="cal-state-error">
-      <div class="cal-big-icon">📷</div>
-      <h3>Camera Not Available</h3>
-      <p>Eye tracking needs camera access. You can still play without gaze tracking.</p>
-      <button class="btn btn-green" onclick="skipCalibration()" style="max-width:260px;margin-top:8px">Continue Without Gaze</button>
+      <div class="cal-big-icon">🔄</div>
+      <h3>Eye Tracking Unavailable</h3>
+      <p>Couldn't load the gaze model (network or camera issue).<br>All other features work normally without it.</p>
+      <code id="cal-error-detail" style="font-size:11px;color:var(--gray-2);word-break:break-all;max-width:300px;display:none"></code>
+      <button class="btn btn-green" onclick="retryCalibration()" style="max-width:260px;margin-top:8px">Retry</button>
+      <button class="btn btn-ghost" onclick="skipCalibration()" style="max-width:260px">Continue Without Gaze</button>
     </div>
 
     <!-- State: instructions -->
     <div class="cal-state" id="cal-state-instructions">
       <div class="cal-big-icon">👁️</div>
       <h3>Calibrate Eye Tracking</h3>
-      <p>Look at each numbered dot and click it. This helps the app track where your eyes are on screen.</p>
+      <p><strong>Look at each dot and click it.</strong><br>This teaches the app where your eyes point on screen. Only 5 clicks needed.</p>
       <div class="cal-progress-bar-wrap">
         <div class="cal-prog-track"><div class="cal-prog-fill" id="cal-prog-fill" style="width:0%"></div></div>
       </div>
-      <button class="btn btn-green" onclick="startCalDots()" style="max-width:260px;margin-top:4px">Begin (9 points)</button>
+      <button class="btn btn-green" onclick="startCalDots()" style="max-width:260px;margin-top:4px">Begin (5 points)</button>
     </div>
 
     <!-- State: dotting (dots rendered absolutely over cal-body) -->
@@ -777,6 +804,14 @@
     </div>
   </div>
 
+  <!-- Gaze breakdown (rendered by JS) -->
+  <div class="results-cards" style="padding-top:0">
+    <div class="gaze-breakdown" id="gaze-breakdown" style="display:none">
+      <div class="gaze-breakdown-title">👁 Gaze per Round</div>
+      <div id="gaze-breakdown-rows"></div>
+    </div>
+  </div>
+
   <div class="results-actions">
     <button class="btn btn-green" onclick="goHome()">CONTINUE</button>
     <button class="btn btn-outline" onclick="requestLesson()">PLAY AGAIN</button>
@@ -845,8 +880,8 @@
 // ════════════════════════════════════════════════════════════════
 //  CONSTANTS
 // ════════════════════════════════════════════════════════════════
-const TOTAL_ROUNDS  = 5;
-const SEQ_LENGTHS   = [3, 3, 4, 4, 5];
+const TOTAL_ROUNDS  = 3;
+const SEQ_LENGTHS   = [3, 4, 5];
 const XP_CORRECT    = 20;
 const XP_PARTIAL    = 8;
 const DAILY_GOAL    = 50;
@@ -855,11 +890,11 @@ const DIGIT_OFF_MS  = 180;
 const GAZE_SAMPLE_MS = 100;   // gaze poll interval
 const GAZE_PADDING  = 80;     // px tolerance around digit box
 
-// 9-point calibration grid (% of cal-body dimensions)
+// 5-point calibration (corners + center)
 const CAL_POINTS = [
-  { x: 15, y: 15 }, { x: 50, y: 15 }, { x: 85, y: 15 },
-  { x: 15, y: 50 }, { x: 50, y: 50 }, { x: 85, y: 50 },
-  { x: 15, y: 85 }, { x: 50, y: 85 }, { x: 85, y: 85 },
+  { x: 50, y: 18 },
+  { x: 15, y: 50 }, { x: 85, y: 50 },
+  { x: 20, y: 82 }, { x: 80, y: 82 },
 ];
 
 const CONF_COLORS = ['#58CC02','#FF9600','#1CB0F6','#FF4B4B','#CE82FF','#FFBA00'];
@@ -923,29 +958,46 @@ const Gazer = {
   load() {
     return new Promise((resolve) => {
       if (typeof webgazer !== 'undefined') { this.loaded = true; resolve(true); return; }
-      const s = document.createElement('script');
-      s.src = 'https://webgazer.cs.brown.edu/webgazer.js';
-      const timeout = setTimeout(() => resolve(false), 12000);
-      s.onload  = () => { clearTimeout(timeout); this.loaded = true; resolve(true); };
-      s.onerror = () => { clearTimeout(timeout); resolve(false); };
-      document.head.appendChild(s);
+
+      const CDNS = [
+        'https://cdn.jsdelivr.net/npm/webgazer/webgazer.js',
+        'https://unpkg.com/webgazer/webgazer.js',
+        'https://webgazer.cs.brown.edu/webgazer.js',
+      ];
+
+      const tryNext = (i) => {
+        if (i >= CDNS.length) { resolve(false); return; }
+        const s = document.createElement('script');
+        s.src = CDNS[i];
+        const t = setTimeout(() => { s.remove(); tryNext(i + 1); }, 10000);
+        s.onload  = () => { clearTimeout(t); this.loaded = true; resolve(true); };
+        s.onerror = () => { clearTimeout(t); tryNext(i + 1); };
+        document.head.appendChild(s);
+      };
+      tryNext(0);
     });
   },
 
   async begin() {
     if (!this.loaded) return false;
     try {
-      webgazer
-        .setRegression('ridge')
-        .setGazeListener((data) => { this.pos = data ? { x: data.x, y: data.y } : null; });
-      await webgazer.begin();
-      webgazer.showPredictionPoints(false);
-      webgazer.showVideoPreview(true);
-      return true;
+      const r = webgazer.begin();
+      if (r && typeof r.then === 'function') await r;
     } catch (e) {
-      console.warn('WebGazer begin failed:', e);
-      return false;
+      console.warn('WebGazer begin (non-fatal):', e);
+      this.lastError = e?.message || String(e);
     }
+    // IMPORTANT: setGazeListener must come AFTER begin() —
+    // WebGazer resets the listener during its own initialization.
+    try {
+      webgazer.setGazeListener((data) => {
+        this.pos = data ? { x: data.x, y: data.y } : null;
+      });
+    } catch (e) { console.warn('setGazeListener failed:', e); }
+    try { webgazer.showPredictionPoints(false); } catch {}
+    try { webgazer.showVideoPreview(true);      } catch {}
+    const vid = document.getElementById('webgazerVideoFeed');
+    return !!(vid) || typeof webgazer !== 'undefined';
   },
 
   end() {
@@ -999,14 +1051,15 @@ const Metrics = {
   recallStart: null, // for RT
   firstInput:  null, // for RT
   rtTicker:    null, // display interval
-  gazeSamples:    [],
+  gazePoints:     [], // [{nx,ny,onTarget}] normalized 0-1
   gazeOnTarget:   0,
   gazeInterval:   null,
   gazeIndicatorInterval: null,
+  targetRect:     null, // normalized bounding rect of digit box
 
   reset() {
     this.rounds = []; this.recallStart = null; this.firstInput = null;
-    this.gazeSamples = []; this.gazeOnTarget = 0;
+    this.gazePoints = []; this.gazeOnTarget = 0; this.targetRect = null;
     clearInterval(this.gazeInterval);
     clearInterval(this.rtTicker);
     clearInterval(this.gazeIndicatorInterval);
@@ -1033,18 +1086,36 @@ const Metrics = {
   },
 
   startGaze(targetEl) {
-    if (!Gazer.loaded) return;
-    this.gazeSamples  = [];
+    this.gazePoints   = [];
     this.gazeOnTarget = 0;
+    // Always capture the target rect (even without WebGazer)
+    const r = targetEl.getBoundingClientRect();
+    this.targetRect = {
+      x: r.left   / window.innerWidth,
+      y: r.top    / window.innerHeight,
+      w: r.width  / window.innerWidth,
+      h: r.height / window.innerHeight,
+    };
     clearInterval(this.gazeInterval);
+    if (!Gazer.loaded) return;
+
     this.gazeInterval = setInterval(() => {
-      const hit = Gazer.isOnTarget(targetEl);
-      if (hit !== null) {
-        this.gazeSamples.push(hit ? 1 : 0);
-        if (hit) this.gazeOnTarget++;
-        // visual feedback on digit box
-        targetEl.classList.toggle('gaze-on', hit);
-      }
+      const pos = Gazer.pos;
+      if (!pos) return;                 // no prediction yet — skip silently
+      const r2  = targetEl.getBoundingClientRect();
+      const onTarget = (
+        pos.x >= r2.left  - GAZE_PADDING &&
+        pos.x <= r2.right + GAZE_PADDING &&
+        pos.y >= r2.top   - GAZE_PADDING &&
+        pos.y <= r2.bottom + GAZE_PADDING
+      );
+      this.gazePoints.push({
+        nx: pos.x / window.innerWidth,
+        ny: pos.y / window.innerHeight,
+        onTarget,
+      });
+      if (onTarget) this.gazeOnTarget++;
+      targetEl.classList.toggle('gaze-on', onTarget);
     }, GAZE_SAMPLE_MS);
   },
 
@@ -1052,8 +1123,8 @@ const Metrics = {
     clearInterval(this.gazeInterval);
     const el = $('digit-box');
     if (el) el.classList.remove('gaze-on');
-    if (!this.gazeSamples.length) return null;
-    return this.gazeOnTarget / this.gazeSamples.length;
+    if (!this.gazePoints.length) return null;
+    return this.gazeOnTarget / this.gazePoints.length;
   },
 
   startGazeIndicator() {
@@ -1076,7 +1147,11 @@ const Metrics = {
     const fixation = this.stopGaze();
     const rt = this.firstInput;
     $('rt-chip').classList.remove('visible');
-    this.rounds.push({ roundNum, seqLen, correct, rt, fixation });
+    this.rounds.push({
+      roundNum, seqLen, correct, rt, fixation,
+      gazePoints:  [...this.gazePoints],
+      targetRect:  this.targetRect ? { ...this.targetRect } : null,
+    });
   },
 
   computeSession(roundScore, sessionXP) {
@@ -1172,7 +1247,7 @@ function requestLesson() {
   Gazer.load().then(loaded => {
     if (!loaded) { showCalState('error'); return; }
     return Gazer.begin().then(ok => {
-      if (!ok) { showCalState('error'); return; }
+      if (!ok) { showCalError(Gazer.lastError); return; }
       Gazer.positionVideo('cal');
       showCalState('instructions');
       $('cal-header-sub').textContent = 'Position yourself facing the camera';
@@ -1186,6 +1261,12 @@ function showCalState(name) {
   if (el) el.classList.add('active');
   const area = $('cal-dots-area');
   area.classList.toggle('active', name === 'dots');
+}
+
+function showCalError(detail) {
+  showCalState('error');
+  const d = $('cal-error-detail');
+  if (d && detail) { d.textContent = detail; d.style.display = 'block'; }
 }
 
 function startCalDots() {
@@ -1237,10 +1318,35 @@ function handleCalClick(i) {
 
 function finishCalibration() {
   Gazer.calibrated = true;
+  // Re-register listener here — calibration clicks can sometimes
+  // reset WebGazer's internal listener state.
+  try {
+    webgazer.setGazeListener((data) => {
+      Gazer.pos = data ? { x: data.x, y: data.y } : null;
+    });
+    webgazer.showPredictionPoints(false);
+  } catch {}
   Gazer.positionVideo('lesson');
   $('cal-dots-area').classList.remove('active');
   showCalState('done');
   setTimeout(startLesson, 1200);
+}
+
+function retryCalibration() {
+  // Reset loaded flag so script is re-fetched if needed
+  if (typeof webgazer !== 'undefined') Gazer.loaded = true;
+  else Gazer.loaded = false;
+  showCalState('loading');
+  $('cal-header-sub').textContent = 'Retrying…';
+  Gazer.load().then(loaded => {
+    if (!loaded) { showCalState('error'); return; }
+    return Gazer.begin().then(ok => {
+      if (!ok) { showCalError(Gazer.lastError); return; }
+      Gazer.positionVideo('cal');
+      showCalState('instructions');
+      $('cal-header-sub').textContent = 'Position yourself facing the camera';
+    });
+  });
 }
 
 function skipCalibration() {
@@ -1483,6 +1589,40 @@ function showResults(sess) {
     ? `fixation ${Math.round((sess.fixationRate||0)*100)}% · gaze tracked`
     : 'based on accuracy + reaction time';
   fc.className = 'rcard-val ' + focusColor(sess.focusScore);
+
+  // Gaze per-round path visualization — always shown when WebGazer was active
+  const bd     = $('gaze-breakdown');
+  const bdRows = $('gaze-breakdown-rows');
+
+  if (!Gazer.loaded && !sess.rounds.some(r => r.gazePoints?.length > 0)) {
+    bd.style.display = 'none';
+  } else {
+    bd.style.display = 'block';
+    bdRows.innerHTML = '';
+    sess.rounds.forEach((r, i) => {
+      const pct    = r.fixation != null ? Math.round(r.fixation * 100) : null;
+      const rtStr  = r.rt != null ? (r.rt / 1000).toFixed(2) + 's' : '—';
+      const pts    = r.gazePoints?.length ?? 0;
+      const block  = document.createElement('div');
+      block.className = 'gaze-round-block';
+      const canvasId  = `gaze-canvas-${i}`;
+      block.innerHTML = `
+        <div class="gaze-round-header">
+          <div class="gaze-round-label">Round ${i + 1} &nbsp;${r.correct ? '✅' : '❌'}</div>
+          <div class="gaze-round-meta">
+            <span>⏱ ${rtStr}</span>
+            ${pct  != null ? `<span>👁 ${pct}% on-target</span>` : ''}
+            <span style="color:var(--gray-2)">${pts} pts</span>
+          </div>
+        </div>
+        <div class="gaze-canvas-wrap">
+          <canvas id="${canvasId}" width="600" height="260"></canvas>
+        </div>`;
+      bdRows.appendChild(block);
+      // Small delay so the canvas is in the DOM before drawing
+      setTimeout(() => drawGazePath(document.getElementById(canvasId), r.gazePoints, r.targetRect), 100 + i * 50);
+    });
+  }
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -1658,7 +1798,93 @@ function goHome() {
 // ════════════════════════════════════════════════════════════════
 //  HELPERS
 // ════════════════════════════════════════════════════════════════
-function $(id) { return document.getElementById(id); }
+function $(id)  { return document.getElementById(id); }
+function $$(id) { return document.getElementById(id); } // alias for clarity
+
+function drawGazePath(canvas, gazePoints, targetRect) {
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  // Background
+  ctx.fillStyle = '#F0F4F0';
+  ctx.fillRect(0, 0, W, H);
+
+  // Grid lines (subtle)
+  ctx.strokeStyle = 'rgba(0,0,0,0.05)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x <= W; x += W / 6) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+  for (let y = 0; y <= H; y += H / 4) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+  // Target box (digit display area)
+  if (targetRect) {
+    const bx = targetRect.x * W, by = targetRect.y * H;
+    const bw = targetRect.w * W, bh = targetRect.h * H;
+    ctx.fillStyle = 'rgba(88,204,2,0.12)';
+    ctx.fillRect(bx, by, bw, bh);
+    ctx.strokeStyle = '#58CC02';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(bx, by, bw, bh);
+    // label
+    ctx.fillStyle = '#46A302';
+    ctx.font = 'bold 11px system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText('Target', bx + bw / 2, by - 5 > 10 ? by - 5 : by + bh + 14);
+  }
+
+  if (!gazePoints || gazePoints.length === 0) {
+    ctx.fillStyle = '#AFAFAF'; ctx.textAlign = 'center';
+    ctx.font = '13px system-ui';
+    ctx.fillText('No gaze data recorded', W / 2, H / 2);
+    return;
+  }
+
+  // Path line
+  ctx.beginPath();
+  ctx.strokeStyle = 'rgba(100,100,100,0.2)';
+  ctx.lineWidth = 1.5;
+  gazePoints.forEach((p, i) => {
+    const x = p.nx * W, y = p.ny * H;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  // Dots — colored by on-target, opacity by time
+  gazePoints.forEach((p, i) => {
+    const x = p.nx * W, y = p.ny * H;
+    const t = (i + 1) / gazePoints.length;
+    const alpha = 0.35 + 0.65 * t;
+    ctx.beginPath();
+    ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+    ctx.fillStyle = p.onTarget
+      ? `rgba(88,204,2,${alpha})`
+      : `rgba(255,150,0,${alpha})`;
+    ctx.fill();
+  });
+
+  // Start marker (blue) and end marker (red)
+  const drawMarker = (p, color, label) => {
+    const x = p.nx * W, y = p.ny * H;
+    ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2);
+    ctx.fillStyle = color; ctx.fill();
+    ctx.fillStyle = 'white'; ctx.font = 'bold 8px system-ui'; ctx.textAlign = 'center';
+    ctx.fillText(label, x, y + 3);
+  };
+  drawMarker(gazePoints[0], '#1CB0F6', 'S');
+  drawMarker(gazePoints[gazePoints.length - 1], '#FF4B4B', 'E');
+
+  // Legend
+  const legendY = H - 14;
+  ctx.font = '10px system-ui'; ctx.textAlign = 'left';
+  ctx.fillStyle = 'rgba(88,204,2,0.9)'; ctx.fillRect(8, legendY - 8, 10, 10);
+  ctx.fillStyle = '#555'; ctx.fillText('on target', 22, legendY);
+  ctx.fillStyle = 'rgba(255,150,0,0.9)'; ctx.fillRect(82, legendY - 8, 10, 10);
+  ctx.fillStyle = '#555'; ctx.fillText('off target', 96, legendY);
+  ctx.fillStyle = '#1CB0F6'; ctx.beginPath(); ctx.arc(163, legendY - 3, 5, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#555'; ctx.fillText('start', 172, legendY);
+  ctx.fillStyle = '#FF4B4B'; ctx.beginPath(); ctx.arc(205, legendY - 3, 5, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#555'; ctx.fillText('end', 214, legendY);
+}
 function showPhase(id) {
   document.querySelectorAll('.phase').forEach(p => p.classList.remove('active'));
   $(id).classList.add('active');
