@@ -670,11 +670,11 @@
     <div class="cal-state" id="cal-state-instructions">
       <div class="cal-big-icon">👁️</div>
       <h3>Calibrate Eye Tracking</h3>
-      <p>👀 숫자 점을 <strong>바라보면서</strong> 클릭하세요.<br>앱이 시선 위치를 학습해요. (5번만 하면 돼요)</p>
+      <p><strong>Look at each dot and click it.</strong><br>This teaches the app where your eyes point on screen. Only 5 clicks needed.</p>
       <div class="cal-progress-bar-wrap">
         <div class="cal-prog-track"><div class="cal-prog-fill" id="cal-prog-fill" style="width:0%"></div></div>
       </div>
-      <button class="btn btn-green" onclick="startCalDots()" style="max-width:260px;margin-top:4px">시작 (5 포인트)</button>
+      <button class="btn btn-green" onclick="startCalDots()" style="max-width:260px;margin-top:4px">Begin (5 points)</button>
     </div>
 
     <!-- State: dotting (dots rendered absolutely over cal-body) -->
@@ -980,21 +980,22 @@ const Gazer = {
 
   async begin() {
     if (!this.loaded) return false;
-    // Start WebGazer — ignore errors from internals since the camera
-    // may already be running even if something non-critical throws.
     try {
-      webgazer.setGazeListener((data) => {
-        this.pos = data ? { x: data.x, y: data.y } : null;
-      });
       const r = webgazer.begin();
       if (r && typeof r.then === 'function') await r;
     } catch (e) {
       console.warn('WebGazer begin (non-fatal):', e);
       this.lastError = e?.message || String(e);
     }
+    // IMPORTANT: setGazeListener must come AFTER begin() —
+    // WebGazer resets the listener during its own initialization.
+    try {
+      webgazer.setGazeListener((data) => {
+        this.pos = data ? { x: data.x, y: data.y } : null;
+      });
+    } catch (e) { console.warn('setGazeListener failed:', e); }
     try { webgazer.showPredictionPoints(false); } catch {}
     try { webgazer.showVideoPreview(true);      } catch {}
-    // If the video element is alive, tracking is running — proceed.
     const vid = document.getElementById('webgazerVideoFeed');
     return !!(vid) || typeof webgazer !== 'undefined';
   },
@@ -1085,10 +1086,9 @@ const Metrics = {
   },
 
   startGaze(targetEl) {
-    if (!Gazer.loaded) return;
     this.gazePoints   = [];
     this.gazeOnTarget = 0;
-    // Capture normalized target rect once
+    // Always capture the target rect (even without WebGazer)
     const r = targetEl.getBoundingClientRect();
     this.targetRect = {
       x: r.left   / window.innerWidth,
@@ -1097,17 +1097,25 @@ const Metrics = {
       h: r.height / window.innerHeight,
     };
     clearInterval(this.gazeInterval);
+    if (!Gazer.loaded) return;
+
     this.gazeInterval = setInterval(() => {
-      const hit = Gazer.isOnTarget(targetEl);
-      if (hit !== null && Gazer.pos) {
-        this.gazePoints.push({
-          nx: Gazer.pos.x / window.innerWidth,
-          ny: Gazer.pos.y / window.innerHeight,
-          onTarget: hit,
-        });
-        if (hit) this.gazeOnTarget++;
-        targetEl.classList.toggle('gaze-on', hit);
-      }
+      const pos = Gazer.pos;
+      if (!pos) return;                 // no prediction yet — skip silently
+      const r2  = targetEl.getBoundingClientRect();
+      const onTarget = (
+        pos.x >= r2.left  - GAZE_PADDING &&
+        pos.x <= r2.right + GAZE_PADDING &&
+        pos.y >= r2.top   - GAZE_PADDING &&
+        pos.y <= r2.bottom + GAZE_PADDING
+      );
+      this.gazePoints.push({
+        nx: pos.x / window.innerWidth,
+        ny: pos.y / window.innerHeight,
+        onTarget,
+      });
+      if (onTarget) this.gazeOnTarget++;
+      targetEl.classList.toggle('gaze-on', onTarget);
     }, GAZE_SAMPLE_MS);
   },
 
@@ -1310,6 +1318,14 @@ function handleCalClick(i) {
 
 function finishCalibration() {
   Gazer.calibrated = true;
+  // Re-register listener here — calibration clicks can sometimes
+  // reset WebGazer's internal listener state.
+  try {
+    webgazer.setGazeListener((data) => {
+      Gazer.pos = data ? { x: data.x, y: data.y } : null;
+    });
+    webgazer.showPredictionPoints(false);
+  } catch {}
   Gazer.positionVideo('lesson');
   $('cal-dots-area').classList.remove('active');
   showCalState('done');
@@ -1574,36 +1590,38 @@ function showResults(sess) {
     : 'based on accuracy + reaction time';
   fc.className = 'rcard-val ' + focusColor(sess.focusScore);
 
-  // Gaze per-round path visualization
+  // Gaze per-round path visualization — always shown when WebGazer was active
   const bd     = $('gaze-breakdown');
   const bdRows = $('gaze-breakdown-rows');
-  const hasAnyGaze = sess.rounds.some(r => r.gazePoints && r.gazePoints.length > 0);
-  if (hasAnyGaze) {
+
+  if (!Gazer.loaded && !sess.rounds.some(r => r.gazePoints?.length > 0)) {
+    bd.style.display = 'none';
+  } else {
     bd.style.display = 'block';
     bdRows.innerHTML = '';
     sess.rounds.forEach((r, i) => {
-      const pct   = r.fixation != null ? Math.round(r.fixation * 100) : null;
-      const rtStr = r.rt != null ? (r.rt / 1000).toFixed(2) + 's' : '—';
-      const block = document.createElement('div');
+      const pct    = r.fixation != null ? Math.round(r.fixation * 100) : null;
+      const rtStr  = r.rt != null ? (r.rt / 1000).toFixed(2) + 's' : '—';
+      const pts    = r.gazePoints?.length ?? 0;
+      const block  = document.createElement('div');
       block.className = 'gaze-round-block';
-      const canvasId = `gaze-canvas-${i}`;
+      const canvasId  = `gaze-canvas-${i}`;
       block.innerHTML = `
         <div class="gaze-round-header">
           <div class="gaze-round-label">Round ${i + 1} &nbsp;${r.correct ? '✅' : '❌'}</div>
           <div class="gaze-round-meta">
             <span>⏱ ${rtStr}</span>
-            ${pct != null ? `<span>👁 ${pct}% on-target</span>` : ''}
+            ${pct  != null ? `<span>👁 ${pct}% on-target</span>` : ''}
+            <span style="color:var(--gray-2)">${pts} pts</span>
           </div>
         </div>
         <div class="gaze-canvas-wrap">
           <canvas id="${canvasId}" width="600" height="260"></canvas>
         </div>`;
       bdRows.appendChild(block);
-      // Draw after DOM insert
-      requestAnimationFrame(() => drawGazePath($$(canvasId), r.gazePoints, r.targetRect));
+      // Small delay so the canvas is in the DOM before drawing
+      setTimeout(() => drawGazePath(document.getElementById(canvasId), r.gazePoints, r.targetRect), 100 + i * 50);
     });
-  } else {
-    bd.style.display = 'none';
   }
 }
 
