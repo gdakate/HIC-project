@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UnoNeuro — Summary Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --green:       #58CC02;
+      --green-dark:  #46A302;
+      --green-light: #D7FFB8;
+      --orange:      #FF9600;
+      --orange-dark: #D47800;
+      --blue:        #1CB0F6;
+      --blue-dark:   #0099DA;
+      --red:         #FF4B4B;
+      --red-dark:    #EA2B2B;
+      --purple:      #CE82FF;
+      --gray-1:      #E5E5E5;
+      --gray-2:      #AFAFAF;
+      --gray-3:      #777777;
+      --text:        #3C3C3C;
+      --bg:          #F0F4F8;
+      --white:       #FFFFFF;
+    }
+
+    body {
+      font-family: 'Nunito', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ─────────────────────────────────────────────── */
+    .site-header {
+      background: var(--white);
+      border-bottom: 2px solid var(--gray-1);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 68px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    }
+    .header-left  { display: flex; align-items: center; gap: 12px; }
+    .logo-badge   { width: 40px; height: 40px; background: var(--green); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; box-shadow: 0 3px 0 var(--green-dark); }
+    .logo-title   { font-size: 22px; font-weight: 900; color: var(--green); letter-spacing: -.5px; }
+    .logo-subtitle{ font-size: 12px; font-weight: 700; color: var(--gray-2); margin-top: 1px; }
+    .header-right { display: flex; align-items: center; gap: 10px; }
+    .hdr-btn {
+      padding: 9px 18px; border-radius: 12px; border: none; cursor: pointer;
+      font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 900;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+      transition: transform .08s, box-shadow .08s;
+    }
+    .hdr-btn:active { transform: translateY(1px); }
+    .hdr-btn.green  { background: var(--green); color: white; box-shadow: 0 3px 0 var(--green-dark); }
+    .hdr-btn.outline{ background: transparent; color: var(--gray-3); border: 2px solid var(--gray-1); }
+    .hdr-btn.outline:hover { border-color: var(--gray-2); }
+    .last-refresh { font-size: 11px; font-weight: 700; color: var(--gray-2); }
+
+    /* ── OVERVIEW STRIP ─────────────────────────────────────── */
+    .overview-strip {
+      background: linear-gradient(135deg, #1e7e2e 0%, #58CC02 100%);
+      padding: 28px 32px;
+      color: white;
+    }
+    .overview-strip h1 { font-size: 26px; font-weight: 900; margin-bottom: 4px; }
+    .overview-strip p  { font-size: 14px; opacity: .85; font-weight: 600; margin-bottom: 20px; }
+    .overview-kpis { display: flex; gap: 16px; flex-wrap: wrap; }
+    .kpi-box {
+      background: rgba(255,255,255,.18); border-radius: 14px; padding: 14px 20px;
+      min-width: 120px; text-align: center; backdrop-filter: blur(4px);
+    }
+    .kpi-val   { font-size: 30px; font-weight: 900; line-height: 1; }
+    .kpi-label { font-size: 10px; font-weight: 800; opacity: .8; text-transform: uppercase; letter-spacing: .8px; margin-top: 4px; }
+
+    /* ── FILTER BAR ─────────────────────────────────────────── */
+    .filter-bar {
+      background: var(--white); border-bottom: 1.5px solid var(--gray-1);
+      padding: 12px 32px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    .filter-label { font-size: 12px; font-weight: 800; color: var(--gray-2); text-transform: uppercase; letter-spacing: .5px; }
+    .filter-btn {
+      padding: 6px 14px; border-radius: 99px; border: 2px solid var(--gray-1);
+      font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 800;
+      background: var(--white); color: var(--gray-3); cursor: pointer; transition: all .15s;
+    }
+    .filter-btn.active, .filter-btn:hover { border-color: var(--green); color: var(--green-dark); background: var(--green-light); }
+    .search-input {
+      margin-left: auto; padding: 7px 14px; border-radius: 10px; border: 2px solid var(--gray-1);
+      font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 600; outline: none;
+      transition: border-color .2s; width: 200px;
+    }
+    .search-input:focus { border-color: var(--green); }
+
+    /* ── MAIN GRID ──────────────────────────────────────────── */
+    .main-content { padding: 28px 32px; }
+    .section-title { font-size: 13px; font-weight: 900; color: var(--gray-2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .section-title .count-pill { background: var(--gray-1); color: var(--gray-3); border-radius: 99px; padding: 2px 8px; font-size: 11px; }
+    .count-pill.red    { background: #FFE5E5; color: var(--red-dark); }
+    .count-pill.orange { background: #FFF3E0; color: var(--orange-dark); }
+    .count-pill.green  { background: var(--green-light); color: var(--green-dark); }
+
+    .participant-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 18px;
+      margin-bottom: 36px;
+    }
+
+    /* ── PARTICIPANT CARD ───────────────────────────────────── */
+    .p-card {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 3px 14px rgba(0,0,0,.07), 0 0 0 1px var(--gray-1);
+      position: relative;
+      overflow: hidden;
+      transition: transform .15s, box-shadow .15s;
+    }
+    .p-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.1), 0 0 0 1px var(--gray-1); }
+    .p-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 5px; height: 100%;
+      border-radius: 20px 0 0 20px;
+    }
+    .p-card.status-ok::before     { background: var(--green); }
+    .p-card.status-watch::before  { background: var(--orange); }
+    .p-card.status-alert::before  { background: var(--red); }
+    .p-card.status-new::before    { background: var(--gray-2); }
+
+    /* card top row */
+    .card-top { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 16px; }
+    .p-avatar {
+      width: 50px; height: 50px; border-radius: 50%; font-size: 22px; font-weight: 900;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .p-avatar.ok    { background: var(--green-light); color: var(--green-dark); }
+    .p-avatar.watch { background: #FFF3E0;            color: var(--orange-dark); }
+    .p-avatar.alert { background: #FFE5E5;            color: var(--red-dark); }
+    .p-avatar.new   { background: var(--gray-1);      color: var(--gray-2); }
+    .card-info { flex: 1; min-width: 0; }
+    .p-name { font-size: 19px; font-weight: 900; margin-bottom: 2px; }
+    .p-meta { font-size: 12px; font-weight: 600; color: var(--gray-2); line-height: 1.5; }
+    .status-badge {
+      padding: 5px 12px; border-radius: 99px; font-size: 12px; font-weight: 900;
+      flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px;
+    }
+    .status-badge.ok    { background: var(--green-light); color: var(--green-dark); }
+    .status-badge.watch { background: #FFF3E0;            color: var(--orange-dark); }
+    .status-badge.alert { background: #FFE5E5;            color: var(--red-dark); animation: pulse 1.4s ease-in-out infinite alternate; }
+    .status-badge.new   { background: var(--gray-1);      color: var(--gray-2); }
+    @keyframes pulse { from { opacity: 1; } to { opacity: .55; } }
+
+    /* stats grid */
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 8px; margin-bottom: 14px;
+    }
+    .stat-box {
+      background: var(--bg); border-radius: 12px; padding: 12px 8px; text-align: center;
+    }
+    .stat-val  { font-size: 20px; font-weight: 900; line-height: 1; }
+    .stat-name { font-size: 9px; font-weight: 800; color: var(--gray-2); text-transform: uppercase; letter-spacing: .5px; margin-top: 4px; }
+    .val-green  { color: var(--green); }
+    .val-blue   { color: var(--blue); }
+    .val-purple { color: var(--purple); }
+    .val-orange { color: var(--orange); }
+
+    /* mini trend bars */
+    .trend-row { display: flex; align-items: flex-end; gap: 3px; height: 32px; margin-bottom: 12px; }
+    .trend-bar {
+      flex: 1; border-radius: 3px 3px 0 0; min-height: 4px;
+      transition: height .3s;
+    }
+    .trend-label { font-size: 10px; font-weight: 700; color: var(--gray-2); margin-bottom: 2px; }
+
+    /* flag bar */
+    .flag-bar {
+      border-radius: 12px; padding: 10px 14px; margin-bottom: 14px;
+      font-size: 12px; font-weight: 700; line-height: 1.55;
+    }
+    .flag-bar.watch { background: #FFF3E0; color: var(--orange-dark); border: 1.5px solid #FFD580; }
+    .flag-bar.alert { background: #FFE5E5; color: var(--red-dark);    border: 1.5px solid #FFB3B3; }
+    .flag-bar-title { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
+
+    /* action buttons */
+    .card-actions { display: flex; gap: 8px; }
+    .action-btn {
+      flex: 1; padding: 12px 8px; border: none; border-radius: 14px;
+      font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 900;
+      cursor: pointer; text-align: center; text-decoration: none;
+      display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+      transition: transform .08s, box-shadow .08s, opacity .1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .action-btn:active { transform: translateY(2px); }
+    .action-btn.train  { background: var(--green);  color: white; box-shadow: 0 4px 0 var(--green-dark); }
+    .action-btn.train:active  { box-shadow: 0 1px 0 var(--green-dark); }
+    .action-btn.pdf    { background: var(--white);  color: var(--blue);   border: 2px solid var(--blue); }
+    .action-btn.doctor { background: var(--red);    color: white; box-shadow: 0 4px 0 var(--red-dark); }
+    .action-btn.doctor:active { box-shadow: 0 1px 0 var(--red-dark); }
+
+    /* ── SESSION SPARKLINE ──────────────────────────────────── */
+    .sparkline-wrap { margin-bottom: 12px; }
+    .sparkline-label { font-size: 10px; font-weight: 800; color: var(--gray-2); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 5px; }
+    canvas.sparkline { width: 100%; height: 44px; display: block; border-radius: 8px; background: var(--bg); }
+
+    /* ── EMPTY STATE ────────────────────────────────────────── */
+    .empty-state {
+      text-align: center; padding: 72px 24px; color: var(--gray-2);
+      grid-column: 1 / -1;
+    }
+    .empty-icon { font-size: 56px; margin-bottom: 14px; }
+    .empty-state h2 { font-size: 20px; font-weight: 900; margin-bottom: 8px; color: var(--gray-3); }
+    .empty-state p  { font-size: 14px; font-weight: 600; line-height: 1.7; }
+    .open-app-link {
+      display: inline-block; margin-top: 20px;
+      background: var(--green); color: white; border-radius: 14px;
+      padding: 13px 28px; font-size: 15px; font-weight: 900;
+      text-decoration: none; box-shadow: 0 4px 0 var(--green-dark);
+      transition: transform .08s, box-shadow .08s;
+    }
+    .open-app-link:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--green-dark); }
+
+    /* ── PDF loading overlay ── */
+    .pdf-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.65);
+      display: none; align-items: center; justify-content: center;
+      z-index: 500; flex-direction: column; gap: 14px;
+    }
+    .pdf-overlay.show { display: flex; }
+    .pdf-spinner {
+      width: 44px; height: 44px; border: 4px solid rgba(255,255,255,.3);
+      border-top-color: white; border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .pdf-overlay-text { color: white; font-size: 16px; font-weight: 900; }
+
+    /* ── RESPONSIVE ─────────────────────────────────────────── */
+    @media (max-width: 700px) {
+      .site-header { padding: 0 16px; height: 60px; }
+      .overview-strip { padding: 20px 16px; }
+      .overview-strip h1 { font-size: 20px; }
+      .filter-bar { padding: 10px 16px; }
+      .main-content { padding: 20px 16px; }
+      .participant-grid { grid-template-columns: 1fr; gap: 14px; }
+      .search-input { width: 100%; margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════
+     HEADER
+════════════════════════════════════════════════════════════ -->
+<header class="site-header">
+  <div class="header-left">
+    <div class="logo-badge">🎯</div>
+    <div>
+      <div class="logo-title">UnoNeuro</div>
+      <div class="logo-subtitle">Clinical Summary Dashboard</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="last-refresh" id="last-refresh"></span>
+    <button class="hdr-btn outline" onclick="loadAndRender()">⟳ Refresh</button>
+    <a class="hdr-btn green" href="index (1).html">▶ Open Training App</a>
+  </div>
+</header>
+
+<!-- ════════════════════════════════════════════════════════════
+     OVERVIEW STRIP
+════════════════════════════════════════════════════════════ -->
+<div class="overview-strip">
+  <h1>Participant Overview</h1>
+  <p id="overview-sub">Loading data…</p>
+  <div class="overview-kpis" id="overview-kpis">
+    <div class="kpi-box"><div class="kpi-val" id="kpi-total">—</div><div class="kpi-label">Total Participants</div></div>
+    <div class="kpi-box"><div class="kpi-val" id="kpi-alert">—</div><div class="kpi-label">Alerts 🚨</div></div>
+    <div class="kpi-box"><div class="kpi-val" id="kpi-watch">—</div><div class="kpi-label">Watching ⚠️</div></div>
+    <div class="kpi-box"><div class="kpi-val" id="kpi-ok">—</div><div class="kpi-label">OK ✅</div></div>
+    <div class="kpi-box"><div class="kpi-val" id="kpi-sessions">—</div><div class="kpi-label">Total Sessions</div></div>
+    <div class="kpi-box"><div class="kpi-val" id="kpi-avg-focus">—</div><div class="kpi-label">Avg Focus</div></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     FILTER BAR
+════════════════════════════════════════════════════════════ -->
+<div class="filter-bar">
+  <span class="filter-label">Filter:</span>
+  <button class="filter-btn active" data-filter="all"    onclick="setFilter('all',this)">All</button>
+  <button class="filter-btn"        data-filter="alert"  onclick="setFilter('alert',this)">🚨 Alert</button>
+  <button class="filter-btn"        data-filter="watch"  onclick="setFilter('watch',this)">⚠️ Watch</button>
+  <button class="filter-btn"        data-filter="ok"     onclick="setFilter('ok',this)">✅ OK</button>
+  <button class="filter-btn"        data-filter="new"    onclick="setFilter('new',this)">🆕 New</button>
+  <input class="search-input" type="text" placeholder="🔍 Search by name…" id="search-input" oninput="renderCards()" />
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     MAIN CONTENT
+════════════════════════════════════════════════════════════ -->
+<div class="main-content">
+  <div id="alert-section" style="display:none">
+    <div class="section-title">Needs Attention <span class="count-pill red" id="alert-count">0</span></div>
+    <div class="participant-grid" id="alert-grid"></div>
+  </div>
+
+  <div id="watch-section" style="display:none">
+    <div class="section-title">Under Observation <span class="count-pill orange" id="watch-count">0</span></div>
+    <div class="participant-grid" id="watch-grid"></div>
+  </div>
+
+  <div id="ok-section" style="display:none">
+    <div class="section-title">Performing Well <span class="count-pill green" id="ok-count">0</span></div>
+    <div class="participant-grid" id="ok-grid"></div>
+  </div>
+
+  <div id="new-section" style="display:none">
+    <div class="section-title">New Participants <span class="count-pill" id="new-count">0</span></div>
+    <div class="participant-grid" id="new-grid"></div>
+  </div>
+
+  <div id="all-grid" class="participant-grid"></div>
+</div>
+
+<!-- PDF overlay -->
+<div class="pdf-overlay" id="pdf-overlay">
+  <div class="pdf-spinner"></div>
+  <div class="pdf-overlay-text">Generating PDF…</div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+//  DATA HELPERS  (mirror the main app's localStorage schema)
+// ════════════════════════════════════════════════════════════════
+let _allParticipants = [];
+let _currentFilter   = 'all';
+const GAME_NAMES = {
+  'digit-span':'Working Memory','tap-x':'Tap When Ready',
+  'match-recall':'Match & Recall','odd-one-out':'Odd One Out',
+  'track-objects':'Obj. Tracker','dual-nback':'Dual N-Back',
+};
+
+function loadParticipants() {
+  try { return JSON.parse(localStorage.getItem('uno_participants_v1') || '[]'); }
+  catch { return []; }
+}
+function loadSessions(pid) {
+  try { return JSON.parse(localStorage.getItem(`uno_sess_${pid}`) || '[]'); }
+  catch { return []; }
+}
+function avg(arr) { return arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0; }
+function clamp(v,lo,hi){ return Math.max(lo,Math.min(hi,v)); }
+
+function computeStatus(sessions) {
+  if (sessions.length < 2) return 'new';
+  const recent = sessions.slice(-5);
+  const f = avg(recent.map(s => s.focusScore || 0));
+  const a = avg(recent.map(s => s.accuracy   || 0)) * 100;
+  let trend = 0;
+  if (sessions.length >= 6) {
+    trend = avg(sessions.slice(-3).map(s=>s.focusScore||0)) -
+            avg(sessions.slice(-6,-3).map(s=>s.focusScore||0));
+  }
+  if (f < 35 || a < 40) return 'alert';
+  if (f < 55 || a < 58 || trend < -15) return 'watch';
+  return 'ok';
+}
+
+function getFlags(sessions) {
+  if (sessions.length < 2) return [];
+  const recent = sessions.slice(-5);
+  const f = avg(recent.map(s => s.focusScore || 0));
+  const a = avg(recent.map(s => s.accuracy   || 0)) * 100;
+  const msgs = [];
+  if (f < 35)  msgs.push(`Focus score critically low (avg ${Math.round(f)} / 100)`);
+  else if (f < 55) msgs.push(`Focus score below healthy threshold (avg ${Math.round(f)} / 100)`);
+  if (a < 40)  msgs.push(`Accuracy critically low (avg ${Math.round(a)}%)`);
+  else if (a < 58) msgs.push(`Accuracy below expected range (avg ${Math.round(a)}%)`);
+  if (sessions.length >= 6) {
+    const trend = avg(sessions.slice(-3).map(s=>s.focusScore||0)) -
+                  avg(sessions.slice(-6,-3).map(s=>s.focusScore||0));
+    if (trend < -15) msgs.push(`Declining trend (−${Math.round(Math.abs(trend))} pts over 3 sessions)`);
+  }
+  return msgs;
+}
+
+// ════════════════════════════════════════════════════════════════
+//  LOAD + RENDER
+// ════════════════════════════════════════════════════════════════
+function loadAndRender() {
+  _allParticipants = loadParticipants().map(p => {
+    const sessions = loadSessions(p.id);
+    const status   = computeStatus(sessions);
+    const flags    = getFlags(sessions);
+    const recent5  = sessions.slice(-5);
+    const avgFocus = sessions.length ? Math.round(avg(recent5.map(s=>s.focusScore||0))) : null;
+    const avgAcc   = sessions.length ? Math.round(avg(recent5.map(s=>s.accuracy  ||0))*100) : null;
+    const rtArr    = recent5.filter(s=>s.avgRT);
+    const avgRT    = rtArr.length ? (avg(rtArr.map(s=>s.avgRT))/1000).toFixed(2)+'s' : '—';
+    const totalXP  = sessions.reduce((s,r)=>s+(r.xp||0), 0);
+    const lastSess = sessions.length ? sessions[sessions.length-1] : null;
+    return { ...p, sessions, status, flags, avgFocus, avgAcc, avgRT, totalXP, lastSess };
+  });
+
+  updateOverview();
+  renderCards();
+  $('last-refresh').textContent = 'Updated ' + new Date().toLocaleTimeString();
+}
+
+function updateOverview() {
+  const ps = _allParticipants;
+  const totalSess = ps.reduce((s,p)=>s+p.sessions.length, 0);
+  const allFocus  = ps.filter(p=>p.avgFocus!=null).map(p=>p.avgFocus);
+  $('kpi-total').textContent   = ps.length;
+  $('kpi-alert').textContent   = ps.filter(p=>p.status==='alert').length;
+  $('kpi-watch').textContent   = ps.filter(p=>p.status==='watch').length;
+  $('kpi-ok').textContent      = ps.filter(p=>p.status==='ok').length;
+  $('kpi-sessions').textContent= totalSess;
+  $('kpi-avg-focus').textContent = allFocus.length ? Math.round(avg(allFocus)) : '—';
+  $('overview-sub').textContent = ps.length
+    ? `${ps.length} participant${ps.length!==1?'s':''} · ${totalSess} total sessions · Last updated ${new Date().toLocaleDateString()}`
+    : 'No participants found. Open the Training App to add participants.';
+}
+
+let _currentFilter = 'all';
+
+function setFilter(f, btn) {
+  _currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCards();
+}
+
+function renderCards() {
+  const query = ($('search-input').value || '').toLowerCase().trim();
+  let ps = _allParticipants;
+  if (_currentFilter !== 'all') ps = ps.filter(p=>p.status===_currentFilter);
+  if (query) ps = ps.filter(p=>p.name.toLowerCase().includes(query));
+
+  // Grouped sections (only shown in "all" mode without search)
+  const useGrouped = _currentFilter === 'all' && !query;
+  $('all-grid').style.display    = useGrouped ? 'none' : 'grid';
+  ['alert','watch','ok','new'].forEach(s=>{
+    $(s+'-section').style.display = useGrouped ? 'block' : 'none';
+  });
+
+  if (useGrouped) {
+    ['alert','watch','ok','new'].forEach(status=>{
+      const sub = _allParticipants.filter(p=>p.status===status);
+      $(status+'-count').textContent = sub.length;
+      $(status+'-section').style.display = sub.length ? 'block' : 'none';
+      $(status+'-grid').innerHTML = sub.map(buildCard).join('');
+    });
+  } else {
+    $('all-grid').innerHTML = ps.length ? ps.map(buildCard).join('') : `
+      <div class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <h2>No results</h2>
+        <p>No participants match the current filter or search.</p>
+      </div>`;
+  }
+
+  // Empty state when no participants at all
+  if (!_allParticipants.length) {
+    $('all-grid').style.display = 'grid';
+    ['alert','watch','ok','new'].forEach(s=>$(s+'-section').style.display='none');
+    $('all-grid').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">👥</div>
+        <h2>No participants yet</h2>
+        <p>Open the Training App to add participants and start tracking their cognitive health.</p>
+        <a class="open-app-link" href="index (1).html">▶ Open Training App</a>
+      </div>`;
+  }
+
+  // Draw sparklines after DOM update
+  requestAnimationFrame(drawAllSparklines);
+}
+
+// ════════════════════════════════════════════════════════════════
+//  CARD BUILDER
+// ════════════════════════════════════════════════════════════════
+function buildCard(p) {
+  const { status, flags, avgFocus, avgAcc, avgRT, totalXP, sessions, lastSess } = p;
+  const statusLabel = { ok:'✅ OK', watch:'⚠️ Watch', alert:'🚨 Alert', new:'🆕 New' }[status];
+  const lastStr = lastSess
+    ? (lastSess.displayDate || lastSess.date || '').split(',')[0]
+    : 'No sessions yet';
+  const agePart = p.age ? `Age ${p.age} · ` : '';
+  const docPart = p.doctor ? ` · Dr. ${p.doctor}` : '';
+
+  const focusStr  = avgFocus != null ? avgFocus : '—';
+  const accStr    = avgAcc   != null ? avgAcc + '%' : '—';
+  const focusCol  = avgFocus == null ? 'val-orange' : avgFocus >= 70 ? 'val-green' : avgFocus >= 45 ? 'val-orange' : 'val-red';
+  const accCol    = avgAcc   == null ? 'val-orange' : avgAcc   >= 70 ? 'val-green' : avgAcc   >= 50 ? 'val-orange' : 'val-red';
+
+  const flagHtml = flags.length ? `
+    <div class="flag-bar ${status}">
+      <div class="flag-bar-title">${status==='alert'?'🚨 Clinical Concerns':'⚠️ Performance Concerns'}</div>
+      ${flags.map(f=>`<div>• ${f}</div>`).join('')}
+    </div>` : '';
+
+  const doctorBtn = (status==='watch'||status==='alert') ? `
+    <button class="action-btn doctor" onclick="mailDoctor('${p.id}')">📧 Doctor</button>` : '';
+
+  return `
+    <div class="p-card status-${status}" id="card-${p.id}">
+      <div class="card-top">
+        <div class="p-avatar ${status}">${p.name.charAt(0).toUpperCase()}</div>
+        <div class="card-info">
+          <div class="p-name">${escHtml(p.name)}</div>
+          <div class="p-meta">${agePart}${sessions.length} session${sessions.length!==1?'s':''} · Last: ${lastStr}${docPart}</div>
+        </div>
+        <div class="status-badge ${status}">${statusLabel}</div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-box"><div class="stat-val ${focusCol}">${focusStr}</div><div class="stat-name">Focus</div></div>
+        <div class="stat-box"><div class="stat-val ${accCol}">${accStr}</div><div class="stat-name">Accuracy</div></div>
+        <div class="stat-box"><div class="stat-val val-purple">${avgRT}</div><div class="stat-name">Avg RT</div></div>
+        <div class="stat-box"><div class="stat-val val-orange">${sessions.length}</div><div class="stat-name">Sessions</div></div>
+      </div>
+
+      <div class="sparkline-wrap">
+        <div class="sparkline-label">Focus Score — last ${Math.min(sessions.length,10)} sessions</div>
+        <canvas class="sparkline" id="spark-${p.id}" height="44"></canvas>
+      </div>
+
+      ${flagHtml}
+
+      <div class="card-actions">
+        <a class="action-btn train" href="index (1).html">▶ Train</a>
+        <button class="action-btn pdf" onclick="downloadPDF('${p.id}')">📄 PDF</button>
+        ${doctorBtn}
+      </div>
+    </div>`;
+}
+
+function $(id){ return document.getElementById(id); }
+function escHtml(s){ const d=document.createElement('div');d.textContent=s;return d.innerHTML; }
+
+// ════════════════════════════════════════════════════════════════
+//  SPARKLINES
+// ════════════════════════════════════════════════════════════════
+function drawAllSparklines() {
+  _allParticipants.forEach(p => {
+    const canvas = document.getElementById('spark-' + p.id);
+    if (!canvas) return;
+    drawSparkline(canvas, p.sessions.slice(-10).map(s=>s.focusScore||0), p.status);
+  });
+}
+
+function drawSparkline(canvas, data, status) {
+  const ctx = canvas.getContext('2d');
+  const W   = canvas.offsetWidth || 300;
+  const H   = canvas.offsetHeight || 44;
+  canvas.width  = W * devicePixelRatio;
+  canvas.height = H * devicePixelRatio;
+  ctx.scale(devicePixelRatio, devicePixelRatio);
+
+  ctx.clearRect(0, 0, W, H);
+
+  if (!data.length) {
+    ctx.fillStyle = '#AFAFAF'; ctx.font = '11px system-ui'; ctx.textAlign = 'center';
+    ctx.fillText('No data yet', W/2, H/2 + 4);
+    return;
+  }
+
+  const pad  = 4;
+  const minV = 0, maxV = 100;
+  const xStep = data.length > 1 ? (W - pad*2) / (data.length - 1) : W - pad*2;
+  const toY   = v => pad + (1 - (v - minV) / (maxV - minV)) * (H - pad*2);
+  const toX   = i => pad + i * xStep;
+
+  const color = status === 'ok' ? '#58CC02' : status === 'watch' ? '#FF9600' : status === 'alert' ? '#FF4B4B' : '#AFAFAF';
+  const fillC = status === 'ok' ? 'rgba(88,204,2,.15)' : status === 'watch' ? 'rgba(255,150,0,.15)' : status === 'alert' ? 'rgba(255,75,75,.15)' : 'rgba(175,175,175,.15)';
+
+  // Fill area
+  ctx.beginPath();
+  ctx.moveTo(toX(0), H - pad);
+  data.forEach((v,i) => ctx.lineTo(toX(i), toY(v)));
+  ctx.lineTo(toX(data.length-1), H - pad);
+  ctx.closePath();
+  ctx.fillStyle = fillC;
+  ctx.fill();
+
+  // Line
+  ctx.beginPath();
+  data.forEach((v,i) => i===0 ? ctx.moveTo(toX(i),toY(v)) : ctx.lineTo(toX(i),toY(v)));
+  ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+  ctx.stroke();
+
+  // Dots
+  data.forEach((v,i) => {
+    ctx.beginPath(); ctx.arc(toX(i), toY(v), 3.5, 0, Math.PI*2);
+    ctx.fillStyle = color; ctx.fill();
+    ctx.strokeStyle = 'white'; ctx.lineWidth = 1.5; ctx.stroke();
+  });
+
+  // Last value label
+  if (data.length) {
+    const lv = data[data.length-1];
+    const lx = toX(data.length-1);
+    const ly = toY(lv);
+    ctx.fillStyle = color; ctx.font = 'bold 10px system-ui'; ctx.textAlign = lx > W*0.8 ? 'right' : 'left';
+    ctx.fillText(lv, lx + (lx > W*0.8 ? -8 : 8), ly - 5);
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+//  DOCTOR MAILTO
+// ════════════════════════════════════════════════════════════════
+function mailDoctor(pid) {
+  const p      = _allParticipants.find(x=>x.id===pid);
+  if (!p) return;
+  const flags  = p.flags;
+  const to     = p.doctorEmail || '';
+  const status = p.status;
+  const subject = encodeURIComponent(`UnoNeuro ${status==='alert'?'URGENT ':''}Alert: ${p.name}`);
+  const body = encodeURIComponent(
+    `Dear ${p.doctor||'Clinician'},\n\n` +
+    `UnoNeuro Alert for participant: ${p.name}${p.age?` (Age ${p.age})`:''}.\n\n` +
+    `STATUS: ${status.toUpperCase()}\n\n` +
+    `CONCERNS:\n${flags.map(f=>'• '+f).join('\n')}\n\n` +
+    `RECENT METRICS (last 5 sessions):\n` +
+    `• Avg Focus:    ${p.avgFocus??'—'} / 100\n` +
+    `• Avg Accuracy: ${p.avgAcc??'—'}%\n` +
+    `• Total Sessions: ${p.sessions.length}\n\n` +
+    `Please review the attached PDF report.\n\n` +
+    `Generated by UnoNeuro · ${new Date().toLocaleDateString()}`
+  );
+  window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+}
+
+// ════════════════════════════════════════════════════════════════
+//  PDF GENERATION
+// ════════════════════════════════════════════════════════════════
+function loadjsPDF() {
+  return new Promise(resolve => {
+    if (window.jspdf) { resolve(); return; }
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    s.onload = resolve;
+    s.onerror = () => alert('PDF library could not load. Check your internet connection.');
+    document.head.appendChild(s);
+  });
+}
+
+async function downloadPDF(pid) {
+  const p = _allParticipants.find(x=>x.id===pid);
+  if (!p) return;
+  $('pdf-overlay').classList.add('show');
+  await loadjsPDF();
+  const { jsPDF } = window.jspdf;
+  const doc      = new jsPDF({ unit:'mm', format:'a4' });
+  const sessions = p.sessions;
+  const GREEN=[88,204,2], BLUE=[28,176,246], RED=[255,75,75], ORANGE=[255,150,0], GRAY=[120,120,120], DARK=[60,60,60];
+  const pageW=210, pageH=297, margin=18;
+  let y=0;
+  const text=(t,tx,ty,sz=10,bold=false,col=DARK)=>{doc.setFontSize(sz);doc.setFont('helvetica',bold?'bold':'normal');doc.setTextColor(...col);doc.text(t,tx,ty);};
+  const line=(x1,y1,x2,y2,col=GRAY,w=0.3)=>{doc.setDrawColor(...col);doc.setLineWidth(w);doc.line(x1,y1,x2,y2);};
+
+  // Header
+  doc.setFillColor(...GREEN); doc.rect(0,0,pageW,52,'F');
+  text('UnoNeuro', margin, 22, 22, true, [255,255,255]);
+  text('Cognitive Performance Report', margin, 31, 11, false, [220,255,200]);
+  text(`Participant: ${p.name}${p.age?'  ·  Age '+p.age:''}`, margin, 41, 10, false, [255,255,255]);
+  text(`Generated: ${new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'})}`, margin, 48, 9, false, [210,240,200]);
+  y=62;
+
+  // Status banner
+  const sCol = p.status==='ok'?GREEN:p.status==='watch'?ORANGE:p.status==='alert'?RED:GRAY;
+  const sLbl = {ok:'✓ OK — Within Normal Range',watch:'⚠ WATCH — Performance Concern',alert:'⚠ ALERT — Clinical Review Recommended',new:'NEW — Insufficient Data'}[p.status];
+  doc.setFillColor(...sCol); doc.roundedRect(margin,y,pageW-margin*2,12,2,2,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(255,255,255);
+  doc.text(sLbl,margin+4,y+8); y+=20;
+
+  // Summary
+  text('Performance Summary',margin,y,13,true,DARK); y+=6; line(margin,y,pageW-margin,y,GRAY,.3); y+=6;
+  const metrics=[
+    ['Focus Score (5-session avg)', p.avgFocus!=null?`${p.avgFocus} / 100`:'—', p.avgFocus>=70?GREEN:p.avgFocus>=45?ORANGE:RED],
+    ['Accuracy (5-session avg)', p.avgAcc!=null?`${p.avgAcc}%`:'—', p.avgAcc>=70?GREEN:p.avgAcc>=50?ORANGE:RED],
+    ['Avg Reaction Time', p.avgRT],
+    ['Total Sessions', String(sessions.length)],
+    ['Total XP', String(p.totalXP)],
+  ];
+  metrics.forEach(([lbl,val,col=BLUE])=>{
+    text(lbl,margin,y,9,false,GRAY);
+    doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(...col);
+    doc.text(val,pageW-margin,y,{align:'right'});
+    line(margin,y+2,pageW-margin,y+2,[230,230,230],.2); y+=9;
+  }); y+=4;
+
+  // Flags
+  if (p.flags.length) {
+    text('Clinical Flags',margin,y,13,true,DARK); y+=6; line(margin,y,pageW-margin,y,GRAY,.3); y+=5;
+    p.flags.forEach(f=>{
+      doc.setFillColor(255,235,235); doc.roundedRect(margin,y-4,pageW-margin*2,8,2,2,'F');
+      text('• '+f,margin+3,y+1,9,false,[200,60,60]); y+=10;
+    }); y+=4;
+  }
+
+  // Session table
+  if (y>pageH-60){doc.addPage();y=20;}
+  text('Session History',margin,y,13,true,DARK); y+=6; line(margin,y,pageW-margin,y,GRAY,.3); y+=5;
+  const cols=[margin,56,95,123,144,163,182];
+  const hdrs=['Date','Game','Accuracy','Focus','RT','XP','Mood'];
+  doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(...GRAY);
+  hdrs.forEach((h,i)=>doc.text(h,cols[i],y)); y+=4; line(margin,y,pageW-margin,y,GRAY,.3); y+=4;
+  const moodE=['😴','😐','🙂','😊','🤩'];
+  sessions.slice().reverse().slice(0,40).forEach((s,idx)=>{
+    if(y>pageH-20){doc.addPage();y=20;}
+    if(idx%2===0){doc.setFillColor(248,250,248);doc.rect(margin,y-3.5,pageW-margin*2,7,'F');}
+    doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.setTextColor(...DARK);
+    const row=[(s.displayDate||s.date||'').split(',')[0],GAME_NAMES[s.gameId]||'Working Memory',Math.round((s.accuracy||0)*100)+'%',String(s.focusScore||0),s.avgRT?(s.avgRT/1000).toFixed(1)+'s':'—',String(s.xp||0),s.mood?moodE[s.mood-1]:'—'];
+    row.forEach((d,i)=>doc.text(d,cols[i],y)); y+=7;
+  });
+
+  // Footer
+  const pages=doc.getNumberOfPages();
+  for(let pg=1;pg<=pages;pg++){
+    doc.setPage(pg);doc.setFillColor(245,245,245);doc.rect(0,pageH-12,pageW,12,'F');
+    doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.setTextColor(...GRAY);
+    doc.text('UnoNeuro — Cognitive Training Platform',margin,pageH-5);
+    doc.text(`Page ${pg} of ${pages}`,pageW-margin,pageH-5,{align:'right'});
+    doc.text('CONFIDENTIAL — For clinical use only',pageW/2,pageH-5,{align:'center'});
+  }
+
+  $('pdf-overlay').classList.remove('show');
+  doc.save(`UnoNeuro_${p.name.replace(/\s+/g,'_')}_${new Date().toISOString().slice(0,10)}.pdf`);
+}
+
+// ════════════════════════════════════════════════════════════════
+//  BOOT — auto-refresh every 30s when tab is visible
+// ════════════════════════════════════════════════════════════════
+loadAndRender();
+setInterval(()=>{ if (!document.hidden) loadAndRender(); }, 30000);
+document.addEventListener('visibilitychange', ()=>{ if (!document.hidden) loadAndRender(); });
+window.addEventListener('storage', loadAndRender); // live-sync with training app
+</script>
+</body>
+</html>
